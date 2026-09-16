@@ -17,6 +17,7 @@
     "db:reset": "prisma migrate reset --force",
     "content:check": "tsx scripts/content-check.ts",
     "media:check": "tsx scripts/media-check.ts",
+    "test:unit": "tsx --test src/components/marketing/network-state.test.ts src/components/marketing/network-layout.test.ts",
     "env:local": "node scripts/make-local-env.cjs",
     "test:e2e": "playwright test",
     "verify": "npm run typecheck && npm run lint && npm run content:check && npm run media:check"
