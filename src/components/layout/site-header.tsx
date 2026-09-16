@@ -10,9 +10,9 @@ import { NavLinks } from "@/components/layout/nav-links";
 export async function SiteHeader() {
   const viewer = await getViewer();
   const primary = viewer
-    ? { href: viewer.isApprovedMember || viewer.isOfficer ? "/dashboard" : "/pending", label: "Dashboard" }
+    ? { href: viewer.isComplete ? "/dashboard" : "/onboarding", label: "Dashboard" }
     : { href: "/join", label: "Join the Club" };
-  const secondary = viewer ? { href: "/account", label: "Account" } : { href: "/sign-in", label: "Sign in" };
+  const secondary = viewer ? { href: "/settings", label: "Settings" } : { href: "/join#sign-in", label: "Sign in" };
 
   return (
     <header className="site-header sticky top-0 z-40 border-b border-line">

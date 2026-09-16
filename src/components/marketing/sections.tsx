@@ -60,8 +60,8 @@ export const JOIN_STEPS = [
   {
     icon: UserPlus,
     title: "Create your site account",
-    body: "Register here with a personal email for long-term access and your GSU email for student verification. An officer approves membership, then the learning platform unlocks.",
-    cta: { label: "Register", href: "/sign-up", external: false },
+    body: "Sign in with a personal Google account or an email link, then confirm your GSU student email to unlock member features.",
+    cta: { label: "Sign in", href: "/join#sign-in", external: false },
   },
 ];
 
@@ -69,7 +69,7 @@ export function JoinSteps({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" 
   return (
     <section className="section join-section" aria-label="How to join">
       <div className="container-x">
-        <SectionHeading eyebrow="Your next chapter" title="There’s a place for you here." as={headingLevel} description="Start with a hello. Site membership is reviewed by an officer before private learning resources unlock." />
+        <SectionHeading eyebrow="Your next chapter" title="There’s a place for you here." as={headingLevel} description="Start with a hello. Confirm your GSU student email to unlock member features on the site." />
         <ol className="join-steps">
           {JOIN_STEPS.map((s, i) => (
             <li key={s.title} className="join-step">

@@ -30,7 +30,7 @@ for (const viewport of VIEWPORTS) {
     await page.evaluate(() => document.fonts.ready);
 
     await expect(page.getByRole("heading", { level: 1, name: "Cybersecurity Club at GSU" })).toBeVisible();
-    for (const name of ["About", "Events", "Community", "Register Now", "Log In"]) {
+    for (const name of ["About", "Events", "Community", "Join the club", "Log In"]) {
       await expect(page.getByRole("link", { name, exact: true })).toBeVisible();
     }
 
@@ -80,14 +80,17 @@ for (const viewport of VIEWPORTS) {
     expect(report.horizonVisible).toBeGreaterThan(20);
     expect(report.horizonVisible).toBeLessThan(80);
 
-    for (const node of await canvas(page).locator(".network-node").all()) {
-      const dot = (await node.locator(".node-visible").boundingBox())!;
-      const topmost = await page.evaluate(
-        ([x, y]) => (document.elementFromPoint(x, y)?.closest(".network-node") as SVGGElement | null)?.dataset.node,
-        [dot.x + dot.width / 2, dot.y + dot.height / 2],
-      );
-      expect(topmost).toBe(await node.getAttribute("data-node"));
-    }
+    const unclickable = await page.evaluate(() => {
+      const svg = [...document.querySelectorAll<SVGSVGElement>(".network-canvas")].find((el) => getComputedStyle(el).display !== "none")!;
+      return [...svg.querySelectorAll<SVGGElement>(".network-node")]
+        .filter((node) => {
+          const dot = node.querySelector(".node-visible")!.getBoundingClientRect();
+          const hit = document.elementFromPoint(dot.x + dot.width / 2, dot.y + dot.height / 2);
+          return (hit?.closest(".network-node") as SVGGElement | null)?.dataset.node !== node.dataset.node;
+        })
+        .map((node) => node.dataset.node);
+    });
+    expect(unclickable).toEqual([]);
     expect(errors).toEqual([]);
   });
 }
@@ -173,10 +176,10 @@ test("reduced motion skips pulses and shake but still completes", async ({ brows
 
 test("homepage links reach their pages", async ({ page, request }) => {
   await page.goto("/");
-  for (const [name, path] of [["About", "/about"], ["Events", "/events"], ["Community", "/community"], ["Register Now", "/join"]]) {
+  for (const [name, path] of [["About", "/about"], ["Events", "/events"], ["Community", "/community"], ["Join the club", "/join"]]) {
     const href = await page.getByRole("link", { name, exact: true }).getAttribute("href");
     expect(href).toBe(path);
     expect((await request.get(path)).status()).toBe(200);
   }
-  await expect(page.getByRole("link", { name: "Log In", exact: true })).toHaveAttribute("href", "/sign-in");
+  await expect(page.getByRole("link", { name: "Log In", exact: true })).toHaveAttribute("href", "/join#sign-in");
 });

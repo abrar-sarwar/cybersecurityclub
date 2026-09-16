@@ -1,81 +1,101 @@
 import "server-only";
 import { cache } from "react";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import type { MemberProfile } from "@prisma/client";
-import { auth } from "@/server/auth";
-import { prisma } from "@/server/db";
-import { applyAutomaticTransitions, ensureProfileForUser, touchLastActive } from "@/server/services/members";
-import { roleAtLeast, type Role } from "@/lib/enums";
+import { notFound, redirect } from "next/navigation";
+import { isProfileComplete, roleAtLeast, type MemberRole, type Profile } from "@/lib/portal";
+import { SupabaseNotConfiguredError } from "@/lib/supabase/config";
+import { createClient } from "@/lib/supabase/server";
 
 export type Viewer = {
-  user: { id: string; name: string; email: string; emailVerified: boolean; image: string | null };
-  profile: MemberProfile;
-  session: { id: string; expiresAt: Date };
-  isApprovedMember: boolean;
-  isOfficer: boolean; // editor or admin
+  id: string;
+  /** Sign-in address (usually a personal Google account). */
+  email: string | null;
+  profile: Profile;
+  isComplete: boolean;
+  /** Student email verified and membership active: student-only features unlock. */
+  isVerified: boolean;
+  isSuspended: boolean;
+  isOfficer: boolean;
   isAdmin: boolean;
-  needsGraduationConfirmation: boolean;
 };
 
-/** Current session + profile, memoised per request. Null when signed out. */
+let warnedNotConfigured = false;
+
+/**
+ * The signed-in member, memoised per request. Null when signed out.
+ * The JWT is verified with getClaims(); the profile is read through row
+ * level security as that member.
+ */
 export const getViewer = cache(async (): Promise<Viewer | null> => {
-  const result = await auth.api.getSession({ headers: await headers() });
-  if (!result) return null;
-  const { user, session } = result;
-  let profile = await prisma.memberProfile.findUnique({ where: { userId: user.id } });
-  if (!profile) profile = await ensureProfileForUser(user.id, user.email);
-  profile = await applyAutomaticTransitions(profile, user.email);
-  void touchLastActive(profile.id).catch(() => undefined);
-  const isApprovedMember = profile.membershipStatus === "approved";
+  let supabase: Awaited<ReturnType<typeof createClient>>;
+  try {
+    supabase = await createClient();
+  } catch (error) {
+    if (!(error instanceof SupabaseNotConfiguredError)) throw error;
+    if (!warnedNotConfigured) {
+      console.warn("[session] Supabase is not configured; everyone is treated as signed out.");
+      warnedNotConfigured = true;
+    }
+    return null;
+  }
+
+  const { data, error } = await supabase.auth.getClaims();
+  const userId = data?.claims?.sub;
+  if (error || typeof userId !== "string") return null;
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", userId)
+    .maybeSingle();
+  if (profileError) throw profileError;
+  if (!profile) return null;
+
+  const active = profile.membership_status === "active";
   return {
-    user: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      emailVerified: user.emailVerified,
-      image: user.image ?? null,
-    },
+    id: userId,
+    email: typeof data?.claims.email === "string" ? data.claims.email : null,
     profile,
-    session: { id: session.id, expiresAt: session.expiresAt },
-    isApprovedMember,
-    isOfficer: roleAtLeast(profile.role, "editor"),
-    isAdmin: profile.role === "admin",
-    needsGraduationConfirmation: profile.educationStatus === "graduation_confirmation_needed",
+    isComplete: isProfileComplete(profile),
+    isVerified: active && Boolean(profile.student_email_verified_at),
+    isSuspended: !active,
+    isOfficer: active && roleAtLeast(profile.role, "officer"),
+    isAdmin: active && profile.role === "admin",
   };
 });
 
-function signInRedirect(next?: string): never {
-  const target = next && next.startsWith("/") ? `/sign-in?next=${encodeURIComponent(next)}` : "/sign-in";
-  redirect(target);
+function joinRedirect(next: string): never {
+  redirect(`/join?next=${encodeURIComponent(next)}`);
 }
 
-/** Any signed-in account (approved or not). */
-export async function requireUser(next?: string): Promise<Viewer> {
+/** Any signed-in account. */
+export async function requireUser(next: string) {
   const viewer = await getViewer();
-  if (!viewer) signInRedirect(next);
+  if (!viewer) joinRedirect(next);
   return viewer;
 }
 
-/** Approved club member (or officer). Pending accounts land on /pending. */
-export async function requireMember(next?: string): Promise<Viewer> {
+/** Signed in with a finished onboarding form. */
+export async function requireMember(next: string) {
   const viewer = await requireUser(next);
-  if (!viewer.isApprovedMember && !viewer.isOfficer) redirect("/pending");
+  if (!viewer.isComplete) redirect("/onboarding");
   return viewer;
 }
 
-/** Officer tools. Editors and admins pass "editor"; admin-only tools pass "admin". */
-export async function requireRole(min: Role, next?: string): Promise<Viewer> {
+/**
+ * Staff pages. Members get a plain 404 so the admin area does not advertise
+ * itself. Call this in every admin page; layouts alone do not protect
+ * server actions or direct requests.
+ */
+export async function requireStaff(min: Extract<MemberRole, "officer" | "admin">, next: string) {
   const viewer = await requireUser(next);
-  if (!roleAtLeast(viewer.profile.role, min)) redirect("/dashboard?denied=1");
+  const allowed = min === "admin" ? viewer.isAdmin : viewer.isOfficer;
+  if (!allowed) notFound();
   return viewer;
 }
 
-/** API variants: return null instead of redirecting so handlers can send 401/403. */
-export async function apiViewer(): Promise<Viewer | null> {
-  return getViewer();
-}
-
-export function actorOf(viewer: Viewer) {
-  return { id: viewer.user.id, email: viewer.user.email, role: viewer.profile.role };
+/** Server action guard: returns the viewer or null, never redirects. */
+export async function staffForAction(min: Extract<MemberRole, "officer" | "admin">) {
+  const viewer = await getViewer();
+  if (!viewer) return null;
+  return (min === "admin" ? viewer.isAdmin : viewer.isOfficer) ? viewer : null;
 }

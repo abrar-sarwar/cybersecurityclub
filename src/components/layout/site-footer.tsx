@@ -38,8 +38,8 @@ const columns = [
     links: [
       { href: "/privacy", label: "Privacy" },
       { href: "/accessibility", label: "Accessibility" },
-      { href: "/sign-in", label: "Member sign in" },
-      { href: "/account/data", label: "Data requests" },
+      { href: "/join#sign-in", label: "Member sign in" },
+      { href: "/privacy#your-data", label: "Data requests" },
     ],
   },
 ];

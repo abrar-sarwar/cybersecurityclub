@@ -6,11 +6,9 @@ import { ButtonLink } from "@/components/ui/button";
 import { Badge, Breadcrumbs } from "@/components/ui/primitives";
 import { Markdown } from "@/components/learn/markdown";
 import { PathIcon } from "@/components/learn/path-card";
-import { ChoosePathButton } from "@/components/learn/choose-path-button";
 import { getPath, getProject, loadLessonsForPath, loadPaths } from "@/content/loaders";
 import { safeLoad } from "@/content/safe";
 import { getViewer } from "@/server/session";
-import { getActivePathSelection, getLessonProgressMap } from "@/server/services/progress";
 import { branding } from "@config/branding";
 
 export const dynamic = "force-dynamic";
@@ -27,11 +25,11 @@ export default async function PathOverviewPage(props: PageProps<"/learn/paths/[p
   const path = safeLoad(() => getPath(slug), null);
   if (!path || path.status !== "published") notFound();
   const viewer = await getViewer();
-  const isMember = Boolean(viewer && (viewer.isApprovedMember || viewer.isOfficer));
+  const isMember = Boolean(viewer && (viewer.isVerified || viewer.isOfficer));
   const lessons = safeLoad(() => loadLessonsForPath(path.slug), []);
   const project = path.portfolioProject ? safeLoad(() => getProject(path.portfolioProject!), null) : null;
-  const selection = viewer ? await getActivePathSelection(viewer.user.id) : null;
-  const progress = isMember && viewer ? await getLessonProgressMap(viewer.user.id, "lesson:" + path.slug + "/") : new Map();
+  // Progress tracking is paused while it moves from the legacy tables to the member portal.
+  const progress = new Map<string, { status: string }>();
   const otherPaths = safeLoad(() => loadPaths().filter((p) => p.slug !== path.slug && p.status === "published").slice(0, 3), []);
   const totalMinutes = lessons.reduce((n, l) => n + l.estimatedMinutes, 0);
   const completed = [...progress.values()].filter((p) => p.status === "completed").length;
@@ -204,14 +202,20 @@ export default async function PathOverviewPage(props: PageProps<"/learn/paths/[p
         <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
           <div className="card p-6">
             {isMember && viewer ? (
-              <ChoosePathButton pathSlug={path.slug} pathTitle={path.title} selected={selection?.pathSlug === path.slug} />
+              <>
+                <p className="font-semibold text-navy-900">Progress tracking is coming back</p>
+                <p className="mt-1 text-sm text-muted">Choosing a path and saving lesson progress are paused while they move into the member portal. The lessons are open to you now.</p>
+                <ButtonLink href="/dashboard" variant="secondary" className="mt-4 w-full">
+                  Go to your dashboard
+                </ButtonLink>
+              </>
             ) : (
               <>
                 <p className="font-semibold text-navy-900">Members can choose this path</p>
-                <p className="mt-1 text-sm text-muted">Lessons, projects and progress tracking open after membership approval.</p>
+                <p className="mt-1 text-sm text-muted">Lessons and projects open after you verify your GSU student email.</p>
                 <div className="mt-4 flex flex-col gap-2">
                   <ButtonLink href="/join">Join the club</ButtonLink>
-                  <ButtonLink href={`/sign-in?next=/learn/paths/${path.slug}`} variant="outline">
+                  <ButtonLink href={`/join?next=/learn/paths/${path.slug}#sign-in`} variant="outline">
                     Sign in
                   </ButtonLink>
                 </div>

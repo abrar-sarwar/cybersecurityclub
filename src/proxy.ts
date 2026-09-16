@@ -1,51 +1,51 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
+import { updateSession } from "@/lib/supabase/proxy";
 
 /**
- * Optimistic redirect for signed-out visitors hitting private areas.
- * This only checks for the presence of the session cookie; every private page
- * and API route performs the real session, membership and role checks on the
- * server (see src/server/session.ts).
+ * Refreshes the Supabase session cookie on every page request and sends
+ * signed-out visitors away from member areas. This is only the first gate:
+ * every private page and server action checks the session, profile and role
+ * again on the server (src/server/session.ts).
  */
-const PRIVATE_PREFIXES = [
+const PROTECTED_PREFIXES = [
   "/dashboard",
+  "/onboarding",
+  "/settings",
+  "/admin",
   "/questionnaire",
   "/projects",
   "/lab-setup",
   "/certifications",
   "/interview-prep",
   "/account",
-  "/pending",
-  "/admin",
 ];
 
-export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const isPrivate =
-    PRIVATE_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/")) ||
-    /^\/learn\/paths\/[^/]+\/[^/]+\/[^/]+/.test(pathname);
-  if (!isPrivate) return NextResponse.next();
+function isProtected(pathname: string) {
+  return (
+    PROTECTED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)) ||
+    /^\/learn\/paths\/[^/]+\/[^/]+\/[^/]+/.test(pathname)
+  );
+}
 
-  const cookie = getSessionCookie(request);
-  if (cookie) return NextResponse.next();
+export async function proxy(request: NextRequest) {
+  const { response, userId } = await updateSession(request);
+  const { pathname, search } = request.nextUrl;
 
-  const url = request.nextUrl.clone();
-  url.pathname = "/sign-in";
-  url.search = `?next=${encodeURIComponent(pathname + request.nextUrl.search)}`;
-  return NextResponse.redirect(url);
+  if (!userId && isProtected(pathname)) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/join";
+    url.search = `?next=${encodeURIComponent(pathname + search)}`;
+    const redirect = NextResponse.redirect(url);
+    response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+    return redirect;
+  }
+
+  return response;
 }
 
 export const config = {
   matcher: [
-    "/dashboard/:path*",
-    "/questionnaire/:path*",
-    "/projects/:path*",
-    "/lab-setup/:path*",
-    "/certifications/:path*",
-    "/interview-prep/:path*",
-    "/account/:path*",
-    "/pending",
-    "/admin/:path*",
-    "/learn/paths/:path*",
+    // Every route except static assets and image optimization.
+    "/((?!_next/static|_next/image|favicon.ico|assets/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|txt|xml|json)$).*)",
   ],
 };

@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic";
 
 export default async function LearnCatalogPage() {
   const viewer = await getViewer();
-  const isMember = Boolean(viewer && (viewer.isApprovedMember || viewer.isOfficer));
+  const isMember = Boolean(viewer && (viewer.isVerified || viewer.isOfficer));
   const paths = safeLoad(() => loadPaths().filter((p) => p.status === "published"), []);
   const projects = safeLoad(() => loadProjects().filter((p) => p.status === "published"), []);
   const certs = safeLoad(() => loadCertTracks().filter((t) => t.status === "published"), []);
@@ -38,9 +38,9 @@ export default async function LearnCatalogPage() {
               You are previewing the catalog.{" "}
               {viewer ? (
                 <>
-                  Your membership is {viewer.profile.membershipStatus === "pending" ? "waiting for officer approval" : "not active"}.{" "}
-                  <Link href="/pending" className="font-semibold underline underline-offset-2">
-                    Check status
+                  {viewer.isSuspended ? "Your membership is suspended." : "Verify your GSU student email to unlock everything."}{" "}
+                  <Link href="/dashboard" className="font-semibold underline underline-offset-2">
+                    Go to your dashboard
                   </Link>
                 </>
               ) : (
@@ -49,7 +49,7 @@ export default async function LearnCatalogPage() {
                     Join the club
                   </Link>{" "}
                   or{" "}
-                  <Link href="/sign-in?next=/learn" className="font-semibold underline underline-offset-2">
+                  <Link href="/join?next=/learn#sign-in" className="font-semibold underline underline-offset-2">
                     sign in
                   </Link>{" "}
                   to unlock everything.

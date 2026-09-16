@@ -354,9 +354,9 @@ export function CyberHome() {
             <h1 id="cyber-home-heading">Cybersecurity Club at GSU</h1>
             <div className="cyber-home-actions">
               <Link className="cyber-primary-action" href="/join">
-                Register Now
+                Join the club
               </Link>
-              <Link className="cyber-secondary-action" href="/sign-in" prefetch={false}>
+              <Link className="cyber-secondary-action" href="/join#sign-in">
                 Log In
               </Link>
             </div>

@@ -2,17 +2,20 @@
 
 import { revalidatePath } from "next/cache";
 import { getPath } from "@/content/loaders";
-import { getViewer } from "@/server/session";
 import { choosePath, saveInterviewNote, saveProjectProgress, setCertChecklist, setLessonChecks } from "@/server/services/progress";
 import { prisma } from "@/server/db";
 
 export type ActionResult<T = string> = { ok: boolean; message?: string; data?: T };
 
-async function requireMemberForAction() {
-  const viewer = await getViewer();
-  if (!viewer) return { error: "Please sign in again." as const, viewer: null };
-  if (!viewer.isApprovedMember && !viewer.isOfficer) return { error: "Your membership is not active yet." as const, viewer: null };
-  return { error: null, viewer };
+type ProgressViewer = { user: { id: string } };
+
+/**
+ * Learning progress lives in the Prisma tables keyed to the previous auth
+ * system's user ids. Saving stays paused until progress moves to Supabase, so
+ * no action can write rows for accounts that no longer exist.
+ */
+async function requireMemberForAction(): Promise<{ error: string | null; viewer: ProgressViewer | null }> {
+  return { error: "Saving learning progress is paused while it moves to the new member portal.", viewer: null };
 }
 
 export async function choosePathAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {

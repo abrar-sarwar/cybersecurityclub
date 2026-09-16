@@ -33,7 +33,7 @@ export default async function EventDetailPage(props: PageProps<"/events/[slug]">
   if (!event) notFound();
   const cover = event.coverAssetId ? await resolveAssetById(event.coverAssetId) : null;
   const cancelled = event.status === "cancelled";
-  const canSeeMemberMaterial = Boolean(viewer && (viewer.isApprovedMember || viewer.isOfficer));
+  const canSeeMemberMaterial = Boolean(viewer && (viewer.isVerified || viewer.isOfficer));
 
   const related = event.relatedLessonKeys.map((key) => ({ key, href: lessonHrefFromKey(key), title: lessonTitleFromKey(key) })).filter((r) => r.href);
 
@@ -94,7 +94,7 @@ export default async function EventDetailPage(props: PageProps<"/events/[slug]">
               ) : (
                 <p className="mt-2 text-muted">
                   Follow-up materials are available to approved members.{" "}
-                  <Link href={`/sign-in?next=/events/${event.slug}`} className="text-brand-700 underline underline-offset-2">
+                  <Link href={`/join?next=/events/${event.slug}#sign-in`} className="text-brand-700 underline underline-offset-2">
                     Sign in
                   </Link>{" "}
                   or{" "}
