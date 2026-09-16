@@ -1,0 +1,262 @@
+{
+  "intro": "A home lab is a small, disposable environment where you can install tools, run intentionally vulnerable software and make mistakes without consequences. It can be a couple of virtual machines on your laptop, a few containers, or a lab that a website runs for you in the browser. The one rule that matters more than any tool choice is isolation: keep lab machines separate from the computer, accounts and network you rely on every day. Vulnerable targets are vulnerable to everyone, not just to you, so they must never be reachable from campus Wi-Fi or your home network. Snapshots and disposable machines mean you can always get back to a clean state. Use the wizard to pick an environment that fits your hardware, then follow its guide step by step.",
+  "safetyRules": [
+    "Keep vulnerable machines and attack tools off the devices and accounts you use for classes, banking and email. If your only computer is your daily laptop, run the lab inside a virtual machine and keep it isolated from the host.",
+    "Never expose a lab machine to a shared network. Use NAT, host-only or internal networking, and never bridge a vulnerable VM onto campus Wi-Fi or your home network.",
+    "Only test systems you own or have written permission to test. The practice targets in these guides are your own VMs, containers on localhost, or platforms that explicitly invite testing. Scanning or probing anything else, including GSU networks, may be a crime and a code-of-conduct violation.",
+    "Take a snapshot or export a backup before every risky step, and rehearse restoring it before you need it.",
+    "Keep the host patched and its firewall on. A virtual machine is only as safe as the computer it runs on.",
+    "Use throwaway credentials inside the lab. Never reuse a real password, sign in to personal accounts from a lab VM, or store real data there.",
+    "Download tools and images only from the official pages linked in each guide, and verify checksums or signatures when the vendor publishes them."
+  ],
+  "environments": [
+    {
+      "id": "virtualbox-ubuntu-kali",
+      "name": "VirtualBox with Ubuntu and Kali Linux",
+      "summary": "The classic free lab: VirtualBox on Windows, Linux or an Intel Mac running an Ubuntu desktop VM and the pre-built Kali VM on a private host-only network. Our recommended starting point for most laptops with an x64 processor.",
+      "type": "local",
+      "fits": {
+        "os": ["windows", "linux", "mac-intel"],
+        "arch": ["x64"],
+        "minRamGb": 8,
+        "minStorageGb": 40,
+        "needsAdmin": true,
+        "experience": ["new", "some", "experienced"]
+      },
+      "cost": "Free",
+      "accountRequired": false,
+      "downloads": [
+        {
+          "label": "VirtualBox",
+          "url": "https://www.virtualbox.org/wiki/Downloads",
+          "verifiedOn": "2026-09-15",
+          "note": "Pick the package for your host OS. VirtualBox also ships an Apple Silicon build, but it only runs arm64 guests; we recommend UTM there."
+        },
+        {
+          "label": "Ubuntu Desktop",
+          "url": "https://ubuntu.com/download/desktop",
+          "verifiedOn": "2026-09-15",
+          "note": "x64 ISO. Take the current LTS release."
+        },
+        {
+          "label": "Kali Linux pre-built virtual machines",
+          "url": "https://www.kali.org/get-kali/#kali-virtual-machines",
+          "verifiedOn": "2026-09-15",
+          "note": "Download the VirtualBox 64-bit image (.7z). Default login is kali / kali; change it on first boot."
+        }
+      ],
+      "guideSlug": "virtualbox-ubuntu-kali",
+      "resourceGuidance": "Plan for 8 GB of host RAM and 40 GB of free disk. On an 8 GB machine run one VM at a time with 2 vCPUs and 3-4 GB; with 16 GB you can run Kali and Ubuntu side by side at 4 GB each.",
+      "isolationSummary": "Give each VM a host-only adapter for lab traffic and connect a NAT adapter only while updating. Vulnerable targets get host-only or internal networking only, never bridged.",
+      "status": "published"
+    },
+    {
+      "id": "utm-apple-silicon",
+      "name": "UTM on an Apple Silicon Mac",
+      "summary": "Free, open-source virtualization for M-series Macs. Runs arm64 Kali and Ubuntu guests quickly with private networking for lab traffic. x64 VM images will not boot here, so you must download arm64 installers.",
+      "type": "local",
+      "fits": {
+        "os": ["mac-apple-silicon"],
+        "arch": ["arm64"],
+        "minRamGb": 8,
+        "minStorageGb": 30,
+        "needsAdmin": true,
+        "experience": ["new", "some", "experienced"]
+      },
+      "cost": "Free (UTM from GitHub is free; the Mac App Store version is paid)",
+      "accountRequired": false,
+      "downloads": [
+        {
+          "label": "UTM",
+          "url": "https://mac.getutm.app/",
+          "verifiedOn": "2026-09-15",
+          "note": "The direct download is free. The Mac App Store listing is the same app sold to support the project and get automatic updates."
+        },
+        {
+          "label": "Kali Linux installer images (choose Apple Silicon arm64)",
+          "url": "https://www.kali.org/get-kali/#kali-installer-images",
+          "verifiedOn": "2026-09-15",
+          "note": "Use the Apple Silicon (arm64) installer ISO, not the x64 pre-built VMs and not the ARM single-board images."
+        },
+        {
+          "label": "Ubuntu Server for ARM",
+          "url": "https://ubuntu.com/download/server/arm",
+          "verifiedOn": "2026-09-15",
+          "note": "arm64 ISO. Add a desktop after installation if you want one."
+        }
+      ],
+      "guideSlug": "utm-apple-silicon",
+      "resourceGuidance": "Works on 8 GB Macs running one VM at a time with 3-4 GB and 2-4 cores; 16 GB lets you keep Kali and an Ubuntu target running together. Budget about 30 GB of disk for two guests and their ISOs.",
+      "isolationSummary": "Use Shared Network (NAT) only while installing and updating, then move lab VMs to a Host Only network so they can reach each other and nothing else. Never use Bridged on campus Wi-Fi.",
+      "status": "published"
+    },
+    {
+      "id": "vmware-workstation-fusion",
+      "name": "VMware Workstation Pro and Fusion",
+      "summary": "Broadcom's desktop hypervisors: Workstation Pro for Windows and Linux, Fusion for Intel and Apple Silicon Macs. Polished and fast with excellent snapshots, free for personal use, but the downloads sit behind a Broadcom account and the portal changes often.",
+      "type": "local",
+      "fits": {
+        "os": ["windows", "linux", "mac-intel", "mac-apple-silicon"],
+        "arch": ["x64", "arm64"],
+        "minRamGb": 8,
+        "minStorageGb": 40,
+        "needsAdmin": true,
+        "experience": ["new", "some", "experienced"]
+      },
+      "cost": "Free for personal use (Broadcom account required to download; verify current terms)",
+      "accountRequired": true,
+      "downloads": [
+        {
+          "label": "Broadcom support portal (VMware downloads)",
+          "url": "https://support.broadcom.com/",
+          "verifiedOn": "2026-09-15",
+          "note": "Register, sign in, then look under the VMware Cloud Foundation division for the free Workstation Pro and Fusion downloads. Workstation Pro and Fusion became free for personal use in 2024 and later for all use; the page layout moves, so verify on the portal."
+        }
+      ],
+      "guideSlug": "vmware-workstation-fusion",
+      "resourceGuidance": "Same budget as VirtualBox: 8 GB of host RAM and 40 GB free. Give Kali 2 vCPUs and 4 GB when it runs alone. On Apple Silicon, Fusion runs arm64 guests only, so use arm64 installers.",
+      "isolationSummary": "Use NAT for updates and a host-only network (Private to my Mac in Fusion) or a LAN segment for lab traffic. Vulnerable targets never get bridged networking.",
+      "status": "published"
+    },
+    {
+      "id": "docker-vulnerable-web-apps",
+      "name": "Docker with vulnerable web apps",
+      "summary": "Run intentionally vulnerable web applications such as OWASP Juice Shop as containers bound to localhost. Lightweight, quick to reset and ideal for application security practice. Containers share your kernel, so this is not the place for malware samples. New members can use it, but expect terse error messages; a browser lab is gentler for a first week.",
+      "type": "local",
+      "fits": {
+        "os": ["windows", "linux", "mac-intel", "mac-apple-silicon", "chromebook-or-other"],
+        "arch": ["x64", "arm64"],
+        "minRamGb": 8,
+        "minStorageGb": 20,
+        "needsAdmin": true,
+        "experience": ["new", "some", "experienced"]
+      },
+      "cost": "Free for personal and educational use (verify current Docker Desktop terms)",
+      "accountRequired": false,
+      "downloads": [
+        {
+          "label": "Docker Desktop",
+          "url": "https://www.docker.com/products/docker-desktop/",
+          "verifiedOn": "2026-09-15",
+          "note": "Choose the build for your OS and chip. On Linux, Docker Engine from the Docker docs is a lighter alternative. On a Chromebook you need the Linux development environment and Docker Engine, which is an advanced route."
+        },
+        {
+          "label": "OWASP Juice Shop",
+          "url": "https://owasp.org/www-project-juice-shop/",
+          "verifiedOn": "2026-09-15",
+          "note": "Run with: docker run --rm -p 127.0.0.1:3000:3000 bkimminich/juice-shop"
+        }
+      ],
+      "guideSlug": "docker-vulnerable-web-apps",
+      "resourceGuidance": "8 GB of host RAM is comfortable; cap the Docker virtual machine at 4 GB and 2 CPUs. Images take 0.5-2 GB each, so keep 20 GB free and prune old images.",
+      "isolationSummary": "Publish ports on 127.0.0.1 only, so the vulnerable app is reachable from your browser but not from the network. Containers are not a strong boundary against hostile code; use a VM for anything that fights back.",
+      "status": "published"
+    },
+    {
+      "id": "wsl2-linux-tools",
+      "name": "WSL 2 for Linux command-line practice",
+      "summary": "Windows Subsystem for Linux gives you a real Ubuntu or Kali shell inside Windows in about ten minutes. Ideal for learning the command line, scripting and tooling; not a place to host vulnerable targets.",
+      "type": "local",
+      "fits": {
+        "os": ["windows"],
+        "arch": ["x64", "arm64"],
+        "minRamGb": 4,
+        "minStorageGb": 10,
+        "needsAdmin": true,
+        "experience": ["new", "some", "experienced"]
+      },
+      "cost": "Free",
+      "accountRequired": false,
+      "downloads": [
+        {
+          "label": "Microsoft WSL installation guide",
+          "url": "https://learn.microsoft.com/windows/wsl/install",
+          "verifiedOn": "2026-09-15",
+          "note": "Run wsl --install from an administrator PowerShell; no separate download is needed."
+        }
+      ],
+      "guideSlug": "wsl2-linux-tools",
+      "resourceGuidance": "Runs on 4 GB laptops. Limit WSL to 2-4 GB and 2 processors in .wslconfig so Windows stays responsive; a distribution with tools needs 5-10 GB of disk.",
+      "isolationSummary": "WSL sits behind NAT, but it shares your everyday Windows machine and can reach any network Windows can. Use it for tools and for practice against your own VMs or localhost only.",
+      "status": "published"
+    },
+    {
+      "id": "browser-based-labs",
+      "name": "Browser-based labs",
+      "summary": "TryHackMe, Hack The Box Academy, OverTheWire and picoCTF host the lab for you. Nothing to install, and it works on Chromebooks, tablets and locked-down laptops. Accounts are required and free tiers have limits; check current pricing before paying.",
+      "type": "browser",
+      "fits": {
+        "os": ["windows", "linux", "mac-intel", "mac-apple-silicon", "chromebook-or-other"],
+        "arch": ["x64", "arm64", "unknown"],
+        "minRamGb": 0,
+        "minStorageGb": 0,
+        "needsAdmin": false,
+        "experience": ["new", "some", "experienced"]
+      },
+      "cost": "Free tiers with paid options (verify current pricing)",
+      "accountRequired": true,
+      "downloads": [
+        {
+          "label": "TryHackMe",
+          "url": "https://tryhackme.com/",
+          "verifiedOn": "2026-09-15",
+          "note": "Account required. Free rooms plus a paid subscription; the in-browser machine has limits on the free tier."
+        },
+        {
+          "label": "Hack The Box Academy",
+          "url": "https://academy.hackthebox.com/",
+          "verifiedOn": "2026-09-15",
+          "note": "Account required. Fundamentals modules are free; later modules and certifications are paid."
+        },
+        {
+          "label": "OverTheWire Bandit",
+          "url": "https://overthewire.org/wargames/bandit/",
+          "verifiedOn": "2026-09-15",
+          "note": "No account. Connect with an SSH client; the level 0 page lists the host, port and password."
+        },
+        {
+          "label": "picoCTF",
+          "url": "https://picoctf.org/",
+          "verifiedOn": "2026-09-15",
+          "note": "Free, run by Carnegie Mellon University. Account required; the site now presents itself under the CyLab Security Academy name."
+        }
+      ],
+      "guideSlug": "browser-based-labs",
+      "resourceGuidance": "Any device with a modern browser and a stable connection. In-browser machines stream a desktop, so a wired or strong Wi-Fi connection matters more than RAM.",
+      "isolationSummary": "Targets run in the provider's cloud, so nothing vulnerable touches your device. If you use a lab VPN, treat it as a shared network: keep your firewall on and only touch assigned targets.",
+      "status": "published"
+    }
+  ],
+  "lastReviewed": "2026-09-15",
+  "sources": [
+    {
+      "title": "Oracle VirtualBox user manual, chapter 6: Virtual Networking",
+      "url": "https://www.virtualbox.org/manual/ch06.html"
+    },
+    {
+      "title": "Oracle VirtualBox documentation",
+      "url": "https://www.virtualbox.org/wiki/Documentation"
+    },
+    {
+      "title": "UTM documentation",
+      "url": "https://docs.getutm.app/"
+    },
+    {
+      "title": "Docker Engine security",
+      "url": "https://docs.docker.com/engine/security/",
+      "note": "Explains why containers share the host kernel and what namespaces do and do not isolate."
+    },
+    {
+      "title": "Install WSL (Microsoft Learn)",
+      "url": "https://learn.microsoft.com/windows/wsl/install"
+    },
+    {
+      "title": "Kali Linux virtualization documentation",
+      "url": "https://www.kali.org/docs/virtualization/"
+    },
+    {
+      "title": "Kali Linux downloads",
+      "url": "https://www.kali.org/get-kali/"
+    }
+  ]
+}

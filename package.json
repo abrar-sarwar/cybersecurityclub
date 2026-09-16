@@ -1,0 +1,63 @@
+{
+  "name": "cybersecurityclub",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "postinstall": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:generate": "prisma generate",
+    "db:studio": "prisma studio",
+    "db:seed": "tsx scripts/seed.ts",
+    "db:reset": "prisma migrate reset --force",
+    "content:check": "tsx scripts/content-check.ts",
+    "media:check": "tsx scripts/media-check.ts",
+    "env:local": "node scripts/make-local-env.cjs",
+    "test:e2e": "playwright test",
+    "verify": "npm run typecheck && npm run lint && npm run content:check && npm run media:check"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1133.0",
+    "@aws-sdk/s3-request-presigner": "^3.1133.0",
+    "@prisma/client": "^6.19.3",
+    "better-auth": "^1.7.5",
+    "clsx": "^2.1.1",
+    "fast-xml-parser": "^5.11.1",
+    "gray-matter": "^4.0.3",
+    "lucide-react": "^1.46.0",
+    "next": "16.3.5",
+    "nodemailer": "^10.0.10",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
+    "sharp": "^0.35.4",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/typography": "^0.5.20",
+    "@types/node": "^20",
+    "@types/nodemailer": "^8.0.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.5",
+    "prisma": "^6.19.3",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.13",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=20.9"
+  },
+  "prisma": {
+    "seed": "tsx scripts/seed.ts"
+  }
+}

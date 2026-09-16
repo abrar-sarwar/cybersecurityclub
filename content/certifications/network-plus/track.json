@@ -1,0 +1,175 @@
+{
+  "slug": "network-plus",
+  "name": "CompTIA Network+",
+  "examCode": "N10-009",
+  "examVersionLabel": "V9 (N10-009)",
+  "verifiedOn": "2026-09-15",
+  "verificationNote": "On 2026-09-15 we checked the official CompTIA Network+ page and confirmed that the current exam is N10-009 (marketed as V9), which launched on June 20, 2024 and replaced N10-008 (retired December 2024). We also confirmed the five domains and their weights, the question count, the time limit and the passing score listed below. CompTIA usually replaces exam versions about every three years, so confirm the current exam code and objectives on the official page before you schedule.",
+  "officialUrl": "https://www.comptia.org/certifications/network",
+  "objectivesUrl": "https://www.comptia.org/certifications/network#examdetails",
+  "overview": "CompTIA Network+ is a vendor-neutral certification that shows you understand how networks are built and kept running: the OSI and TCP/IP models, IP addressing and subnetting, switching and routing, wireless, cloud connectivity, core services such as DNS and DHCP, basic security controls, and a structured way to troubleshoot problems.\n\nFor a college student it is a useful foundation because almost every security topic sits on top of networking. Reading a packet capture, noticing an odd DNS query, segmenting a home lab, or explaining why a VPN matters all depend on the ideas this exam covers. Studying for it also gives you vocabulary that teammates and hiring managers recognize.\n\nBe realistic about what it is and is not. Network+ is **not required** for every security role, and holding it does not guarantee a job or an internship. Some teams will value a documented project or a home lab more than a certificate. Treat the exam as a milestone that organizes your learning, and pair it with hands-on practice.\n\nYou can learn everything in this track for free. The lessons below, a copy of Wireshark, and the command-line tools already on your computer are enough to prepare. Paying for the exam itself is a separate decision you can make later.",
+  "whoItsFor": "Members who are new to networking, or who have used networks for years without understanding what happens underneath: first- and second-year students, people switching into IT or security from another major, and anyone who wants a structured foundation before Security+ or hands-on security work. If you already run a home lab and read packet captures comfortably, start with the review checklist to find gaps instead of reading every lesson.",
+  "examFormat": {
+    "questions": "Up to 90 questions (multiple choice and performance-based)",
+    "duration": "90 minutes",
+    "passingScore": "720 on a 100-900 scale (verify on the official page)",
+    "note": "Performance-based questions ask you to complete a task in a simulated environment, such as correcting a configuration or placing devices on a diagram. They tend to appear early; many candidates flag them, finish the multiple-choice items, then return. Details can change between exam versions, so check the official page before you schedule."
+  },
+  "costNote": "Learning the material is free. The lessons in this track, the command-line tools already on your computer, Wireshark and the public references listed under sources cover everything you need to study. Sitting the exam is a separate cost. We do not print the price here because it changes; check the official page for the current voucher price in your region. Exam vouchers, retakes and optional study bundles (practice tests, labs, video courses) are each priced separately, and none of the bundles are required to pass. Students may qualify for a discounted voucher through the CompTIA Academic Store; verify current eligibility and pricing there before you buy, and ask a club officer whether any group discounts or reimbursement options exist.",
+  "domains": [
+    {
+      "id": "networking-concepts",
+      "name": "Networking Concepts",
+      "weightPercent": 23,
+      "topics": [
+        "OSI model layers, encapsulation and the TCP/IP model",
+        "Networking appliances and functions: routers, switches, firewalls, load balancers, proxies, IDS/IPS",
+        "Common ports, protocols and traffic types (unicast, multicast, anycast, broadcast)",
+        "IPv4 addressing: public and private ranges, APIPA, loopback, CIDR and VLSM subnetting",
+        "IPv6 addressing basics and coexistence (dual stack, tunneling, NAT64)",
+        "Transmission media, connectors and transceivers (copper, fiber, wireless)",
+        "Topologies and architectures: star, mesh, hub-and-spoke, three-tier, collapsed core, spine-and-leaf",
+        "Cloud concepts and modern network trends: VPCs, SDN, SD-WAN, VXLAN, zero trust, SASE"
+      ]
+    },
+    {
+      "id": "network-implementation",
+      "name": "Network Implementation",
+      "weightPercent": 20,
+      "topics": [
+        "Static and dynamic routing (OSPF, EIGRP, BGP) and how a router selects a route",
+        "Address translation (NAT, PAT) and first-hop redundancy (VRRP, HSRP)",
+        "Switching: VLANs, 802.1Q trunks, native and voice VLANs, SVIs",
+        "Spanning tree, link aggregation, speed and duplex, MTU and jumbo frames",
+        "Wireless: frequencies, channels, SSIDs, WPA2 and WPA3, PSK versus enterprise authentication",
+        "Wireless design: antenna types, autonomous versus controller-based access points, guest networks",
+        "Physical installation: MDF/IDF, racks, patch panels, power (UPS, PDU) and environmental factors"
+      ]
+    },
+    {
+      "id": "network-operations",
+      "name": "Network Operations",
+      "weightPercent": 19,
+      "topics": [
+        "Documentation: physical and logical diagrams, rack diagrams, cable maps, IPAM, asset inventory, SLAs",
+        "Life-cycle management: end of life, end of support, patching and decommissioning",
+        "Change management and configuration management (baseline, production and backup configs)",
+        "Monitoring: SNMP, flow data, packet capture, syslog and SIEM, baselines and alerting",
+        "Disaster recovery concepts: RPO, RTO, MTTR, MTBF, cold/warm/hot sites, high availability",
+        "Network services: DHCP scopes and relays, SLAAC, DNS record types and zones, NTP",
+        "Access and management methods: VPN types, SSH, console, jump hosts, in-band versus out-of-band"
+      ]
+    },
+    {
+      "id": "network-security",
+      "name": "Network Security",
+      "weightPercent": 14,
+      "topics": [
+        "Logical security: encryption in transit and at rest, certificates and PKI",
+        "Identity and access: MFA, SSO, RADIUS, TACACS+, LDAP, SAML, least privilege and RBAC",
+        "Physical security and deception technologies (honeypots, honeynets)",
+        "Security terminology: risk, vulnerability, exploit, threat and the CIA triad",
+        "Segmentation and compliance: guest, IoT/OT and BYOD networks, PCI DSS, GDPR, data locality",
+        "Common attacks: DoS/DDoS, VLAN hopping, MAC flooding, ARP and DNS poisoning, rogue devices, evil twins, social engineering",
+        "Defenses: device hardening, NAC and 802.1X, port security, ACLs, content filtering, trusted and screened zones"
+      ]
+    },
+    {
+      "id": "network-troubleshooting",
+      "name": "Network Troubleshooting",
+      "weightPercent": 24,
+      "topics": [
+        "The structured troubleshooting methodology, from identifying the problem to documenting the fix",
+        "Cabling and physical interface problems: attenuation, crosstalk, bad terminations, interface error counters, PoE budgets",
+        "Switching and routing problems: loops, wrong VLAN, ACLs, route selection, missing default routes",
+        "Addressing problems: exhausted DHCP pools, wrong gateway, duplicate addresses, wrong subnet mask",
+        "Performance problems: congestion, bandwidth versus throughput, latency, packet loss, jitter",
+        "Wireless problems: interference, coverage gaps, roaming and client association issues",
+        "Software and hardware tools: ping, traceroute, nslookup/dig, tcpdump and Wireshark, cable testers, toner probes, Wi-Fi analyzers, device show commands"
+      ]
+    }
+  ],
+  "lessons": [
+    "the-osi-and-tcp-ip-models",
+    "ip-addressing-and-subnetting",
+    "switching-vlans-and-ethernet",
+    "routing-fundamentals",
+    "wireless-networking",
+    "core-network-services-dns-dhcp-nat",
+    "cloud-and-virtual-networking-basics",
+    "network-security-controls",
+    "monitoring-and-troubleshooting-methodology"
+  ],
+  "practicalExercises": [
+    {
+      "title": "Read your own traffic in Wireshark",
+      "body": "Install Wireshark, start a capture on your active interface, load one web page, then stop. Apply the display filter `dns` and find the query and response for the site you visited. Then filter `tcp.port == 443` and expand a single packet in the details pane until you can point at the Ethernet, IP, TCP and TLS layers. Capture only on your own computer and your own network.",
+      "domainId": "networking-concepts"
+    },
+    {
+      "title": "Map your own machine's addressing",
+      "body": "Run `ipconfig /all` (Windows), `ip a` and `ip route` (Linux) or `ifconfig` and `netstat -rn` (macOS). Write down your IPv4 address, subnet mask, default gateway, DHCP server, DNS servers, MAC address and any IPv6 addresses. Decide whether the IPv4 address is private under RFC 1918, then calculate the network address, broadcast address and usable host range by hand and check them against the mask.",
+      "domainId": "networking-concepts"
+    },
+    {
+      "title": "Subnetting worksheet",
+      "body": "On paper, write ten random addresses with prefixes between /20 and /30 (for example 172.16.45.200/22). For each one, work out the subnet mask in dotted decimal, the network address, the broadcast address and the number of usable hosts. Time yourself; the goal is under a minute per problem without a calculator. Check your answers with the block-size method from the subnetting lesson.",
+      "domainId": "networking-concepts"
+    },
+    {
+      "title": "Trace a path and reason about routing",
+      "body": "Run `tracert example.com` (Windows) or `traceroute example.com` (Linux/macOS) and then `route print` or `ip route`. Identify your default route, the first hop (your gateway) and the hop where private addresses stop and public addresses begin. Explain in one sentence what each hop represents and why some hops show only asterisks.",
+      "domainId": "network-implementation"
+    },
+    {
+      "title": "Resolve names by hand",
+      "body": "Use `nslookup` or `dig` to look up the A, AAAA, MX and NS records for a public domain, then do a reverse lookup on one of the returned addresses. Note which resolver answered, whether the answer was authoritative, and the TTL. Then query a different public resolver (for example `nslookup example.com 1.1.1.1`) and compare the results.",
+      "domainId": "network-operations"
+    },
+    {
+      "title": "Baseline your home network",
+      "body": "Over three days, record ping round-trip time to your gateway and to a public host, the result of a browser speed test, and your Wi-Fi signal level at your usual desk (`netsh wlan show interfaces` on Windows). Put the numbers in a small table. This is a baseline: the reference you compare against when someone says the network feels slow.",
+      "domainId": "network-operations"
+    },
+    {
+      "title": "Design a segmented small-office network on paper",
+      "body": "Draw a packet-tracer style diagram for a twenty-person office: an internet router, a firewall, one core switch, two access switches, a wireless access point, a file server and a printer. Assign VLANs and subnets for staff, guests, IoT devices and servers, mark where the firewall zones and ACLs sit, and write one sentence per segment explaining what it protects against.",
+      "domainId": "network-security"
+    },
+    {
+      "title": "Practice the troubleshooting method on a scenario",
+      "body": "Pick one scenario from the troubleshooting lesson (for example, a laptop that shows a 169.254 address). Write out all seven steps of the methodology before touching a keyboard, then run the commands that would test your theory on your own machine (`ipconfig /all`, `ping`, `nslookup`, `tracert`) and record what a healthy result looks like so you recognize an unhealthy one.",
+      "domainId": "network-troubleshooting"
+    }
+  ],
+  "reviewChecklist": [
+    { "id": "osi-layers", "text": "I can name all seven OSI layers in order, give the PDU for each, and place a protocol or device at each layer.", "domainId": "networking-concepts" },
+    { "id": "ports-and-protocols", "text": "I can recall the default ports and transport protocols for SSH, DNS, DHCP, HTTP, HTTPS, SMTP, NTP, SNMP, RDP, SMB and syslog.", "domainId": "networking-concepts" },
+    { "id": "subnetting-fluency", "text": "Given any IPv4 address and prefix, I can find the network, broadcast, usable range and host count in under a minute.", "domainId": "networking-concepts" },
+    { "id": "ipv6-basics", "text": "I can recognize IPv6 global unicast, link-local, unique local and multicast prefixes and shorten an address correctly.", "domainId": "networking-concepts" },
+    { "id": "cloud-concepts", "text": "I can explain IaaS, PaaS and SaaS, what a VPC is, and the difference between a security group and a network ACL.", "domainId": "networking-concepts" },
+    { "id": "vlans-and-trunks", "text": "I can explain access ports, trunks, 802.1Q tags, the native VLAN, and how inter-VLAN routing works.", "domainId": "network-implementation" },
+    { "id": "spanning-tree", "text": "I can describe why loops are dangerous, how the root bridge is elected, and what the STP port roles and states mean.", "domainId": "network-implementation" },
+    { "id": "route-selection", "text": "I can order longest prefix match, administrative distance and metric correctly when predicting which route a router uses.", "domainId": "network-implementation" },
+    { "id": "wireless-design", "text": "I can pick non-overlapping 2.4 GHz channels, explain 5 GHz and 6 GHz trade-offs, and compare WPA2, WPA3, PSK and enterprise authentication.", "domainId": "network-implementation" },
+    { "id": "dhcp-and-dns", "text": "I can walk through the DHCP DORA exchange, explain why a relay is needed, and name the common DNS record types and what each is for.", "domainId": "network-operations" },
+    { "id": "nat-and-pat", "text": "I can explain the difference between static NAT, dynamic NAT and PAT, and why NAT alone is not a security control.", "domainId": "network-operations" },
+    { "id": "monitoring-stack", "text": "I can describe what SNMP, syslog, flow data and packet capture each give you, and why SNMPv3 is preferred over v2c.", "domainId": "network-operations" },
+    { "id": "dr-and-documentation", "text": "I can define RPO, RTO, MTTR and MTBF, compare cold, warm and hot sites, and list the documents a well-run network keeps.", "domainId": "network-operations" },
+    { "id": "layered-defenses", "text": "I can describe defense in depth, firewall zones and the screened subnet, and where IDS, IPS and NAC fit.", "domainId": "network-security" },
+    { "id": "layer2-attacks", "text": "I can explain VLAN hopping, MAC flooding, ARP poisoning and rogue DHCP, and name the switch feature that mitigates each.", "domainId": "network-security" },
+    { "id": "identity-controls", "text": "I can explain 802.1X roles, RADIUS versus TACACS+, MFA, SSO and least privilege.", "domainId": "network-security" },
+    { "id": "method-steps", "text": "I can list the seven troubleshooting steps in order and say what happens in each one.", "domainId": "network-troubleshooting" },
+    { "id": "symptom-to-layer", "text": "I can map common symptoms (169.254 address, no link light, name does not resolve, CRC errors, jitter) to a likely cause and the tool that confirms it.", "domainId": "network-troubleshooting" },
+    { "id": "tool-fluency", "text": "I can use ping, traceroute, nslookup/dig, ipconfig/ip, arp and netstat on my own machine and read their output without looking it up.", "domainId": "network-troubleshooting" }
+  ],
+  "status": "published",
+  "lastReviewed": "2026-09-15",
+  "sources": [
+    { "title": "CompTIA Network+ official page", "url": "https://www.comptia.org/certifications/network", "note": "Exam code, domains, format and pricing. Checked 2026-09-15." },
+    { "title": "RFC 1918, Address Allocation for Private Internets", "url": "https://www.rfc-editor.org/rfc/rfc1918" },
+    { "title": "Cloudflare Learning Center", "url": "https://www.cloudflare.com/learning/", "note": "Plain-language explainers on DNS, routing, the OSI model and security topics." },
+    { "title": "Wireshark documentation", "url": "https://www.wireshark.org/docs/", "note": "User's guide for the packet-capture exercises." },
+    { "title": "IANA Service Name and Transport Protocol Port Number Registry", "url": "https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml" }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "employers": [
+    { "name": "IBM", "confirmed": true },
+    { "name": "Equifax", "confirmed": true },
+    { "name": "CrowdStrike", "confirmed": true },
+    { "name": "State Farm", "confirmed": true },
+    { "name": "USPS", "confirmed": true },
+    { "name": "Palo Alto Networks", "confirmed": true }
+  ],
+  "projects": [],
+  "news": []
+}

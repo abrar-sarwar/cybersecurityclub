@@ -1,0 +1,864 @@
+{
+  "lastReviewed": "2026-09-15",
+  "guides": [
+    {
+      "slug": "staying-updated",
+      "title": "How to stay updated (and talk about it)",
+      "summary": "A repeatable method for keeping up with security news: discover from credible sources, verify against primary ones, judge relevance, study the underlying issue, act proportionally, and keep one honest takeaway you can explain."
+    },
+    {
+      "slug": "project-discussion",
+      "title": "How to talk about your projects",
+      "summary": "A structure for walking through your own projects honestly: context, your role, key decisions, what broke, what you learned, and evidence, plus how to be candid about scope and the help you received."
+    }
+  ],
+  "topics": [
+    {
+      "id": "cia-triad",
+      "title": "The CIA triad",
+      "category": "technical",
+      "summary": "Confidentiality, integrity, and availability are the three goals almost every security control serves. Interviewers use the triad to check that you can connect a specific control to the goal it protects, and that you understand the three goals can pull against each other.",
+      "relatedPaths": ["security-operations", "governance-risk-compliance", "incident-response"],
+      "prompts": [
+        {
+          "id": "cia-what-is-it",
+          "question": "What is the CIA triad, and why is it useful when thinking about security?",
+          "strongAnswer": [
+            "Defines all three plainly: confidentiality (only authorized people can read data), integrity (data is accurate and unaltered), availability (data and services are reachable when needed).",
+            "Ties each goal to a concrete control, for example encryption for confidentiality, hashing or checksums for integrity, and backups or redundancy for availability.",
+            "Explains the triad is a checklist for reasoning about what a control actually protects, not just three words to memorize.",
+            "Gives an everyday example, such as a university grade portal, and maps a plausible threat to each goal."
+          ],
+          "weakPatterns": [
+            "Reciting the three words without defining them or giving any example.",
+            "Confusing integrity with confidentiality, for example saying integrity means keeping data secret."
+          ],
+          "followUps": [
+            "Which of the three is usually hardest to protect, and why?",
+            "Where does authentication fit relative to the triad?"
+          ]
+        },
+        {
+          "id": "cia-tradeoffs",
+          "question": "Give an example where two goals of the CIA triad conflict, and how you would decide.",
+          "strongAnswer": [
+            "Names a real tension, such as strict availability (keep the service up) versus integrity (take it offline to stop data corruption during an incident).",
+            "Explains the decision depends on business impact and context, not a fixed rule.",
+            "Says who should be involved, such as the data owner and the incident lead, rather than deciding alone.",
+            "Acknowledges the trade-off has a cost either way and states the reasoning behind the choice."
+          ],
+          "weakPatterns": [
+            "Claiming the three goals never conflict in practice.",
+            "Picking a side with no reasoning about impact or context."
+          ],
+          "followUps": [
+            "How would a ransomware infection force this trade-off?",
+            "Who in an organization should make that call?"
+          ]
+        },
+        {
+          "id": "cia-integrity",
+          "question": "How would you protect and verify the integrity of important data?",
+          "strongAnswer": [
+            "Names concrete techniques: cryptographic hashes, digital signatures, checksums, version control, and access logging.",
+            "Distinguishes preventing changes (access control) from detecting changes (hashing and monitoring).",
+            "Mentions backups so a known-good version exists to compare against or restore from.",
+            "Grounds it in a scenario, such as verifying a downloaded file matches its published hash."
+          ],
+          "weakPatterns": [
+            "Only mentioning passwords or encryption, which mainly serve confidentiality.",
+            "Naming a tool without being able to say what it does."
+          ],
+          "followUps": [
+            "What is the difference between hashing and encryption?",
+            "How would you know if a log file had been tampered with?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "networking-fundamentals",
+      "title": "Networking fundamentals",
+      "category": "technical",
+      "summary": "Most security work assumes you can read an IP address, reason about ports and protocols, and picture how a request travels from a browser to a server and back. Interviewers probe networking basics to see whether you can trace where a problem or an attacker could sit along that path.",
+      "relatedPaths": ["security-operations", "incident-response", "penetration-testing"],
+      "prompts": [
+        {
+          "id": "net-url-walkthrough",
+          "question": "Walk me through what happens when you type a URL into a browser and press enter.",
+          "strongAnswer": [
+            "Covers DNS resolution turning the name into an IP address.",
+            "Describes the TCP connection and, for HTTPS, the TLS handshake before any page data flows.",
+            "Explains the HTTP request and response, then the browser rendering the result.",
+            "Mentions at least one security-relevant step, such as certificate validation during TLS.",
+            "Keeps the steps ordered and flags any step they are unsure about instead of bluffing."
+          ],
+          "weakPatterns": [
+            "Jumping straight to 'the page loads' with no steps in between.",
+            "Getting the order wrong, such as TLS before DNS, with no self-correction."
+          ],
+          "followUps": [
+            "Where along that sequence could an attacker interfere?",
+            "What does the TLS certificate actually prove?"
+          ]
+        },
+        {
+          "id": "net-tcp-vs-udp",
+          "question": "What is the difference between TCP and UDP, and when would each be used?",
+          "strongAnswer": [
+            "TCP is connection-oriented and reliable, with ordering and retransmission; UDP is connectionless and best-effort.",
+            "Gives fitting use cases: TCP for web and email, UDP for DNS queries, video calls, or DHCP.",
+            "States the trade-off: UDP has less overhead and lower latency but no delivery guarantee.",
+            "Connects it to security, for example that UDP is easy to spoof and common in amplification attacks."
+          ],
+          "weakPatterns": [
+            "Saying one is 'secure' and the other is not, when neither is encrypted on its own.",
+            "Listing port numbers with no idea what the protocols do."
+          ],
+          "followUps": [
+            "What port does HTTPS use, and what protocol runs under it?",
+            "Why is UDP often used in DDoS amplification?"
+          ]
+        },
+        {
+          "id": "net-private-public-ip",
+          "question": "What is the difference between a private and a public IP address, and what does NAT do?",
+          "strongAnswer": [
+            "Private ranges such as 10.x and 192.168.x are used inside a network and are not routable on the internet.",
+            "Public addresses are globally routable and assigned by providers.",
+            "NAT translates between private and public addresses so many devices can share one public IP.",
+            "Notes a security implication: NAT hides internal addressing but is not itself a firewall."
+          ],
+          "weakPatterns": [
+            "Believing NAT alone makes a network secure.",
+            "Being unable to name any private range."
+          ],
+          "followUps": [
+            "In a log, how would you tell internal traffic from external traffic?",
+            "What is the difference between NAT and a firewall?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "authentication-authorization",
+      "title": "Authentication and authorization",
+      "category": "technical",
+      "summary": "Authentication proves who you are; authorization decides what you may do. Interviewers want to hear you keep the two ideas separate and connect them to concrete controls like MFA, session management, and least privilege.",
+      "relatedPaths": ["identity-access-management", "product-application-security", "security-operations"],
+      "prompts": [
+        {
+          "id": "authn-vs-authz",
+          "question": "What is the difference between authentication and authorization?",
+          "strongAnswer": [
+            "Authentication verifies identity (who you are); authorization decides permitted actions (what you may do).",
+            "Gives the order: you authenticate first, then the system authorizes each action.",
+            "Uses a concrete example, such as logging into a shared drive versus which folders you can open.",
+            "Notes that a failure in each has different consequences."
+          ],
+          "weakPatterns": [
+            "Using the two words interchangeably.",
+            "Defining both simply as 'logging in'."
+          ],
+          "followUps": [
+            "Where does accounting or auditing fit in?",
+            "Give an example of an authorization flaw that is not an authentication flaw."
+          ]
+        },
+        {
+          "id": "authn-mfa",
+          "question": "What is multi-factor authentication, and why does it help?",
+          "strongAnswer": [
+            "Explains the factor categories: something you know, something you have, and something you are.",
+            "MFA requires two different categories, so a stolen password alone is not enough.",
+            "Notes not all MFA is equal: phishing-resistant methods like passkeys or hardware keys beat SMS codes.",
+            "Acknowledges MFA reduces but does not eliminate risk, citing MFA fatigue or session theft."
+          ],
+          "weakPatterns": [
+            "Describing two passwords as multi-factor.",
+            "Claiming MFA makes an account impossible to compromise."
+          ],
+          "followUps": [
+            "Why is SMS considered a weaker second factor?",
+            "What is an MFA fatigue attack?"
+          ]
+        },
+        {
+          "id": "authz-least-privilege",
+          "question": "What does least privilege mean, and how would you apply it?",
+          "strongAnswer": [
+            "Give each user or service only the access needed for its task, and no more.",
+            "Describes practical steps: role-based access, periodic access reviews, and removing unused accounts.",
+            "Mentions temporary or just-in-time elevation instead of standing admin rights.",
+            "Connects it to blast radius: less access means a compromised account does less damage."
+          ],
+          "weakPatterns": [
+            "Confusing least privilege with simply having strong passwords.",
+            "Saying everyone should be admin for convenience."
+          ],
+          "followUps": [
+            "How would you handle an employee who changes roles?",
+            "What is privilege creep?"
+          ]
+        },
+        {
+          "id": "authn-session-management",
+          "question": "After a user logs in, how does the application remember them, and what can go wrong?",
+          "strongAnswer": [
+            "Describes session tokens or cookies issued after a successful login.",
+            "Names protections: HttpOnly and Secure cookie flags, short expiry, and rotation on privilege change.",
+            "Explains risks like session hijacking, fixation, or tokens leaking in URLs.",
+            "Mentions logout and server-side session invalidation."
+          ],
+          "weakPatterns": [
+            "Assuming login is a one-time check with nothing to protect afterward.",
+            "Never mentioning how a session could be stolen."
+          ],
+          "followUps": [
+            "What does the HttpOnly flag do?",
+            "How would you invalidate all sessions after a breach?"
+          ],
+          "roleSpecific": ["product-application-security", "identity-access-management"]
+        }
+      ]
+    },
+    {
+      "id": "incident-response",
+      "title": "Incident response",
+      "category": "technical",
+      "summary": "Incident response is the organized way a team detects, contains, and recovers from a security event, then learns from it. Interviewers look for a calm, phased approach and evidence you can prioritize under pressure without destroying evidence.",
+      "relatedPaths": ["incident-response", "security-operations", "digital-forensics"],
+      "prompts": [
+        {
+          "id": "ir-phases",
+          "question": "Walk me through the phases of incident response.",
+          "strongAnswer": [
+            "Names recognizable phases: preparation, detection and analysis, containment, eradication, recovery, and post-incident review.",
+            "Explains the goal of each phase in a sentence.",
+            "Stresses preparation and the final review, not just the exciting middle.",
+            "References a common framework such as NIST SP 800-61 as the source rather than claiming personal authority."
+          ],
+          "weakPatterns": [
+            "Jumping straight to 'wipe the machine' with no containment or evidence step.",
+            "Listing phases as memorized words with no idea what happens in each."
+          ],
+          "followUps": [
+            "Why is containment kept separate from eradication?",
+            "What belongs in the preparation phase?"
+          ]
+        },
+        {
+          "id": "ir-first-steps",
+          "question": "You suspect a laptop is compromised. What are your first steps?",
+          "strongAnswer": [
+            "Isolate the device from the network to contain it, rather than immediately powering it off, to preserve volatile evidence.",
+            "Preserve evidence: record the time, and capture logs or an image before changing the system.",
+            "Escalate and communicate to the right people rather than acting alone and silently.",
+            "Avoids destructive actions until the scope is understood."
+          ],
+          "weakPatterns": [
+            "Immediately reinstalling the operating system and destroying evidence.",
+            "Doing nothing and waiting without escalating to anyone."
+          ],
+          "followUps": [
+            "Why might you not want to power the machine off right away?",
+            "What would you document during containment?"
+          ]
+        },
+        {
+          "id": "ir-lessons-learned",
+          "question": "Why does the post-incident review matter, and what goes into it?",
+          "strongAnswer": [
+            "Turns an incident into improvements: what happened, the timeline, what worked, and what did not.",
+            "Focuses on systems and process rather than blaming individuals (a blameless review).",
+            "Produces concrete action items, each with an owner.",
+            "Feeds back into the preparation phase to reduce repeat incidents."
+          ],
+          "weakPatterns": [
+            "Treating the incident as over once the system is back up.",
+            "Framing the review as a hunt for someone to punish."
+          ],
+          "followUps": [
+            "What is a blameless postmortem?",
+            "How would you measure whether incident response is improving?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "application-security",
+      "title": "Application security",
+      "category": "technical",
+      "summary": "Application security is about finding and preventing flaws in how software handles input, identity, and data. Interviewers usually start from common web vulnerabilities and check that you understand root causes and fixes, not just attack names.",
+      "relatedPaths": ["product-application-security", "penetration-testing", "security-operations"],
+      "prompts": [
+        {
+          "id": "appsec-sql-injection",
+          "question": "What is SQL injection, and how do you prevent it?",
+          "strongAnswer": [
+            "Explains that untrusted input ends up treated as part of a database query.",
+            "Names the root cause: mixing code and data by building queries with string concatenation.",
+            "Gives the primary fix, parameterized queries or prepared statements, with input validation as defense in depth.",
+            "Mentions least privilege on the database account to limit the damage of a successful attack.",
+            "Can describe a simple example of the flaw in plain words."
+          ],
+          "weakPatterns": [
+            "Offering 'sanitize input' as the only fix with no mention of parameterization.",
+            "Describing the attack but having no idea how to fix it."
+          ],
+          "followUps": [
+            "Why is escaping alone weaker than parameterized queries?",
+            "How does this idea extend to command injection?"
+          ]
+        },
+        {
+          "id": "appsec-owasp-risks",
+          "question": "Name a few common web application risks and explain why they happen.",
+          "strongAnswer": [
+            "References the OWASP Top 10 as a well-known list rather than inventing categories.",
+            "Names a few real ones, such as broken access control, injection, and security misconfiguration.",
+            "Explains a root cause for at least one, not just the label.",
+            "Connects a risk to a concrete mitigation."
+          ],
+          "weakPatterns": [
+            "Listing scary-sounding attack names with no cause or fix.",
+            "Claiming to have found these in real production systems without permission."
+          ],
+          "followUps": [
+            "Which risk do you think is most common, and why?",
+            "How would you check code for broken access control?"
+          ]
+        },
+        {
+          "id": "appsec-trust-input",
+          "question": "Why is 'never trust user input' such a central idea in application security?",
+          "strongAnswer": [
+            "Most web vulnerabilities trace back to trusting input that a user controls.",
+            "Distinguishes validation (reject bad input), encoding or escaping (render safely), and parameterization (queries).",
+            "Notes validation must happen server-side, not only in the browser.",
+            "Gives an example, such as an ID in a URL that the user can change to reach another account."
+          ],
+          "weakPatterns": [
+            "Believing client-side validation is enough.",
+            "Treating all input handling as one vague step called 'sanitizing'."
+          ],
+          "followUps": [
+            "Why is client-side validation not a security control?",
+            "What is the difference between input validation and output encoding?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "risk-prioritization",
+      "title": "Risk prioritization",
+      "category": "technical",
+      "summary": "Security teams always have more findings than time, so the real skill is deciding what to fix first. Interviewers want to see you reason about likelihood and impact, use context like exploitability and exposure, and communicate a defensible order.",
+      "relatedPaths": ["governance-risk-compliance", "security-operations", "threat-intelligence"],
+      "prompts": [
+        {
+          "id": "risk-what-first",
+          "question": "How do you decide which vulnerabilities to fix first?",
+          "strongAnswer": [
+            "Combines likelihood and impact rather than fixing by severity score alone.",
+            "Adds context: is it internet-facing, is it being actively exploited, is a patch available, what data sits behind it.",
+            "Uses signals such as CVSS as a starting point and CISA KEV for known exploited flaws.",
+            "Explains that a medium-severity but actively exploited, internet-facing issue can outrank a critical one that is unreachable."
+          ],
+          "weakPatterns": [
+            "Fixing strictly in CVSS order with no context.",
+            "Saying 'fix everything' as though time and staff were unlimited."
+          ],
+          "followUps": [
+            "What is CISA KEV, and how would it change your order?",
+            "How does the value of the asset change your ranking?"
+          ]
+        },
+        {
+          "id": "risk-communicate-up",
+          "question": "How would you explain a serious risk to a non-technical manager?",
+          "strongAnswer": [
+            "Leads with impact in business terms, what could happen and to what, rather than jargon.",
+            "Gives a clear recommendation plus options with their trade-offs.",
+            "States confidence and what is still unknown honestly.",
+            "Stays factual and avoids fear or scare tactics."
+          ],
+          "weakPatterns": [
+            "Drowning the manager in technical detail.",
+            "Overstating certainty or using fear to force a decision."
+          ],
+          "followUps": [
+            "How would you handle a manager who wants to accept the risk?",
+            "What is risk acceptance, and who should sign off on it?"
+          ]
+        },
+        {
+          "id": "risk-treatment-options",
+          "question": "What options does an organization have once it identifies a risk?",
+          "strongAnswer": [
+            "Names the standard choices: mitigate (reduce it), transfer (for example insurance), avoid (stop the activity), or accept.",
+            "Explains acceptance is a legitimate, documented decision made by an owner, not neglect.",
+            "Ties the choice to cost versus impact.",
+            "Mentions residual risk that remains after controls are applied."
+          ],
+          "weakPatterns": [
+            "Assuming every risk must be fully eliminated.",
+            "Treating 'accept' as the same as ignoring."
+          ],
+          "followUps": [
+            "Who should own the decision to accept a risk?",
+            "What is residual risk?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lessons-from-failure",
+      "title": "Lessons from failure",
+      "category": "behavioral",
+      "summary": "Interviewers ask about things that went wrong to see how you handle setbacks, take responsibility, and learn. A strong answer is an honest, specific story with a clear lesson, not a humblebrag or a tale where nothing was really your fault.",
+      "relatedPaths": ["security-operations", "incident-response"],
+      "prompts": [
+        {
+          "id": "fail-went-wrong",
+          "question": "Tell me about a project or task that went wrong. What happened, and what did you do?",
+          "strongAnswer": [
+            "Uses a clear structure: the situation, what went wrong, your action, the outcome, and the lesson.",
+            "Owns a specific decision or mistake rather than blaming others.",
+            "Describes concrete corrective action taken at the time.",
+            "Ends with a lesson that changed later behavior.",
+            "Is honest about scope and picks a real, modest example."
+          ],
+          "weakPatterns": [
+            "A 'failure' that is secretly a brag, such as 'I just worked too hard'.",
+            "Blaming teammates or circumstances with no personal ownership.",
+            "A vague story with no concrete detail or lesson."
+          ],
+          "followUps": [
+            "What would you do differently now?",
+            "How did the rest of the team react?"
+          ]
+        },
+        {
+          "id": "fail-what-differently",
+          "question": "Looking back at that situation, what would you do differently?",
+          "strongAnswer": [
+            "Names a specific, realistic change rather than 'nothing'.",
+            "Shows the lesson generalizes to future work.",
+            "Balances self-criticism with what genuinely was outside their control.",
+            "Avoids rewriting history to look flawless."
+          ],
+          "weakPatterns": [
+            "Answering 'nothing, it went fine'.",
+            "Being harshly self-critical with no constructive takeaway."
+          ],
+          "followUps": [
+            "Have you applied that lesson since?",
+            "How do you make sure that mistake does not repeat?"
+          ]
+        },
+        {
+          "id": "fail-hard-feedback",
+          "question": "Tell me about a time you received difficult feedback.",
+          "strongAnswer": [
+            "Describes the feedback plainly and without defensiveness.",
+            "Shows they listened and asked clarifying questions.",
+            "Explains a concrete change they made in response.",
+            "Reflects honestly on the outcome."
+          ],
+          "weakPatterns": [
+            "Framing all past feedback as unfair.",
+            "Claiming to have never received any critical feedback."
+          ],
+          "followUps": [
+            "How do you seek out feedback now?",
+            "What did that change about how you work?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "teamwork",
+      "title": "Teamwork and collaboration",
+      "category": "behavioral",
+      "summary": "Security work is rarely solo; you coordinate with engineers, managers, and other analysts, often during stressful moments. Interviewers want examples of clear communication, handling disagreement, and sharing credit honestly.",
+      "relatedPaths": ["security-operations", "governance-risk-compliance"],
+      "prompts": [
+        {
+          "id": "team-disagreement",
+          "question": "Tell me about a time you disagreed with a teammate. How did you handle it?",
+          "strongAnswer": [
+            "Describes the disagreement factually and respectfully.",
+            "Shows they sought to understand the other view before pushing their own.",
+            "Explains how the decision was reached, through data, compromise, or escalation.",
+            "Reports the outcome and what the working relationship looked like afterward."
+          ],
+          "weakPatterns": [
+            "Painting themselves as always right and the other person as simply wrong.",
+            "Avoiding all conflict and never stating a position."
+          ],
+          "followUps": [
+            "What if the team went with the option you disagreed with?",
+            "How do you disagree with someone more senior than you?"
+          ]
+        },
+        {
+          "id": "team-contribution",
+          "question": "Describe your role on a team project and what you specifically contributed.",
+          "strongAnswer": [
+            "Clearly separates their own work from the team's.",
+            "Gives concrete contributions rather than just 'I helped'.",
+            "Credits teammates honestly and names the help they received.",
+            "Connects their part to the overall outcome."
+          ],
+          "weakPatterns": [
+            "Taking credit for the whole team's work.",
+            "Being so vague it is impossible to tell what they actually did."
+          ],
+          "followUps": [
+            "What part was hardest for you?",
+            "What did you rely on others for?"
+          ]
+        },
+        {
+          "id": "team-communication",
+          "question": "How do you keep teammates informed during a fast-moving problem?",
+          "strongAnswer": [
+            "Describes concise, regular updates aimed at the right audience.",
+            "Separates confirmed facts from guesses when communicating.",
+            "Uses a shared channel or record so others can follow along.",
+            "Adjusts the level of detail for technical versus non-technical people."
+          ],
+          "weakPatterns": [
+            "Going silent and working alone under pressure.",
+            "Flooding everyone with unfiltered detail."
+          ],
+          "followUps": [
+            "How often is too often for updates?",
+            "How do you communicate uncertainty?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "staying-informed",
+      "title": "Staying informed",
+      "category": "behavioral",
+      "summary": "This question checks whether you have a repeatable method for keeping up, not just a list of accounts you follow. A strong answer moves from discovery to verification to understanding to proportionate action, and stays honest about what you have actually done.",
+      "relatedPaths": ["threat-intelligence", "security-operations", "incident-response"],
+      "prompts": [
+        {
+          "id": "informed-how-updated",
+          "question": "How do you stay updated on cybersecurity?",
+          "strongAnswer": [
+            "Describes a method, not just sources: discover, verify, assess relevance, study the underlying issue, apply when appropriate, and keep one concrete takeaway.",
+            "Names credible discovery sources such as newsletters or feeds, CISA KEV and advisories, and vendor security advisories, and treats social media, Discord, and bots as discovery tools only.",
+            "Verifies claims against primary sources such as the vendor advisory and the NVD entry before believing or repeating them.",
+            "Gives one recent, concrete takeaway they can explain in plain language.",
+            "Is explicit that they do not claim lab work they have not done, and that not every vulnerability needs to be reproduced to be understood."
+          ],
+          "weakPatterns": [
+            "Listing accounts or sites they follow with no method for verifying or acting on what they see.",
+            "Claiming to reproduce or lab every vulnerability they read about.",
+            "Name-dropping a recent CVE with no understanding of what it actually does."
+          ],
+          "followUps": [
+            "Tell me about something you learned recently and what you did with it.",
+            "How do you tell a credible source from hype?"
+          ]
+        },
+        {
+          "id": "informed-verify-claim",
+          "question": "You see a post claiming a critical zero-day in a popular product. What do you do next?",
+          "strongAnswer": [
+            "Treats the post as a lead, not a fact, and goes looking for the primary source.",
+            "Checks the vendor advisory and the NVD entry, and whether the flaw appears in CISA KEV.",
+            "Assesses relevance: do we even use that product, and is it exposed.",
+            "Avoids spreading unverified claims and notes the uncertainty until it is confirmed."
+          ],
+          "weakPatterns": [
+            "Taking a single social media post as confirmed truth.",
+            "Alarming everyone before verifying anything."
+          ],
+          "followUps": [
+            "Which sources count as authoritative to you?",
+            "What if the vendor has not published anything yet?"
+          ]
+        },
+        {
+          "id": "informed-recent-takeaway",
+          "question": "Walk me through something you learned recently and how you decided what to do about it.",
+          "strongAnswer": [
+            "Picks one specific topic and explains the underlying issue simply.",
+            "Explains how they judged its relevance to systems they care about.",
+            "States the action taken proportionally: a note, a config change, or a small lab, and admits honestly if the right action was just to understand it.",
+            "Draws one clear, correct takeaway.",
+            "Distinguishes what they read from what they actually tested."
+          ],
+          "weakPatterns": [
+            "Claiming a hands-on lab that did not happen.",
+            "A takeaway that misstates how the issue actually works."
+          ],
+          "followUps": [
+            "Why did you choose that action rather than reproducing the issue?",
+            "How would you explain this to a teammate in one minute?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "project-discussion",
+      "title": "Discussing your own projects",
+      "category": "project",
+      "summary": "When you present a project, interviewers care less about the tool and more about your reasoning, your honesty about scope and help, and what you learned. This topic prepares you to walk through a project clearly and truthfully.",
+      "relatedPaths": ["security-operations", "identity-access-management", "product-application-security"],
+      "prompts": [
+        {
+          "id": "proj-walkthrough",
+          "question": "Walk me through a security project you have worked on.",
+          "strongAnswer": [
+            "Sets the context in a sentence or two: the goal and why it mattered.",
+            "Clearly states their own role and decisions, separate from any team or tutorial.",
+            "Explains a key decision and its trade-offs, plus what broke or surprised them.",
+            "Ends with what they learned and points to evidence such as a write-up, repository, or diagram.",
+            "Is honest about scope and where they got help."
+          ],
+          "weakPatterns": [
+            "Overstating scope or presenting a followed tutorial as fully original.",
+            "Listing the tools used with no reasoning or outcome."
+          ],
+          "followUps": [
+            "What was the hardest part?",
+            "What would you change if you did it again?"
+          ]
+        },
+        {
+          "id": "proj-honesty-scope",
+          "question": "How much of that project was your own work, and where did you get help?",
+          "strongAnswer": [
+            "Answers directly and specifically about what they built versus what they followed.",
+            "Names sources of help such as guides, teammates, or AI tools without embarrassment.",
+            "Distinguishes understanding from copying by explaining each part in their own words.",
+            "Does not inflate their own contribution."
+          ],
+          "weakPatterns": [
+            "Implying everything was invented from scratch.",
+            "Being unable to explain code or steps they claim to have done themselves."
+          ],
+          "followUps": [
+            "Can you explain how this part works?",
+            "What would you have done without that guide?"
+          ]
+        },
+        {
+          "id": "proj-do-differently",
+          "question": "What would you do differently on that project, and what did you learn?",
+          "strongAnswer": [
+            "Names a specific improvement and explains why.",
+            "Shows a lesson that transfers to future work.",
+            "Reflects on both technical and process choices.",
+            "Stays constructive rather than dismissive of their own work."
+          ],
+          "weakPatterns": [
+            "Saying it was perfect and needs no changes.",
+            "A generic answer that could apply to any project."
+          ],
+          "followUps": [
+            "Have you applied that lesson anywhere since?",
+            "What evidence could you show of the result?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "security-operations-scenarios",
+      "title": "Security operations scenarios",
+      "category": "scenario",
+      "summary": "Scenario questions in a SOC context check how you triage alerts, avoid tunnel vision, and act without destroying evidence. Interviewers want a calm, ordered thought process more than a single 'right' answer.",
+      "relatedPaths": ["security-operations", "incident-response"],
+      "prompts": [
+        {
+          "id": "secops-alert-triage",
+          "question": "An alert fires for many failed logins followed by a success on one account. How do you triage it?",
+          "strongAnswer": [
+            "Gathers context first: which account, the source IPs, the timing, and what is normal for that user.",
+            "Distinguishes likely brute force or password spraying from a user who simply mistyped their password.",
+            "Checks whether the successful login shows signs of compromise, such as a new location, an odd hour, or unusual privilege use.",
+            "Contains and escalates proportionally, for example resetting credentials, reviewing sessions, and notifying the user.",
+            "States their assumptions and the data they would want to see."
+          ],
+          "weakPatterns": [
+            "Declaring 'we are breached' or 'it is nothing' with no investigation.",
+            "Naming a tool but giving no reasoning about what to check."
+          ],
+          "followUps": [
+            "What would make you escalate this to an incident?",
+            "How would you tell spraying apart from a single-account brute force?"
+          ]
+        },
+        {
+          "id": "secops-false-positive",
+          "question": "How do you decide whether an alert is a false positive?",
+          "strongAnswer": [
+            "Compares the alert against a baseline of normal activity.",
+            "Corroborates with other data sources rather than trusting a single signal.",
+            "Considers business context, such as a scheduled job or a known scanner.",
+            "Documents the reasoning and tunes a noisy rule without silencing real signal."
+          ],
+          "weakPatterns": [
+            "Closing alerts as false positives just to clear the queue.",
+            "Never adjusting noisy rules, so real alerts get buried."
+          ],
+          "followUps": [
+            "What are the risks of tuning a rule too aggressively?",
+            "How would you document a false positive?"
+          ]
+        },
+        {
+          "id": "secops-prioritize-queue",
+          "question": "You have twenty open alerts and limited time. How do you prioritize?",
+          "strongAnswer": [
+            "Ranks by potential impact and asset value, not by arrival order.",
+            "Prioritizes signs of active, spreading compromise and internet-facing systems.",
+            "Groups related alerts that may actually be one incident.",
+            "Communicates what will wait and why."
+          ],
+          "weakPatterns": [
+            "Working first-in-first-out with no risk reasoning.",
+            "Trying to do everything at once and finishing nothing."
+          ],
+          "followUps": [
+            "Which single alert would jump the queue immediately?",
+            "How do you handle alerts you cannot get to?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "iam-scenarios",
+      "title": "Identity and access scenarios",
+      "category": "scenario",
+      "summary": "IAM scenarios test whether you can apply least privilege, handle the joiner-mover-leaver lifecycle, and reason about access reviews. Interviewers want practical, least-privilege thinking with attention to edge cases like service and shared accounts.",
+      "relatedPaths": ["identity-access-management"],
+      "prompts": [
+        {
+          "id": "iam-mover",
+          "question": "An employee moves from the finance team to IT. What should happen to their access?",
+          "strongAnswer": [
+            "Grant the access the new IT role needs and remove the old finance access, rather than stacking both.",
+            "Names the risk of privilege creep from accumulated permissions.",
+            "Ties the change to role-based access and an approval step.",
+            "Verifies the change with an access review and logs it."
+          ],
+          "weakPatterns": [
+            "Only adding new access and leaving the old finance access in place.",
+            "Treating access changes as informal, with no record."
+          ],
+          "followUps": [
+            "What happens to their access on the day they leave the company?",
+            "How would you detect leftover finance access months later?"
+          ]
+        },
+        {
+          "id": "iam-access-review",
+          "question": "How would you run an access review for a sensitive system?",
+          "strongAnswer": [
+            "Produces a current list of who has access and why, tied to a role or a request.",
+            "Has the data or system owner confirm each access is still needed.",
+            "Removes or flags orphaned and excessive accounts, including service accounts.",
+            "Records the decisions so the review is auditable and repeatable."
+          ],
+          "weakPatterns": [
+            "Assuming existing access is correct simply because it exists.",
+            "Reviewing only human users and ignoring service accounts."
+          ],
+          "followUps": [
+            "How often should this review happen?",
+            "How do you handle a manager who rubber-stamps everything?"
+          ]
+        },
+        {
+          "id": "iam-shared-account",
+          "question": "A team wants to share one admin login for convenience. How do you respond?",
+          "strongAnswer": [
+            "Explains that shared accounts break accountability: you cannot tell who did what.",
+            "Offers a workable alternative, such as individual accounts with a shared role, or a checkout process through a password or privileged-access tool.",
+            "Acknowledges the real convenience need and solves it rather than simply saying no.",
+            "Mentions logging and least privilege for the elevated role."
+          ],
+          "weakPatterns": [
+            "Allowing the shared account with no compensating control.",
+            "Refusing flatly with no alternative for the underlying need."
+          ],
+          "followUps": [
+            "What if it is a legacy system that only supports one account?",
+            "How would you audit actions taken on that account?"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "appsec-scenarios",
+      "title": "Application security scenarios",
+      "category": "scenario",
+      "summary": "These scenarios check how you approach a feature or codebase you have never seen: where you look for flaws, how you reason about untrusted input, and how you recommend fixes responsibly. Interviewers value a repeatable approach over memorized exploits.",
+      "relatedPaths": ["product-application-security"],
+      "prompts": [
+        {
+          "id": "appsec-review-feature",
+          "question": "You are asked to review a new login and password-reset feature. Where do you start?",
+          "strongAnswer": [
+            "Maps the trust boundaries: what input is user-controlled and where it is used.",
+            "Checks authentication, session handling, and authorization on every step, including the reset flow.",
+            "Looks for common flaws: injection, missing rate limiting, user enumeration, and weak reset-token generation.",
+            "Recommends fixes and asks for the threat model or requirements rather than guessing."
+          ],
+          "weakPatterns": [
+            "Diving into random exploits with no structured review.",
+            "Checking only the login and forgetting the reset path."
+          ],
+          "followUps": [
+            "How would you prevent account enumeration on password reset?",
+            "What would you rate as the highest risk here?"
+          ]
+        },
+        {
+          "id": "appsec-report-finding",
+          "question": "You find a serious vulnerability in a teammate's code. How do you handle it?",
+          "strongAnswer": [
+            "Reports it privately and factually, focusing on the issue rather than the person.",
+            "Explains the impact, how to reproduce it, and a suggested fix.",
+            "Confirms it responsibly in a safe environment, not against production or anyone else's systems.",
+            "Follows the organization's disclosure or ticketing process."
+          ],
+          "weakPatterns": [
+            "Publicly embarrassing the author.",
+            "Exploiting the flaw further to prove a point without permission."
+          ],
+          "followUps": [
+            "What detail makes a bug report actionable?",
+            "How would you verify the fix?"
+          ]
+        },
+        {
+          "id": "appsec-vulnerable-dependency",
+          "question": "A library your app uses has a newly announced critical vulnerability. What do you do?",
+          "strongAnswer": [
+            "Confirms whether the app actually uses the vulnerable version and code path.",
+            "Checks the vendor advisory and the NVD entry, and whether it is listed in CISA KEV.",
+            "Assesses exposure and prioritizes: patch, upgrade, or apply a temporary mitigation.",
+            "Tests the fix before deploying and records the decision."
+          ],
+          "weakPatterns": [
+            "Patching blindly with no testing or exposure check.",
+            "Assuming the app is affected without confirming the version or path."
+          ],
+          "followUps": [
+            "What if no patch is available yet?",
+            "How do you keep track of which libraries you depend on?"
+          ]
+        }
+      ]
+    }
+  ]
+}

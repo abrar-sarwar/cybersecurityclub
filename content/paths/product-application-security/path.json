@@ -1,0 +1,138 @@
+{
+  "slug": "product-application-security",
+  "title": "Product & Application Security",
+  "shortTitle": "AppSec",
+  "tagline": "Help teams build and ship software that stands up to real-world attacks.",
+  "summary": "Learn to find and fix the vulnerabilities that matter most in web applications, and to help developers build safer software from the start. This path moves from web fundamentals through hands-on practice with common flaws to reviewing code, automating checks, and shipping fixes.",
+  "availability": "complete",
+  "icon": "Code2",
+  "roleOverview": "Application security, often shortened to AppSec, is the practice of helping teams build and ship software that holds up against real-world attacks. Instead of defending a network or responding to alerts, you work close to the code and the people who write it. You review designs and pull requests, model threats before a feature is built, hunt for weaknesses like injection and broken access control, and help developers fix what you find. A large part of the role is making the secure choice the easy choice, through safe defaults, automated checks in the build pipeline, and clear guidance. It blends hands-on technical work with steady communication: a finding only matters if someone understands it and acts on it. AppSec suits people who enjoy understanding how software works, like breaking down how something could fail, and want to build things rather than only test them. You do not need to be an expert developer to start, but comfort reading code in some language goes a long way. This path takes you from how a web request works through finding and fixing common vulnerabilities to shipping safer software and collaborating well with the teams who own it.",
+  "typicalTasks": [
+    "Review pull requests and designs for security problems before they ship",
+    "Run lightweight threat models on new features",
+    "Find and confirm vulnerabilities like injection, broken access control, and authentication flaws",
+    "Write clear findings and work with developers to get them fixed",
+    "Triage results from SAST, DAST, dependency, and secret scanners",
+    "Add and tune automated security checks in the CI pipeline",
+    "Track and update dependencies to remove known-vulnerable components",
+    "Write practical guidance and secure defaults developers can reuse"
+  ],
+  "prerequisites": [
+    "Basic programming in any language helps; if you are new to code, start by learning to read simple Python or JavaScript first",
+    "Comfort using a web browser and its developer tools (the Networking basics material is a good primer)",
+    "No prior security background is needed; this path starts from the basics"
+  ],
+  "goodFitIf": [
+    "You like understanding how software works under the hood",
+    "You enjoy figuring out how something could break or be misused",
+    "You would rather help build and fix than only file reports",
+    "You are comfortable reading code, or want to become comfortable with it",
+    "You like explaining technical things clearly to other people"
+  ],
+  "startingSkills": [
+    "Reading an HTTP request and response",
+    "Recognizing the OWASP Top 10 categories",
+    "Finding and fixing SQL injection with parameterized queries",
+    "Spotting broken access control such as an insecure direct object reference",
+    "Writing a clear, reproducible security finding"
+  ],
+  "buildNext": [
+    "Deeper hands-on web exploitation and a full testing methodology",
+    "Threat modeling for larger, multi-service systems",
+    "Cloud and container security for modern deployments",
+    "Automating security deeper into CI/CD and infrastructure as code",
+    "Reading the OWASP ASVS and applying it to a real application"
+  ],
+  "modules": [
+    {
+      "slug": "web-foundations",
+      "title": "Web foundations",
+      "summary": "How the web works, the common weakness categories, and how security fits into the way software is built.",
+      "lessons": [
+        "how-a-web-request-works",
+        "a-tour-of-the-owasp-top-10",
+        "security-in-the-development-lifecycle",
+        "threat-modeling-basics"
+      ]
+    },
+    {
+      "slug": "finding-issues",
+      "title": "Finding issues",
+      "summary": "Hands-on practice finding the most common application vulnerabilities and understanding how they work.",
+      "lessons": [
+        "injection-in-practice",
+        "broken-access-control",
+        "authentication-and-session-mistakes",
+        "dependencies-and-supply-chain"
+      ]
+    },
+    {
+      "slug": "fixing-and-shipping",
+      "title": "Fixing and shipping",
+      "summary": "Review code for security, automate checks in the pipeline, and write findings that actually get fixed.",
+      "lessons": [
+        "secure-code-review",
+        "security-testing-in-ci",
+        "writing-a-security-finding"
+      ]
+    },
+    {
+      "slug": "growing-in-the-role",
+      "title": "Growing in the role",
+      "summary": "What the work looks like day to day and how to collaborate well with the developers who own the code.",
+      "lessons": [
+        "a-week-in-appsec",
+        "talking-to-developers"
+      ]
+    }
+  ],
+  "portfolioProject": "fix-vulnerable-app",
+  "certifications": [
+    {
+      "name": "CompTIA Security+",
+      "issuer": "CompTIA",
+      "url": "https://www.comptia.org/certifications/security",
+      "note": "A broad, vendor-neutral, entry-level security certification (exam SY0-701). A solid first cert that covers far more than AppSec and pairs well with this path."
+    },
+    {
+      "name": "GIAC Web Application Penetration Tester (GWAPT)",
+      "issuer": "GIAC",
+      "url": "https://www.giac.org/certifications/web-application-penetration-tester-gwapt/",
+      "note": "Focused on web application testing, but expensive and not a starting point. Consider it later, once you have real hands-on experience."
+    },
+    {
+      "name": "OffSec Web Assessor (OSWA)",
+      "issuer": "OffSec",
+      "url": "https://www.offsec.com/courses/web-200/",
+      "note": "A hands-on web assessment course and exam. Verify the current course name and price on the official page before committing."
+    }
+  ],
+  "interviewTopics": [
+    "application-security",
+    "appsec-scenarios",
+    "authentication-authorization",
+    "project-discussion"
+  ],
+  "learningRoutine": [
+    "Spend 20 to 30 minutes reading one OWASP resource, such as a Top 10 category or a cheat sheet",
+    "Do one hands-on exercise on a local, intentionally vulnerable app like OWASP Juice Shop",
+    "Read one write-up of a real vulnerability and note how it happened",
+    "Practice explaining one security concept out loud in plain language",
+    "Review a small piece of code, your own or open source, against a security checklist",
+    "Follow security advisories for a framework or library you use",
+    "Reflect on one thing you learned and one thing to try next week"
+  ],
+  "support": [
+    { "label": "Ask questions in the club Discord", "kind": "discord" },
+    { "label": "Pair up at a project night", "kind": "event" }
+  ],
+  "status": "published",
+  "lastReviewed": "2026-09-15",
+  "sources": [
+    { "title": "OWASP Top 10", "url": "https://owasp.org/www-project-top-ten/" },
+    { "title": "OWASP Application Security Verification Standard (ASVS)", "url": "https://owasp.org/www-project-application-security-verification-standard/" },
+    { "title": "OWASP Cheat Sheet Series", "url": "https://cheatsheetseries.owasp.org/" },
+    { "title": "OWASP Juice Shop", "url": "https://owasp.org/www-project-juice-shop/" },
+    { "title": "OWASP Threat Modeling", "url": "https://owasp.org/www-community/Threat_Modeling" }
+  ]
+}

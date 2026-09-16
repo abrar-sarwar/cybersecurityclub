@@ -1,0 +1,21 @@
+{
+  "widths": [
+    {
+      "width": 360,
+      "scroll": 360
+    },
+    {
+      "width": 390,
+      "scroll": 390
+    },
+    {
+      "width": 768,
+      "scroll": 768
+    }
+  ],
+  "routes": [],
+  "checks": [
+    "Mobile menu focus trap, Escape, restored focus/scroll, and homepage anchor navigation"
+  ],
+  "errors": []
+}

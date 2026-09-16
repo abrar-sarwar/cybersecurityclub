@@ -1,0 +1,440 @@
+// Prisma schema for the Cybersecurity Club at GSU platform.
+//
+// Portable by design: only String / Int / Float / Boolean / DateTime columns
+// are used (no Json or enum types) so the same schema works on SQLite for
+// local development and on Postgres in production. To switch providers,
+// change `provider` below (and DATABASE_PROVIDER in .env) and run
+// `npm run db:migrate` against the new database. See README.
+//
+// Enumerated string columns are validated in application code
+// (src/lib/enums.ts) and documented inline here.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Authentication tables (owned by Better Auth). Field names must stay as-is.
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String   @id
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions Session[]
+  accounts Account[]
+  profile  MemberProfile?
+
+  pathSelections        PathSelection[]
+  questionnaireAttempts QuestionnaireAttempt[]
+  lessonProgress        LessonProgress[]
+  projectProgress       ProjectProgress[]
+  certProgress          CertProgress[]
+  practiceAttempts      PracticeAttempt[]
+  interviewNotes        InterviewNote[]
+  labProfile            LabProfile?
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+// ---------------------------------------------------------------------------
+// Membership, education status and roles
+// ---------------------------------------------------------------------------
+
+model MemberProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  displayName String?
+  pronouns    String?
+
+  // GSU student verification (separate from club membership approval)
+  gsuEmail                 String?   @unique
+  gsuEmailVerifiedAt       DateTime?
+  gsuVerificationCodeHash  String?
+  gsuVerificationExpiresAt DateTime?
+  gsuVerificationSentAt    DateTime?
+  gsuVerificationAttempts  Int       @default(0)
+
+  // Education status: current_student | graduation_confirmation_needed | confirmed_alumni
+  expectedGraduationMonth Int?
+  expectedGraduationYear  Int?
+  educationStatus         String    @default("current_student")
+  graduationConfirmedAt   DateTime?
+  registeredAsAlumni      Boolean   @default(false)
+
+  // Club membership: pending | approved | declined | revoked
+  membershipStatus      String    @default("pending")
+  membershipDecidedAt   DateTime?
+  membershipDecidedById String?
+  membershipNote        String? // officer-only note
+
+  // Role: member | editor | admin
+  role String @default("member")
+
+  major           String?
+  interests       String? // JSON array of strings
+  experienceLevel String? // new | some | experienced
+
+  // Discord: a typed username is not proof of membership. Verified fields are
+  // only set through the Discord OAuth link + guild check.
+  discordUsername    String?
+  discordUserId      String?
+  discordGuildMember Boolean?
+  discordCheckedAt   DateTime?
+
+  publicProfileOptIn Boolean @default(false)
+  publicHeadline     String?
+  linkedinUrl        String?
+
+  onboardingCompletedAt DateTime?
+  lastActiveAt          DateTime?
+  isSample              Boolean   @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Learning: paths, questionnaire, progress
+// ---------------------------------------------------------------------------
+
+model PathSelection {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pathSlug   String
+  source     String    @default("manual") // manual | questionnaire
+  active     Boolean   @default(true)
+  selectedAt DateTime  @default(now())
+  endedAt    DateTime?
+
+  @@index([userId, active])
+}
+
+model QuestionnaireAttempt {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  version      Int
+  status       String    @default("in_progress") // in_progress | completed | abandoned
+  answers      String    @default("{}") // JSON object questionId -> answer
+  currentIndex Int       @default(0)
+  resultJson   String? // JSON recommendation result
+  startedAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  completedAt  DateTime?
+
+  @@index([userId, status])
+}
+
+model LessonProgress {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contentKey  String // e.g. "lesson:security-operations/foundations/what-a-soc-does"
+  status      String    @default("started") // started | completed
+  checksJson  String    @default("[]") // completed completion-check indexes
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, contentKey])
+}
+
+model ProjectProgress {
+  id             String    @id @default(cuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectSlug    String
+  status         String    @default("in_progress") // in_progress | completed
+  stepsJson      String    @default("[]") // completed step ids
+  notes          String? // private
+  submissionUrl  String?
+  submissionNote String?
+  startedAt      DateTime  @default(now())
+  completedAt    DateTime?
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([userId, projectSlug])
+}
+
+model CertProgress {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackSlug     String
+  checklistJson String   @default("[]") // completed review-checklist ids
+  updatedAt     DateTime @updatedAt
+
+  @@unique([userId, trackSlug])
+}
+
+model PracticeAttempt {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackSlug    String
+  questionId   String
+  selectedJson String // JSON array of selected option ids
+  correct      Boolean
+  createdAt    DateTime @default(now())
+
+  @@index([userId, trackSlug, questionId])
+}
+
+model InterviewNote {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  promptId  String
+  body      String
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, promptId])
+}
+
+model LabProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answersJson   String   @default("{}")
+  environmentId String?
+  checklistJson String   @default("[]")
+  updatedAt     DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Events (manual + PIN synchronisation)
+// ---------------------------------------------------------------------------
+
+model Event {
+  id             String    @id @default(cuid())
+  slug           String    @unique
+  title          String
+  description    String    @default("") // markdown
+  startsAt       DateTime
+  endsAt         DateTime?
+  timezone       String    @default("America/New_York")
+  location       String?
+  locationUrl    String?
+  audienceLevel  String    @default("all") // all | beginner | intermediate | advanced
+  pinUrl         String?
+  pinEventId     String?   @unique
+  source         String    @default("manual") // manual | pin
+  pinStatus      String? // confirmed | cancelled (as reported by PIN)
+  whatToBring    String? // markdown list
+  prepChecklist  String    @default("[]") // JSON array of strings
+  relatedLessons String    @default("[]") // JSON array of content keys
+  followUp       String? // markdown
+  status         String    @default("draft") // draft | published | cancelled
+  coverAssetId   String?
+  coverImageUrl  String? // external cover from PIN
+  lastSyncedAt   DateTime?
+  syncHash       String?
+  isSample       Boolean   @default(false)
+  createdById    String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([status, startsAt])
+}
+
+model PinSyncRun {
+  id         String    @id @default(cuid())
+  feedUrl    String
+  trigger    String    @default("manual") // manual | scheduled
+  status     String    @default("running") // running | success | error
+  itemsSeen  Int       @default(0)
+  created    Int       @default(0)
+  updated    Int       @default(0)
+  cancelled  Int       @default(0)
+  message    String?
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+}
+
+// ---------------------------------------------------------------------------
+// People and stories
+// ---------------------------------------------------------------------------
+
+model LeadershipProfile {
+  id              String   @id @default(cuid())
+  name            String
+  roleTitle       String
+  bio             String?
+  termLabel       String? // e.g. "2026-2027"
+  order           Int      @default(0)
+  portraitAssetId String?
+  contactEmail    String?
+  linkedinUrl     String?
+  status          String   @default("draft") // draft | published
+  isSample        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model MemberStory {
+  id                String   @id @default(cuid())
+  memberName        String
+  roleTitle         String
+  company           String
+  companyConfirmed  Boolean  @default(false)
+  dates             String?
+  summary           String
+  contribution      String?
+  profileUrl        String?
+  photoAssetId      String?
+  permissionGranted Boolean  @default(false)
+  permissionNote    String?
+  order             Int      @default(0)
+  status            String   @default("draft") // draft | published
+  isSample          Boolean  @default(false)
+  createdById       String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Media
+// ---------------------------------------------------------------------------
+
+model MediaAsset {
+  id               String    @id @default(cuid())
+  version          Int       @default(1)
+  storageKey       String // original file key (private)
+  originalFilename String
+  mimeType         String
+  sizeBytes        Int
+  width            Int
+  height           Int
+  alt              String    @default("")
+  caption          String?
+  credit           String?
+  focalX           Float     @default(0.5)
+  focalY           Float     @default(0.5)
+  status           String    @default("draft") // draft | published
+  folder           String    @default("uploads")
+  variantsJson     String    @default("{}") // { "w480": {key,width,height}, ... }
+  uploadedById     String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+
+  slots MediaSlot[]
+}
+
+model MediaSlot {
+  id          String     @id @default(cuid())
+  slotKey     String
+  assetId     String
+  asset       MediaAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  position    Int        @default(0)
+  updatedById String?
+  updatedAt   DateTime   @updatedAt
+
+  @@unique([slotKey, assetId])
+  @@index([slotKey])
+}
+
+// ---------------------------------------------------------------------------
+// Content overrides, settings, audit, development mailbox
+// ---------------------------------------------------------------------------
+
+model ContentOverride {
+  id          String   @id @default(cuid())
+  contentKey  String   @unique // e.g. "lesson:security-operations/foundations/what-a-soc-does"
+  status      String? // draft | published (null = use file value)
+  title       String?
+  body        String? // markdown override
+  updatedById String?
+  updatedAt   DateTime @updatedAt
+}
+
+model SiteSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  actorId      String?
+  actorEmail   String?
+  action       String
+  targetType   String
+  targetId     String?
+  summary      String
+  metadataJson String?
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([targetType, targetId])
+}
+
+model DevMailbox {
+  id        String   @id @default(cuid())
+  toAddress String
+  subject   String
+  text      String
+  html      String?
+  createdAt DateTime @default(now())
+}

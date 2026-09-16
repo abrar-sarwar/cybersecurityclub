@@ -1,0 +1,28 @@
+{
+  "$comment": "Initial image import manifest. Map named slots to files placed under public/assets/club/. See ASSET-UPLOAD-GUIDE.md. Uploads made in the officer Media Manager take priority over entries here. Set status to \"published\" to show an asset; \"draft\" keeps it hidden.",
+  "version": 1,
+  "assets": {
+    "example-hero": {
+      "src": "/assets/club/hero/EXAMPLE-replace-me.jpg",
+      "alt": "Members working together at laptops during a club workshop",
+      "caption": "Workshop night in the classroom",
+      "credit": "",
+      "focalPoint": { "x": 0.5, "y": 0.4 },
+      "width": 1600,
+      "height": 900,
+      "status": "draft"
+    }
+  },
+  "slots": {
+    "site.logo": { "asset": null },
+    "site.favicon": { "asset": null },
+    "site.socialPreview": { "asset": null },
+    "home.hero": { "asset": null },
+    "home.communityFeature": { "asset": null },
+    "home.workshopPhoto": { "asset": null },
+    "home.communityGallery": { "assets": [] },
+    "about.hero": { "asset": null },
+    "join.photo": { "asset": null },
+    "community.gallery": { "assets": [] }
+  }
+}
