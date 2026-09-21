@@ -717,3 +717,30 @@ test("the board and the timeline are usable on a phone", async ({ page }) => {
     expect(width, path).toBeLessThanOrEqual(390);
   }
 });
+
+test("the mobile menu opens over the page and navigates", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/careers");
+
+  await page.getByRole("button", { name: "Open menu" }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+
+  // The header sets a backdrop-filter, which would otherwise trap the fixed
+  // overlay inside the header's own box: it must cover the whole viewport.
+  const overlay = page.locator(".signal-menu-panel");
+  const box = (await overlay.boundingBox())!;
+  expect(box.height).toBeGreaterThan(700);
+  // Opaque, so the page cannot read through it.
+  await expect(overlay).toHaveCSS("background-color", "rgb(2, 7, 20)");
+
+  // Every nav link is reachable and the current page is marked.
+  for (const label of ["About", "Events", "Careers", "Projects", "Team"]) {
+    await expect(dialog.getByRole("link", { name: label, exact: true })).toBeVisible();
+  }
+  await expect(dialog.getByRole("link", { name: "Careers", exact: true })).toHaveAttribute("aria-current", "page");
+
+  await dialog.getByRole("link", { name: "Team", exact: true }).click();
+  await expect(page).toHaveURL(/\/team$/);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -26,6 +27,10 @@ export function MobileNav({
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const id = useId();
+  // The header sets a backdrop-filter, which makes it a containing block for
+  // fixed positioning. Without a portal the overlay is trapped in the header's
+  // own box instead of covering the viewport. The overlay only ever renders
+  // after a click, so it is always on the client and needs no mounted flag.
 
   // Focus management, Escape, scroll lock, focus trap.
   useEffect(() => {
@@ -85,8 +90,9 @@ export function MobileNav({
         {open ? <X className="size-6" aria-hidden /> : <Menu className="size-6" aria-hidden />}
       </button>
 
-      {open ? (
-        <div className="fixed inset-0 z-50" role="presentation">
+      {open
+        ? createPortal(
+            <div className="fixed inset-0 z-[60]" role="presentation">
           <button
             type="button"
             className="absolute inset-0 bg-black/70"
@@ -148,8 +154,10 @@ export function MobileNav({
             </div>
           </div>
           <style>{`@keyframes slide-in { from { transform: translateX(24px); opacity: 0 } to { transform: none; opacity: 1 } }`}</style>
-        </div>
-      ) : null}
+            </div>,
+            document.body,
+          )
+        : null}
     </div>
   );
 }
