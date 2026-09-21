@@ -213,7 +213,7 @@ export function Diagram({ id }: { id: DiagramId }) {
               <rect x={12} y={50 + r * 38} width={496} height={34} rx={8} fill={r % 2 ? P : "#0d1829"} stroke={L} />
               {row.map((cell, c) => (
                 <text key={c} x={c === 0 ? 20 : 100 + c * 90} y={72 + r * 38} textAnchor={c === 0 ? "start" : "middle"} fontSize={13} fontWeight={c === 0 ? 600 : 500} fill={cell === "admin" ? "#ffb5bc" : cell ? B : L}>
-                  {cell || "—"}
+                  {cell || "-"}
                 </text>
               ))}
             </g>

@@ -1,7 +1,7 @@
 /**
  * Registry of named image slots. Pages ask for a slot by key; the media
- * service resolves it to an uploaded asset (officer Media Manager) or to an
- * entry in content/media-manifest.json. Dynamic slots use a prefix and an id.
+ * service resolves it to a previously stored media asset or to an entry in
+ * content/media-manifest.json. Dynamic slots use a prefix and an id.
  */
 export type SlotKind = "single" | "multi";
 

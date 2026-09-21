@@ -7,11 +7,9 @@
  * hard-coding values, so replacing the logo or renaming the club never
  * requires editing individual pages.
  *
- * Images are resolved through media slots (see src/content/media-slots.ts):
- *   - upload a replacement in the officer Media Manager and assign it to the
- *     slot "site.logo", or
- *   - drop the file in public/assets/club/branding/ and reference it from
- *     content/media-manifest.json under the same slot key.
+ * Photos and social previews are resolved through media slots (see
+ * src/content/media-slots.ts): drop the file in public/assets/club/ and
+ * reference it from content/media-manifest.json under the slot key.
  */
 export const branding = {
   /** Full display name used in headings and metadata. */
@@ -30,19 +28,15 @@ export const branding = {
     "A student community at Georgia State University for learning cybersecurity together: workshops, hands-on projects, CTFs and career preparation. Beginners welcome.",
 
   /**
-   * Logo settings. Whether the OFFICIAL mark is installed is derived at
-   * runtime from the "site.logo" slot. When the slot is empty the header
-   * renders a clearly temporary text-and-shield treatment and the officer
-   * dashboard shows a reminder. Never mark the logo as installed by hand.
+   * The club's network shield, tinted to the site's electric blue. Generated
+   * from public/assets/observatory/gsuicon-transparent.png, which is also the
+   * source of src/app/icon.png, apple-icon.png and favicon.ico.
    */
   logo: {
-    slot: "site.logo",
-    /** Rendering height of the mark in the header, in px. */
-    headerHeight: 44,
-    /** Alt text used whenever the official mark is rendered. */
+    src: "/assets/brand/club-shield.png",
+    width: 248,
+    height: 177,
     alt: "Cybersecurity Club at GSU logo",
-    /** Label for the temporary treatment. */
-    temporaryLabel: "Temporary mark. Official logo not installed yet.",
   },
 
   favicon: {
@@ -61,11 +55,11 @@ export const branding = {
    * These are design tokens, not verified university brand standards.
    */
   colors: {
-    brand: "#285CFF",
-    brandHover: "#3869EE",
-    background: "#05070D",
-    surface: "#0D1829",
-    accent: "#8AACFF",
+    brand: "#176BFF",
+    brandHover: "#2F7AFF",
+    background: "#01030A",
+    surface: "#071228",
+    accent: "#8CC0FF",
     navy: "#F3F6FC",
     white: "#FFFFFF",
     paleBlue: "#08111F",
@@ -95,9 +89,9 @@ export const branding = {
     pinOrganization: "https://pin.gsu.edu/organization/cysecclub",
     pinEvents: "https://pin.gsu.edu/organization/cysecclub/events",
     discordInvite:
-      process.env.NEXT_PUBLIC_DISCORD_INVITE_URL || "https://discord.gg/eMwQdmetKD",
+      process.env.NEXT_PUBLIC_DISCORD_INVITE_URL || "https://discord.gg/Mpb6FRj8s6",
     instagram: "https://www.instagram.com/cybersecurityclubgsu/",
-    linkedin: "https://www.linkedin.com/company/cybersecurity-club-gsu/",
+    linkedin: "https://www.linkedin.com/company/cybersecurity-club-gsu/posts/?feedView=all",
   },
 } as const;
 

@@ -156,8 +156,3 @@ export async function resolveAssetById(assetId: string): Promise<ResolvedImage |
   const a = await prisma.mediaAsset.findFirst({ where: { id: assetId, deletedAt: null, status: "published" } });
   return a ? uploadedImage(a) : null;
 }
-
-/** Whether the official logo is installed (any published image in site.logo). */
-export async function officialLogoInstalled() {
-  return (await resolveSingle("site.logo")) !== null;
-}

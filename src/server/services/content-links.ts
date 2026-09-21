@@ -1,22 +1,23 @@
 import "server-only";
 import { findModuleForLesson, getCertLesson, getCertTrack, getLesson, getPath } from "@/content/loaders";
 
-/** Resolves a content key like "lesson:<path>/<lesson>" to an app URL, or null. */
+/**
+ * Resolves a content key like "lesson:<path>/<lesson>" to a public page that
+ * lists it, or null. Lessons are listed on their path's overview page.
+ */
 export function lessonHrefFromKey(key: string): string | null {
   try {
     if (key.startsWith("lesson:")) {
       const [pathSlug, lessonSlug] = key.slice("lesson:".length).split("/");
       const p = getPath(pathSlug);
-      if (!p) return null;
-      const m = findModuleForLesson(p, lessonSlug);
-      if (!m) return null;
-      return `/learn/paths/${pathSlug}/${m.slug}/${lessonSlug}`;
+      if (!p || !findModuleForLesson(p, lessonSlug)) return null;
+      return `/careers/learning/${pathSlug}`;
     }
     if (key.startsWith("cert-lesson:")) {
       const [track, lessonSlug] = key.slice("cert-lesson:".length).split("/");
-      return getCertLesson(track, lessonSlug) ? `/certifications/${track}/${lessonSlug}` : null;
+      return getCertLesson(track, lessonSlug) ? "/careers" : null;
     }
-    if (key.startsWith("project:")) return `/projects/${key.slice("project:".length)}`;
+    if (key.startsWith("project:")) return "/careers#projects";
   } catch {
     return null;
   }

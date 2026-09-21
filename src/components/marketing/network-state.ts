@@ -1,18 +1,22 @@
-export type NetworkPhase = "idle" | "charging" | "fading";
+export type NetworkPhase = "idle" | "intro" | "charging" | "fading";
 
 export type NetworkState = {
   selected: string[];
   phase: NetworkPhase;
   cycle: number;
+  /** True while the opening sequence (not the visitor) drove the network. */
+  autoplay: boolean;
 };
 
 export type NetworkAction =
   | { type: "toggle"; nodeId: string }
+  | { type: "intro" }
+  | { type: "intro-charge" }
   | { type: "begin-fade" }
   | { type: "reset" };
 
 export function createNetworkState(): NetworkState {
-  return { selected: [], phase: "idle", cycle: 0 };
+  return { selected: [], phase: "idle", cycle: 0, autoplay: false };
 }
 
 export function networkReducer(
@@ -42,7 +46,18 @@ export function networkReducer(
       ...state,
       selected,
       phase: isComplete ? "charging" : "idle",
+      autoplay: false,
     };
+  }
+
+  // The opening sequence lights every star, but only on a fresh, untouched network.
+  if (action.type === "intro") {
+    if (state.phase !== "idle" || state.cycle > 0 || state.selected.length) return state;
+    return { ...state, selected: [...nodeIds], phase: "intro", autoplay: true };
+  }
+
+  if (action.type === "intro-charge") {
+    return state.phase === "intro" ? { ...state, phase: "charging" } : state;
   }
 
   if (action.type === "begin-fade") {
@@ -50,7 +65,7 @@ export function networkReducer(
   }
 
   if (action.type === "reset" && state.phase === "fading") {
-    return { selected: [], phase: "idle", cycle: state.cycle + 1 };
+    return { selected: [], phase: "idle", cycle: state.cycle + 1, autoplay: state.autoplay };
   }
 
   return state;

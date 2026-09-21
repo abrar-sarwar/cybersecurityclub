@@ -7,9 +7,9 @@ import { ButtonLink } from "@/components/ui/button";
 import { Badge, Breadcrumbs } from "@/components/ui/primitives";
 import { Markdown } from "@/components/learn/markdown";
 import { ResolvedImg } from "@/components/media/slot-image";
+import { PageHero } from "@/components/site/page-hero";
 import { getPublishedEventBySlug } from "@/server/services/events";
 import { resolveAssetById } from "@/server/services/media";
-import { getViewer } from "@/server/session";
 import { formatEventRange, formatLongDate } from "@/lib/dates";
 import { AUDIENCE_LABELS, type AudienceLevel } from "@/lib/enums";
 import { lessonHrefFromKey, lessonTitleFromKey } from "@/server/services/content-links";
@@ -29,25 +29,28 @@ export async function generateMetadata(props: PageProps<"/events/[slug]">): Prom
 
 export default async function EventDetailPage(props: PageProps<"/events/[slug]">) {
   const { slug } = await props.params;
-  const [event, viewer] = await Promise.all([getPublishedEventBySlug(slug), getViewer()]);
+  const event = await getPublishedEventBySlug(slug);
   if (!event) notFound();
   const cover = event.coverAssetId ? await resolveAssetById(event.coverAssetId) : null;
   const cancelled = event.status === "cancelled";
-  const canSeeMemberMaterial = Boolean(viewer && (viewer.isVerified || viewer.isOfficer));
 
   const related = event.relatedLessonKeys.map((key) => ({ key, href: lessonHrefFromKey(key), title: lessonTitleFromKey(key) })).filter((r) => r.href);
 
   return (
-    <article className="container-x py-10 sm:py-14">
-      <Breadcrumbs items={[{ label: "Events", href: "/events" }, { label: event.title }]} />
-      <div className="mt-6 grid gap-10 lg:grid-cols-[1.4fr_0.8fr]">
+    <article>
+      <PageHero
+        variant="compact"
+        before={<Breadcrumbs items={[{ label: "Events", href: "/events" }, { label: event.title }]} />}
+        eyebrow={cancelled ? "Cancelled event" : "Event"}
+        title={event.title}
+      />
+      <div className="container-x section grid gap-10 lg:grid-cols-[1.4fr_0.8fr]">
         <div>
           <div className="flex flex-wrap items-center gap-2">
             {cancelled ? <Badge tone="danger">Cancelled</Badge> : null}
             <Badge tone={event.audienceLevel === "beginner" ? "cyan" : "brand"}>{AUDIENCE_LABELS[event.audienceLevel as AudienceLevel] ?? "All levels"}</Badge>
             {event.source === "pin" ? <Badge tone="muted">Synced from PIN</Badge> : null}
           </div>
-          <h1 className="mt-3 font-display text-3xl font-extrabold tracking-tight text-navy-900 sm:text-4xl">{event.title}</h1>
           <dl className="mt-4 space-y-2 text-[0.95rem] text-ink">
             <div className="flex items-start gap-2">
               <CalendarDays className="mt-1 size-4 shrink-0 text-accent" aria-hidden />
@@ -89,21 +92,7 @@ export default async function EventDetailPage(props: PageProps<"/events/[slug]">
               <h2 id="follow-up" className="font-display text-xl font-bold text-navy-900">
                 Follow-up materials
               </h2>
-              {canSeeMemberMaterial ? (
-                <Markdown content={event.followUp} className="mt-3" />
-              ) : (
-                <p className="mt-2 text-muted">
-                  Follow-up materials are available to approved members.{" "}
-                  <Link href={`/join?next=/events/${event.slug}#sign-in`} className="text-brand-700 underline underline-offset-2">
-                    Sign in
-                  </Link>{" "}
-                  or{" "}
-                  <Link href="/join" className="text-brand-700 underline underline-offset-2">
-                    join the club
-                  </Link>
-                  .
-                </p>
-              )}
+              <Markdown content={event.followUp} className="mt-3" />
             </section>
           ) : null}
         </div>
@@ -152,7 +141,6 @@ export default async function EventDetailPage(props: PageProps<"/events/[slug]">
                   </li>
                 ))}
               </ul>
-              {!canSeeMemberMaterial ? <p className="mt-3 text-xs text-muted">Lessons open for approved members.</p> : null}
             </div>
           ) : null}
           <p className="text-xs text-muted">

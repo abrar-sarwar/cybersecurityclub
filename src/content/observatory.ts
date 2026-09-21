@@ -3,7 +3,19 @@ import content from "../../content/observatory.json";
 
 const httpsUrl = z.url().refine((value) => value.startsWith("https://"), "Use a public HTTPS link");
 export const observatorySchema = z.object({
-  employers: z.array(z.object({ name: z.string().min(1), confirmed: z.boolean() })),
+  employers: z.array(z.object({
+    name: z.string().min(1),
+    confirmed: z.boolean(),
+    // Official mark downloaded from `source`; shown as a white one-color mark
+    // unless the file is already the company's own dark-background version.
+    logo: z.object({
+      src: z.string().regex(/^\/assets\/internships\/[a-z0-9-]+\.(svg|png)$/),
+      width: z.number().int().positive(),
+      height: z.number().int().positive(),
+      treatment: z.enum(["mono", "original"]),
+      source: httpsUrl,
+    }).optional(),
+  })),
   projects: z.array(z.object({
     id: z.string().regex(/^[a-z0-9-]+$/), title: z.string().min(1), summary: z.string().min(1),
     skills: z.array(z.string()), href: httpsUrl, imageSlot: z.string(),

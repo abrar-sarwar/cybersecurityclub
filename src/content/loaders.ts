@@ -11,7 +11,6 @@ import {
   pathSchema,
   practiceQuestionsSchema,
   projectSchema,
-  questionnaireSchema,
   type CertTrack,
   type InterviewContent,
   type LabGuide,
@@ -20,7 +19,6 @@ import {
   type LessonFrontmatter,
   type PracticeQuestion,
   type Project,
-  type Questionnaire,
 } from "./schemas";
 
 export const CONTENT_ROOT = path.join(process.cwd(), "content");
@@ -231,15 +229,4 @@ export function loadLabEnvironmentGuide(guideSlug: string): Guide | null {
   if (!fs.existsSync(file)) return null;
   const { data, body } = readMarkdown<Omit<Guide, "slug" | "body">>(file, guideFrontmatterSchema);
   return { ...data, slug: guideSlug, body };
-}
-
-// ---------------------------------------------------------------------------
-// Questionnaire
-// ---------------------------------------------------------------------------
-
-export function loadQuestionnaire(): Questionnaire {
-  return cached("questionnaire", () => {
-    const file = path.join(CONTENT_ROOT, "questionnaire.json");
-    return parseWith<Questionnaire>(questionnaireSchema, readJson(file), file);
-  });
 }

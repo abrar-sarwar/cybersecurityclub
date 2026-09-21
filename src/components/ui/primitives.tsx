@@ -9,18 +9,18 @@ export function Card({ children, className, as: Tag = "div" }: { children: React
 type Tone = "brand" | "navy" | "muted" | "success" | "warning" | "danger" | "cyan";
 
 const tones: Record<Tone, string> = {
-  brand: "bg-brand-50 text-brand-700",
-  navy: "bg-surface text-white",
-  muted: "bg-pale-2 text-muted",
-  success: "bg-success-50 text-success-600",
-  warning: "bg-warning-50 text-warning-700",
-  danger: "bg-danger-50 text-danger-700",
-  cyan: "bg-cyan-100 text-cyan-700",
+  brand: "border-[rgba(111,168,255,0.35)] bg-[rgba(23,107,255,0.12)] text-brand-700",
+  navy: "border-line-strong bg-surface text-white",
+  muted: "border-line bg-[rgba(13,26,54,0.6)] text-muted",
+  success: "border-[rgba(130,217,172,0.3)] bg-success-50 text-success-600",
+  warning: "border-[rgba(234,199,126,0.3)] bg-warning-50 text-warning-700",
+  danger: "border-[rgba(255,161,167,0.3)] bg-danger-50 text-danger-700",
+  cyan: "border-[rgba(143,202,214,0.3)] bg-cyan-100 text-cyan-700",
 };
 
 export function Badge({ children, tone = "brand", className }: { children: ReactNode; tone?: Tone; className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold leading-5", tones[tone], className)}>
+    <span className={cn("inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold leading-5", tones[tone], className)}>
       {children}
     </span>
   );
@@ -66,11 +66,15 @@ export function EmptyState({
   className?: string;
 }) {
   return (
-    <div className={cn("border-t border-line py-6", className)}>
-      {icon ? <div className="mb-3 flex size-8 items-center text-accent">{icon}</div> : null}
-      <h3 className="text-base font-semibold text-navy-900">{title}</h3>
-      {description ? <div className="mt-2 max-w-xl text-base leading-7 text-muted">{description}</div> : null}
-      {action ? <div className="mt-4 flex flex-wrap">{action}</div> : null}
+    <div className={cn("signal-empty", className)}>
+      <span className="signal-empty-icon" aria-hidden="true">
+        {icon ?? <span className="signal-eyebrow-mark" />}
+      </span>
+      <div>
+        <h3 className="font-display text-lg font-bold text-navy-900">{title}</h3>
+        {description ? <div className="mt-2 max-w-xl text-base leading-7 text-muted">{description}</div> : null}
+        {action ? <div className="mt-5 flex flex-wrap gap-3">{action}</div> : null}
+      </div>
     </div>
   );
 }
@@ -110,6 +114,7 @@ export function SectionHeading({
   align = "left",
   className,
   as: Tag = "h2",
+  id,
 }: {
   eyebrow?: string;
   title: string;
@@ -117,11 +122,18 @@ export function SectionHeading({
   align?: "left" | "center";
   className?: string;
   as?: "h1" | "h2" | "h3";
+  /** Heading id, for sections labelled by their heading. */
+  id?: string;
 }) {
   return (
     <div className={cn("max-w-2xl", align === "center" && "mx-auto text-center", className)}>
-      {eyebrow ? <p className="eyebrow mb-2">{eyebrow}</p> : null}
-      <Tag className={cn("font-display font-bold tracking-tight text-navy-900", Tag === "h1" ? "text-4xl sm:text-5xl" : "text-3xl sm:text-[2.125rem] leading-tight")}>
+      {eyebrow ? (
+        <p className={cn("signal-eyebrow mb-3", align === "center" && "justify-center")}>
+          <span className="signal-eyebrow-mark" aria-hidden="true" />
+          {eyebrow}
+        </p>
+      ) : null}
+      <Tag id={id} className={cn("signal-section-title", Tag === "h1" && "signal-section-title-lg")}>
         {title}
       </Tag>
       {description ? <div className="mt-3 text-[1.0625rem] leading-7 text-muted">{description}</div> : null}

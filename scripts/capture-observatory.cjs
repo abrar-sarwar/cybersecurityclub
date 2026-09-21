@@ -82,16 +82,11 @@ async function main() {
     await live.evaluate(() => { delete document.hidden; document.dispatchEvent(new Event('visibilitychange')); });
     report.checks.push('Globe rotates, pause freezes it, pause persists on reload, offscreen rendering stops');
     report.checks.push('Simulated hidden-document visibility change stops globe rendering');
-    for (const route of ['/dashboard', '/admin', '/projects', '/account']) {
+    for (const route of ['/dashboard', '/admin', '/sign-in', '/onboarding', '/settings']) {
       const response = await motion.request.get(`http://localhost:3000${route}`, { maxRedirects: 0 });
-      assert.equal(response.status(), 307);
-      assert.ok(response.headers().location.includes('/sign-in?next='));
+      assert.equal(response.status(), 404, route);
     }
-    report.checks.push('Anonymous requests to dashboard, officer tools, member projects, and account still redirect to sign-in');
-    for (const route of ['/sign-in', '/sign-up']) {
-      const response = await motion.request.get(`http://localhost:3000${route}`);
-      report.routes.push({ route, status: response.status(), note: 'Pre-existing missing page; authentication backend left intact' });
-    }
+    report.checks.push('Retired account routes return 404');
     await live.locator('canvas').dispatchEvent('contextlost');
     assert.equal(await live.locator('.globe-canvas.is-ready').count(), 0);
     assert.equal(await live.locator('.globe-poster.is-rendered').count(), 0);

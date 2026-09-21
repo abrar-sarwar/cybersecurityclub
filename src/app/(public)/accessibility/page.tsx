@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { branding } from "@config/branding";
-import { SectionHeading } from "@/components/ui/primitives";
+import { PageHero } from "@/components/site/page-hero";
 
 export const metadata: Metadata = {
   title: "Accessibility",
@@ -10,9 +10,10 @@ export const metadata: Metadata = {
 
 export default function AccessibilityPage() {
   return (
-    <section className="container-x max-w-3xl py-14 sm:py-20">
-      <SectionHeading as="h1" eyebrow="Accessibility" title="Everyone should be able to use this site" description="We build with keyboard navigation, screen readers, reduced motion and enlarged text in mind, and we fix problems when they are reported." />
-      <div className="prose prose-club mt-8 max-w-none">
+    <>
+      <PageHero eyebrow="Accessibility" title="Everyone should be able to use this site" description="We build with keyboard navigation, screen readers, reduced motion and enlarged text in mind, and we fix problems when they are reported." />
+      <section className="container-x section max-w-4xl">
+      <div className="card prose prose-club max-w-none p-6 sm:p-10">
         <h2>What we do</h2>
         <ul>
           <li>Semantic headings and landmarks, visible keyboard focus, and a skip link on every page.</li>
@@ -29,6 +30,7 @@ export default function AccessibilityPage() {
           If something is hard to use, email <a href={`mailto:${branding.contact.accessibilityEmail}?subject=${encodeURIComponent("Accessibility issue")}`}>{branding.contact.accessibilityEmail}</a> with the page address and what happened. An officer will reply and track the fix.
         </p>
       </div>
-    </section>
+      </section>
+    </>
   );
 }

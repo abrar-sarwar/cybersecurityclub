@@ -3,7 +3,12 @@ import Link from "next/link";
 import { CalendarDays, MapPin } from "lucide-react";
 import { branding } from "@config/branding";
 import { ButtonLink } from "@/components/ui/button";
-import { Badge, EmptyState, SectionHeading } from "@/components/ui/primitives";
+import { Badge, SectionHeading } from "@/components/ui/primitives";
+import { PageHero } from "@/components/site/page-hero";
+import { safeDb } from "@/server/safe-db";
+import { EventBoard } from "@/components/site/event-board";
+import { clubToday } from "@/lib/dates";
+import { CtfCallout } from "@/components/site/ctf-callout";
 import { stripMarkdown } from "@/components/marketing/sections";
 import { latestSyncRun, listPastPublished, listUpcomingPublished, type EventView } from "@/server/services/events";
 import { formatDate, formatEventRange } from "@/lib/dates";
@@ -67,17 +72,37 @@ function EventRow({ event }: { event: EventView }) {
 }
 
 export default async function EventsPage() {
-  const [upcoming, past, sync] = await Promise.all([listUpcomingPublished(), listPastPublished(), latestSyncRun()]);
+  const [upcoming, past, sync] = await Promise.all([
+    safeDb(() => listUpcomingPublished(), [], "upcoming events"),
+    safeDb(() => listPastPublished(), [], "past events"),
+    safeDb(() => latestSyncRun(), null, "sync run"),
+  ]);
   const pinEnabled = env().PIN_SYNC_ENABLED;
 
   return (
     <>
-      <section className="container-x pt-14 pb-8 sm:pt-20">
-        <SectionHeading as="h1" eyebrow="Events" title="Meetings, workshops and competitions" description="All times are shown in Eastern time (America/New_York). RSVPs happen on PIN, the official GSU student organization portal." />
-        <p className="mt-4 text-sm text-muted">
+      <PageHero
+        eyebrow="Events"
+        title="Meetings, workshops and competitions"
+        description="All times are shown in Eastern time. RSVPs happen on PIN, the official GSU student organization portal."
+      >
+        <ButtonLink href={branding.links.pinEvents} size="lg" external>
+          Events on PIN
+        </ButtonLink>
+        <ButtonLink href={branding.links.discordInvite} variant="outline" size="lg" external>
+          Join Discord
+        </ButtonLink>
+      </PageHero>
+
+      <section className="container-x pt-14">
+        <CtfCallout />
+      </section>
+
+      <section className="container-x section" aria-labelledby="upcoming">
+        <p className="max-w-3xl text-sm leading-6 text-muted">
           {pinEnabled
             ? sync?.finishedAt
-              ? `Automatically synchronized from the club's public PIN feed. Last successful check: ${formatDate(sync.finishedAt)} at ${new Date(sync.finishedAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: branding.timezone })} Eastern${sync.status === "error" ? " (last run reported an error; officers have been notified on the admin page)" : ""}.`
+              ? `Automatically synchronized from the club's public PIN feed. Last successful check: ${formatDate(sync.finishedAt)} at ${new Date(sync.finishedAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: branding.timezone })} Eastern${sync.status === "error" ? " (the last check reported an error)" : ""}.`
               : "Automatic synchronization from PIN is enabled but has not run yet. Events below are maintained by officers."
             : "Events are maintained manually by officers and mirrored from PIN."}{" "}
           <a href={branding.links.pinEvents} className="text-brand-700 underline underline-offset-2" target="_blank" rel="noopener noreferrer">
@@ -85,39 +110,21 @@ export default async function EventsPage() {
           </a>
           .
         </p>
-      </section>
-
-      <section className="container-x pb-14" aria-labelledby="upcoming">
-        <h2 id="upcoming" className="font-display text-2xl font-bold text-navy-900">
-          Upcoming
-        </h2>
+        <SectionHeading id="upcoming" eyebrow="On the calendar" title="Upcoming events" className="mt-8" />
         {upcoming.length ? (
           <ul className="mt-6 space-y-4">
             {upcoming.map((e) => (
               <EventRow key={e.id} event={e} />
             ))}
           </ul>
-        ) : (
-          <EmptyState
-            className="mt-6"
-            icon={<CalendarDays className="size-5" aria-hidden />}
-            title="Nothing scheduled yet"
-            description="New events appear here as soon as officers publish them or PIN lists them. Discord gets the first announcement."
-            action={
-              <ButtonLink href={branding.links.discordInvite} variant="secondary" external>
-                Join the Discord
-              </ButtonLink>
-            }
-          />
-        )}
+        ) : null}
+        <EventBoard today={clubToday()} />
       </section>
 
       {past.length ? (
         <section className="surface-pale border-t border-line section" aria-labelledby="past">
           <div className="container-x">
-            <h2 id="past" className="font-display text-2xl font-bold text-navy-900">
-              Recent events
-            </h2>
+            <SectionHeading id="past" eyebrow="Archive" title="Recent events" />
             <ul className="mt-6 grid gap-4 md:grid-cols-2">
               {past.map((e) => (
                 <li key={e.id} className="card p-5">

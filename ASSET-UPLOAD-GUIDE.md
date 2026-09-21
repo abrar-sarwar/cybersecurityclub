@@ -4,7 +4,7 @@ The homepage is ready for real club media. No documentary photos, approved offic
 
 ## Replace an image
 
-This checkout has a database-backed media resolver and a file manifest. It does **not** contain working Media Manager pages, upload endpoints, or `/media/…` delivery routes. Use the persistent file workflow below now. Do not treat an officer-only placeholder or a database model as a working upload interface.
+This checkout has a database-backed media resolver and a file manifest. It does **not** contain working Media Manager pages, upload endpoints, or `/media/…` delivery routes. Use the persistent file workflow below now. Do not treat a database model as a working upload interface.
 
 1. Obtain permission to publish the image and confirm the caption, credit, and identities. Keep approval records outside the public web directory.
 2. Export a suitably sized WebP or optimized PNG under `public/assets/club/`. Do not put private originals here.
@@ -82,7 +82,7 @@ A news entry needs `title`, `source`, `topic`, `publishedAt` and `reviewedAt` (`
 
 Member stories still come from the existing service, which requires publication permission and confirmed company information. The homepage omits samples and requires a portrait. Story/editor backend data remains untouched; editor pages are absent from this checkout.
 
-Employer names come from the owner's supplied brief. Only entries marked `confirmed: true` appear. They describe internships, not sponsorship. Use plain text until suitable approved employer mark assets are available; never recreate trademark logos from memory.
+Employer names come from the owner's supplied brief. Only entries marked `confirmed: true` appear. They describe internships, not sponsorship. Logos live in `public/assets/internships/` and each entry records the file's `source` (the company's own site or its Wikimedia Commons file page). Download official files only; never recreate trademark logos from memory. Marks are shown as white one-color logos (`treatment: "mono"`) unless the file is the company's own dark-background version (`"original"`). An employer without a `logo` shows as a text wordmark. If a company asks for different use of its mark, replace or remove the file and entry.
 
 ## Globe maintenance and motion
 

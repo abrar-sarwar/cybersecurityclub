@@ -33,7 +33,7 @@ export function PathCard({ path, href, selected, progressLabel }: { path: Learni
         {path.availability === "complete" ? <Badge tone="success">Complete path</Badge> : <Badge tone="muted">Overview only</Badge>}
       </div>
       <h3 className="mt-4 font-display text-lg font-bold text-navy-900">
-        <Link href={href ?? `/learn/paths/${path.slug}`} className="after:absolute after:inset-0 after:rounded-2xl after:content-['']">
+        <Link href={href ?? `/careers/learning/${path.slug}`} className="after:absolute after:inset-0 after:rounded-2xl after:content-['']">
           {path.title}
         </Link>
       </h3>

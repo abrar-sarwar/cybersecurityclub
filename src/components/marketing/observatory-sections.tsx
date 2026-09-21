@@ -22,7 +22,7 @@ export function ObservatoryHero() {
           <h1 id="hero-heading">Your people.<br /><span>A bigger world.</span></h1>
           <p className="hero-description">Meet students who share your curiosity. Practice cybersecurity, build projects, and stay connected to what’s next.</p>
           <div className="hero-actions">
-            <ButtonLink href="/join" size="lg">Join the club <ArrowUpRight size={18} aria-hidden /></ButtonLink>
+            <ButtonLink href="/careers" size="lg">Explore Career Paths <ArrowUpRight size={18} aria-hidden /></ButtonLink>
             <ButtonLink href="/events" size="lg" variant="outline">Explore events <ArrowRight size={17} aria-hidden /></ButtonLink>
           </div>
           <p className="hero-reassurance"><span aria-hidden />All experience levels welcome.</p>
@@ -97,7 +97,7 @@ export function ObservatoryLearning() {
     ["Practice with purpose", "Turn lessons into practical work, and learn to explain what you built."],
   ];
   return <section className="section learning-section" aria-labelledby="learning-heading"><div className="container-x editorial-split">
-    <div><p className="eyebrow">04 / A direction, not a prerequisite</p><h2 id="learning-heading" className="section-title">Find your direction.<br />Build the skills.</h2><p className="section-description">You don’t need to have it all figured out. Explore the catalog, then take your next step with the club.</p><ButtonLink href="/learn" variant="outline">Explore learning paths <ArrowRight size={17} aria-hidden /></ButtonLink><p className="member-note">Full lessons and practice resources are for approved members. <Link href="/join">How to join</Link></p></div>
+    <div><p className="eyebrow">04 / A direction, not a prerequisite</p><h2 id="learning-heading" className="section-title">Find your direction.<br />Build the skills.</h2><p className="section-description">You don’t need to have it all figured out. Explore the catalog, then take your next step with the club.</p><ButtonLink href="/careers/projects" variant="outline">Explore the project library <ArrowRight size={17} aria-hidden /></ButtonLink><p className="member-note">Not sure where to start? <Link href="/careers">Explore career paths</Link></p></div>
     <ol className="learning-steps">{steps.map(([title, body], index) => <li key={title}><span className="step-number">0{index + 1}</span><div><h3>{title}</h3><p>{body}</p></div><ArrowUpRight size={19} aria-hidden /></li>)}</ol>
   </div></section>;
 }

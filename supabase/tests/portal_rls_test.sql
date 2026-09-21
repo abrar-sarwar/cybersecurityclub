@@ -1,5 +1,7 @@
 -- Row level security and privilege tests for the member portal.
 -- Run with: supabase test db
+-- Assertions only look at this file's fixtures, so they hold on a database
+-- that already contains other accounts or events.
 begin;
 select plan(56);
 
@@ -14,7 +16,7 @@ values
   ('00000000-0000-0000-0000-000000000000', '44444444-4444-4444-4444-444444444444', 'authenticated', 'authenticated', 'admin@gmail.com', '{"full_name":"Admin Z","role":"admin"}', '{"role":"admin"}', now(), now());
 
 select is(
-  (select count(*)::int from public.profiles where role = 'member'),
+  (select count(*)::int from public.profiles where role = 'member' and id in ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', '33333333-3333-3333-3333-333333333333', '44444444-4444-4444-4444-444444444444')),
   4,
   'new users always start as members, whatever their metadata says'
 );
@@ -31,7 +33,8 @@ update public.profiles
  where id = '22222222-2222-2222-2222-222222222222';
 
 select is(
-  (select count(*)::int from public.audit_log where action = 'member.role_changed' and actor_id is null),
+  (select count(*)::int from public.audit_log
+    where action = 'member.role_changed' and actor_id is null and target_user_id in ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', '33333333-3333-3333-3333-333333333333', '44444444-4444-4444-4444-444444444444')),
   2,
   'seeding roles from SQL is written to the audit log'
 );
@@ -153,7 +156,7 @@ select throws_ok(
   '42501', 'Only admins can change roles', 'a member cannot call the role change function'
 );
 select is(
-  (select count(*)::int from public.events),
+  (select count(*)::int from public.events where id = 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee'),
   1,
   'a member can read events'
 );
@@ -199,12 +202,12 @@ set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"33333333-3333-3333-3333-333333333333","role":"authenticated"}', true);
 
 select is(
-  (select count(*)::int from public.profiles),
+  (select count(*)::int from public.profiles where id in ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', '33333333-3333-3333-3333-333333333333', '44444444-4444-4444-4444-444444444444')),
   4,
   'an officer can read member profiles'
 );
 select is(
-  (select count(*)::int from public.event_rsvps),
+  (select count(*)::int from public.event_rsvps where event_id = 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee'),
   1,
   'an officer can read RSVPs'
 );
@@ -276,7 +279,8 @@ select lives_ok(
   'an admin can delete events'
 );
 select results_eq(
-  $$ select actor_id, details ->> 'title' from public.audit_log where action = 'event.deleted' $$,
+  $$ select actor_id, details ->> 'title' from public.audit_log
+      where action = 'event.deleted' and details ->> 'title' = 'Blue team workshop' $$,
   $$ values ('44444444-4444-4444-4444-444444444444'::uuid, 'Blue team workshop') $$,
   'event deletion is written to the audit log with the admin as actor'
 );

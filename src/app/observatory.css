@@ -213,7 +213,7 @@ body:has(.cyber-home) main {
   --trace-idle: rgba(62, 132, 255, 0.52);
   --logo-blue: brightness(0) saturate(100%) invert(39%) sepia(92%) saturate(3530%) hue-rotate(213deg) brightness(104%) contrast(103%);
   --logo-red: brightness(0) saturate(100%) invert(44%) sepia(64%) saturate(5205%) hue-rotate(331deg) brightness(104%) contrast(110%);
-  --section-height: max(40rem, 100svh);
+  --section-height: max(36rem, 100svh);
   --horizon-height: clamp(2.75rem, 6.5svh, 4.25rem);
   position: relative;
   isolation: isolate;
@@ -288,25 +288,43 @@ body:has(.cyber-home) main {
   transform: scaleX(1);
 }
 
-/* Stage: sized by both width and height so the whole mark always fits ---- */
+/*
+ * Stage: sized by both width and height so the network, the copy and the
+ * internship strip all fit in the first screen. Spare height is shared
+ * between the space above the network and the space below the strip.
+ */
 
 .cyber-home-stage {
   display: grid;
-  flex: 1;
   place-items: center;
-  padding: 1rem 1.25rem calc(var(--horizon-height) + 1.25rem);
+  margin-top: auto;
+  padding: 1rem 1.25rem 0;
 }
 
+/*
+ * The network art and the copy share one grid cell. The copy starts where the
+ * layout places the heading and grows downward, so a longer description
+ * extends the stage instead of overflowing it.
+ */
 .network-experience {
   --logo-left: var(--desktop-logo-left);
   --logo-top: var(--desktop-logo-top);
   --logo-width: var(--desktop-logo-width);
-  --copy-top: var(--desktop-copy-top);
+  --copy-offset: var(--desktop-copy-offset);
+  --art-aspect: var(--desktop-aspect, 1200 / 500);
   position: relative;
   z-index: 4;
-  width: min(100%, 75rem, (var(--section-height) - 13rem) * 2.4);
-  aspect-ratio: 1200 / 500;
+  display: grid;
+  /* 21rem is roughly the nav, the copy below the network and the strip. */
+  width: min(100%, 75rem, max(42rem, (var(--section-height) - 21rem) * 2.4));
   container-type: inline-size;
+}
+
+.network-art {
+  position: relative;
+  grid-area: 1 / 1;
+  align-self: start;
+  aspect-ratio: var(--art-aspect);
 }
 
 .network-canvas {
@@ -324,15 +342,17 @@ body:has(.cyber-home) main {
 /* Traces ------------------------------------------------------------------ */
 
 .network-traces {
-  filter: drop-shadow(0 0 2.5px rgba(40, 116, 255, 0.45));
+  filter: drop-shadow(0 0 1.5px rgba(40, 116, 255, 0.28));
   transition: filter 220ms ease;
 }
 
 .network-trace,
+.network-feeder,
 .network-ring,
 .impact-ring,
 .ring-ripple,
 .ambient-pulses path,
+.intro-traces path,
 .charge-trail,
 .charge-head {
   fill: none;
@@ -369,14 +389,52 @@ body:has(.cyber-home) main {
   stroke: rgba(255, 74, 99, 0.72);
 }
 
-.ambient-pulses path {
+/* Decoration only: never take clicks meant for stars, links or the logo strip. */
+.network-feeders,
+.ambient-pulses {
+  pointer-events: none;
+}
+
+/* Lines that run in from beyond the network; the SVG mask fades their far ends. */
+.network-feeder {
+  stroke: rgba(62, 132, 255, 0.3);
+  stroke-width: 1;
+  transition: stroke 220ms ease;
+}
+
+/*
+ * Idle signals. The dash crosses its route in the first part of each cycle and
+ * spends the rest beyond the route's end, so it rests out of sight.
+ */
+.signal-head,
+.signal-trail {
+  stroke-dasharray: var(--dash) 12;
+  stroke-dashoffset: var(--dash);
+  animation: signal-travel var(--signal-cycle) linear var(--signal-delay) infinite;
+}
+
+.signal-head {
+  --dash: var(--signal-head);
+  --end: var(--signal-head-end);
+  stroke: #e2efff;
+  stroke-width: 2.2;
+}
+
+.signal-trail {
+  --dash: var(--signal-trail);
+  --end: var(--signal-trail-end);
+  stroke: rgba(110, 172, 255, 0.62);
+  stroke-width: 1.4;
+  stroke-linecap: butt;
+}
+
+.signal-outward {
   stroke: #b7d6ff;
   stroke-width: 1.5;
-  stroke-dasharray: 0.03 1;
-  stroke-dashoffset: 0.03;
+  stroke-dasharray: 0.04 1;
+  stroke-dashoffset: 0.04;
   opacity: 0;
-  animation: ambient-pulse 9.3s linear infinite;
-  transition: visibility 0s;
+  animation: ambient-pulse 7.2s linear infinite;
 }
 
 /* Nodes ------------------------------------------------------------------- */
@@ -409,11 +467,42 @@ body:has(.cyber-home) main {
 
 .node-glint {
   fill: none;
-  stroke: rgba(157, 200, 255, 0.32);
-  stroke-width: 0.7;
-  stroke-linecap: round;
+  stroke: rgba(169, 208, 255, 0.9);
+  stroke-width: 1;
+  stroke-linecap: square;
+  opacity: 0;
+  transform: scale(1.6);
+  transform-box: fill-box;
+  transform-origin: center;
   vector-effect: non-scaling-stroke;
-  transition: stroke 180ms ease;
+  transition: stroke 180ms ease, opacity 160ms ease, transform 220ms cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+/* Port numbers, like a network map; brighter when the star is in play. */
+.node-label {
+  fill: rgba(140, 184, 255, 0.42);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  user-select: none;
+  transition: fill 180ms ease;
+}
+
+.network-node[data-hovered="true"] .node-label,
+.network-node:focus-visible .node-label {
+  fill: rgba(214, 232, 255, 0.95);
+}
+
+.network-node[data-selected="true"] .node-label {
+  fill: rgba(255, 128, 146, 0.9);
+}
+
+.network-node[data-hovered="true"] .node-glint,
+.network-node:focus-visible .node-glint,
+.network-node[data-selected="true"] .node-glint {
+  opacity: 1;
+  transform: none;
 }
 
 .node-visible {
@@ -432,22 +521,14 @@ body:has(.cyber-home) main {
   stroke: #a9d0ff;
 }
 
-.network-node[data-hovered="true"] .node-glint,
-.network-node:focus-visible .node-glint {
-  stroke: rgba(221, 237, 255, 0.92);
-}
-
 .network-node[data-hovered="true"] .node-halo,
 .network-node:focus-visible .node-halo {
-  fill: rgba(45, 126, 255, 0.24);
+  fill: rgba(45, 126, 255, 0.14);
   opacity: 1;
-  transform: scale(1.1);
 }
 
-.network-node:focus-visible .node-halo {
-  stroke: rgba(214, 232, 255, 0.95);
-  stroke-width: 1.5;
-  vector-effect: non-scaling-stroke;
+.network-node:focus-visible .node-glint {
+  stroke-width: 1.6;
 }
 
 .network-node[data-selected="true"] .node-visible {
@@ -464,7 +545,7 @@ body:has(.cyber-home) main {
 }
 
 .network-node[data-selected="true"] .node-halo {
-  fill: rgba(255, 59, 84, 0.18);
+  fill: rgba(255, 59, 84, 0.12);
   opacity: 1;
 }
 
@@ -504,17 +585,22 @@ body:has(.cyber-home) main {
 /* Copy -------------------------------------------------------------------- */
 
 .cyber-home-copy {
-  position: absolute;
-  top: var(--copy-top);
-  left: 50%;
+  position: relative;
   z-index: 5;
+  grid-area: 1 / 1;
+  align-self: start;
+  justify-self: center;
   width: min(100%, 43rem);
-  transform: translateX(-50%);
+  margin-top: var(--copy-offset);
   text-align: center;
   pointer-events: none;
 }
 
 .cyber-home-copy h1 {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
   color: #f7faff;
   font-family: var(--font-display);
   font-size: clamp(1.6rem, 3.55cqw, 2.65rem);
@@ -522,6 +608,53 @@ body:has(.cyber-home) main {
   line-height: 1.08;
   letter-spacing: -0.045em;
   text-shadow: 0 1px 18px rgba(10, 45, 107, 0.35);
+  /* Only the heading's own text box takes the pointer, so nearby stars stay clickable. */
+  pointer-events: auto;
+}
+
+/* Corrupted-signal effect: brief red and cyan slices plus a small jitter. */
+.glitch-text {
+  display: block;
+}
+
+.glitch-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  text-shadow: none;
+}
+
+.glitch-layer-red {
+  color: #ff3b54;
+}
+
+.glitch-layer-cyan {
+  color: #62d8ff;
+}
+
+.cyber-home-copy h1:hover .glitch-text,
+.network-experience[data-autoplay="true"]:is([data-phase="intro"], [data-phase="charging"]) .glitch-text {
+  animation: glitch-jitter 2.4s steps(1, end) infinite;
+}
+
+.cyber-home-copy h1:hover .glitch-layer-red,
+.network-experience[data-autoplay="true"]:is([data-phase="intro"], [data-phase="charging"]) .glitch-layer-red {
+  animation: glitch-slice-red 2.4s steps(1, end) infinite;
+}
+
+.cyber-home-copy h1:hover .glitch-layer-cyan,
+.network-experience[data-autoplay="true"]:is([data-phase="intro"], [data-phase="charging"]) .glitch-layer-cyan {
+  animation: glitch-slice-cyan 2.4s steps(1, end) infinite;
+}
+
+.cyber-home-description {
+  max-width: 44cqw;
+  margin: 1rem auto 0;
+  color: rgba(214, 226, 245, 0.8);
+  font-size: clamp(0.875rem, 1.3cqw, 1.0625rem);
+  line-height: 1.65;
+  text-wrap: balance;
 }
 
 .cyber-home-actions {
@@ -529,7 +662,7 @@ body:has(.cyber-home) main {
   align-items: center;
   justify-content: center;
   gap: 0.72rem;
-  margin-top: 1.35rem;
+  margin-top: 1.5rem;
 }
 
 .cyber-home-actions a {
@@ -573,6 +706,76 @@ body:has(.cyber-home) main {
   color: #fff;
 }
 
+/* Internship logos --------------------------------------------------------- */
+
+.internship-strip {
+  position: relative;
+  z-index: 4;
+  margin-bottom: auto;
+  padding: clamp(1.5rem, 4svh, 2.5rem) 0 calc(var(--horizon-height) + clamp(1rem, 3svh, 1.75rem));
+}
+
+.internship-strip h2 {
+  color: rgba(214, 226, 245, 0.72);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.internship-window {
+  overflow: hidden;
+  margin-top: 1rem;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.internship-track {
+  display: flex;
+  width: max-content;
+  animation: internship-scroll 42s linear infinite;
+}
+
+.internship-list {
+  display: flex;
+  align-items: center;
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+  padding-right: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.internship-item {
+  display: flex;
+  height: 2.75rem;
+  flex: none;
+  align-items: center;
+}
+
+.internship-logo {
+  width: auto;
+  height: calc(1.6rem * var(--logo-scale, 1));
+  max-width: none;
+  opacity: 0.74;
+  transition: opacity 200ms ease;
+}
+
+/* White one-color mark; files already made for dark backgrounds keep their colors. */
+.internship-logo[data-treatment="mono"] {
+  filter: brightness(0) invert(1);
+}
+
+.internship-item:hover .internship-logo {
+  opacity: 1;
+}
+
+.internship-wordmark {
+  color: rgba(255, 255, 255, 0.78);
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
 /* Horizon: a sliver of planet limb, never the full globe ------------------ */
 
 .cyber-horizon {
@@ -601,6 +804,41 @@ body:has(.cyber-home) main {
 
 .network-experience:not([data-phase="idle"]) .ambient-pulses {
   visibility: hidden;
+}
+
+/* Opening sequence: red spreads out from the shield, one step at a time. */
+.network-experience[data-phase="intro"] .network-node .node-visible,
+.network-experience[data-phase="intro"] .network-node .node-ring,
+.network-experience[data-phase="intro"] .network-node .node-glint,
+.network-experience[data-phase="intro"] .network-node .node-label,
+.network-experience[data-phase="intro"] .network-ring {
+  transition-delay: var(--intro-delay, 0ms);
+}
+
+.network-experience[data-phase="intro"] .network-trace,
+.network-experience[data-phase="intro"] .network-feeder {
+  transition-delay: calc(var(--intro-delay, 0ms) + 200ms);
+}
+
+.network-experience[data-phase="intro"] .network-feeder {
+  stroke: rgba(255, 64, 90, 0.4);
+}
+
+.network-experience[data-phase="intro"] .network-node .node-halo {
+  transition-delay: var(--intro-delay, 0ms);
+  animation: intro-pop 380ms var(--intro-delay, 0ms) cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+.intro-traces {
+  filter: drop-shadow(0 0 3px rgba(255, 59, 84, 0.7));
+}
+
+.intro-traces path {
+  stroke: var(--signal-red);
+  stroke-width: 1.5;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  animation: intro-draw 240ms var(--intro-delay, 0ms) cubic-bezier(0.3, 0, 0.2, 1) forwards;
 }
 
 .charge-trail {
@@ -644,6 +882,11 @@ body:has(.cyber-home) main {
   transition: stroke 160ms ease var(--travel);
 }
 
+.network-experience[data-phase="charging"] .network-feeder {
+  stroke: rgba(255, 64, 90, 0.4);
+  transition: stroke 160ms ease var(--travel);
+}
+
 .network-experience[data-phase="charging"] .network-ring {
   stroke: rgba(255, 74, 99, 0.72);
 }
@@ -659,8 +902,16 @@ body:has(.cyber-home) main {
   transition-delay: var(--travel);
 }
 
+/* When the charge lands, every star is locked on. */
 .network-experience[data-phase="charging"] .node-glint {
-  stroke: rgba(255, 118, 138, 0.6);
+  stroke: rgba(255, 118, 138, 0.85);
+  opacity: 1;
+  transform: none;
+  transition-delay: var(--travel);
+}
+
+.network-experience[data-phase="charging"] .node-label {
+  fill: rgba(255, 128, 146, 0.8);
   transition-delay: var(--travel);
 }
 
@@ -678,10 +929,12 @@ body:has(.cyber-home) main {
 }
 
 .network-experience[data-phase="fading"] .network-trace,
+.network-experience[data-phase="fading"] .network-feeder,
 .network-experience[data-phase="fading"] .network-ring,
 .network-experience[data-phase="fading"] .node-visible,
 .network-experience[data-phase="fading"] .node-ring,
 .network-experience[data-phase="fading"] .node-glint,
+.network-experience[data-phase="fading"] .node-label,
 .network-experience[data-phase="fading"] .node-halo,
 .network-experience[data-phase="fading"] .shield-logo-alert,
 .network-experience[data-phase="fading"] .charge {
@@ -691,6 +944,10 @@ body:has(.cyber-home) main {
 
 .network-experience[data-phase="fading"] .network-trace {
   stroke: var(--trace-idle);
+}
+
+.network-experience[data-phase="fading"] .network-feeder {
+  stroke: rgba(62, 132, 255, 0.3);
 }
 
 .network-experience[data-phase="fading"] .network-ring {
@@ -707,7 +964,16 @@ body:has(.cyber-home) main {
 }
 
 .network-experience[data-phase="fading"] .network-node .node-glint {
-  stroke: rgba(157, 200, 255, 0.32);
+  stroke: rgba(169, 208, 255, 0.9);
+}
+
+.network-experience[data-phase="fading"] .network-node:not(:focus-visible) .node-glint {
+  opacity: 0;
+  transform: scale(1.6);
+}
+
+.network-experience[data-phase="fading"] .network-node .node-label {
+  fill: rgba(140, 184, 255, 0.42);
 }
 
 .network-experience[data-phase="fading"] .network-node:not(:focus-visible) .node-halo {
@@ -719,15 +985,57 @@ body:has(.cyber-home) main {
   transition-property: opacity;
 }
 
+@keyframes internship-scroll {
+  to { transform: translateX(-50%); }
+}
+
+@keyframes glitch-jitter {
+  0%, 9%, 16%, 58%, 63%, 100% { transform: none; }
+  6% { transform: translate(1px, 0) skewX(-2deg); }
+  12% { transform: translate(-1px, 0); }
+  60% { transform: translate(0.5px, 0) skewX(1.5deg); }
+}
+
+@keyframes glitch-slice-red {
+  0%, 16%, 63%, 100% { opacity: 0; transform: none; clip-path: inset(0 0 100% 0); }
+  5% { opacity: 0.85; transform: translate(-2px, 0); clip-path: inset(12% 0 60% 0); }
+  9% { opacity: 0.85; transform: translate(2px, -1px); clip-path: inset(58% 0 18% 0); }
+  13% { opacity: 0.7; transform: translate(-1px, 1px); clip-path: inset(34% 0 44% 0); }
+  58% { opacity: 0.7; transform: translate(1.5px, 0); clip-path: inset(70% 0 6% 0); }
+}
+
+@keyframes glitch-slice-cyan {
+  0%, 16%, 63%, 100% { opacity: 0; transform: none; clip-path: inset(0 0 100% 0); }
+  5% { opacity: 0.75; transform: translate(2px, 0); clip-path: inset(46% 0 30% 0); }
+  9% { opacity: 0.75; transform: translate(-2px, 1px); clip-path: inset(8% 0 72% 0); }
+  13% { opacity: 0.6; transform: translate(1px, 0); clip-path: inset(64% 0 12% 0); }
+  58% { opacity: 0.6; transform: translate(-1.5px, 0); clip-path: inset(22% 0 54% 0); }
+}
+
 @keyframes star-twinkle {
   0%, 100% { opacity: 0.25; }
   50% { opacity: 0.85; }
 }
 
 @keyframes ambient-pulse {
-  0%, 72% { opacity: 0; stroke-dashoffset: 0.03; }
-  74%, 92% { opacity: 0.7; }
+  0%, 70% { opacity: 0; stroke-dashoffset: 0.04; }
+  72%, 92% { opacity: 0.7; }
   96%, 100% { opacity: 0; stroke-dashoffset: -1; }
+}
+
+@keyframes signal-travel {
+  from { stroke-dashoffset: var(--dash); }
+  to { stroke-dashoffset: var(--end); }
+}
+
+@keyframes intro-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes intro-pop {
+  0% { transform: scale(0.4); }
+  60% { transform: scale(1.35); }
+  100% { transform: scale(1); }
 }
 
 @keyframes charge-trail {
@@ -780,9 +1088,10 @@ body:has(.cyber-home) main {
     --logo-left: var(--mobile-logo-left);
     --logo-top: var(--mobile-logo-top);
     --logo-width: var(--mobile-logo-width);
-    --copy-top: var(--mobile-copy-top);
-    width: min(100%, 34rem, (var(--section-height) - 9.5rem) * 0.75);
-    aspect-ratio: 390 / 520;
+    --copy-offset: var(--mobile-copy-offset);
+    --art-aspect: var(--mobile-aspect, 390 / 500);
+    /* The copy starts 0.913 widths down; 28.5rem covers the nav, copy and strip. */
+    width: min(100%, 34rem, max(20rem, (var(--section-height) - 28.5rem) / 0.913));
   }
 
   .network-canvas-desktop {
@@ -793,6 +1102,11 @@ body:has(.cyber-home) main {
     display: block;
   }
 
+  /* Too tight for every port number on a phone: show a star's port once it is picked. */
+  .network-canvas-mobile .network-node:not([data-selected="true"]) .node-label {
+    visibility: hidden;
+  }
+
   .cyber-home-copy {
     width: calc(100% - 3rem);
   }
@@ -801,6 +1115,33 @@ body:has(.cyber-home) main {
     font-size: clamp(1.5rem, 7.8cqw, 2.5rem);
     line-height: 1.12;
     text-wrap: balance;
+  }
+
+  .cyber-home-description {
+    max-width: 34rem;
+    margin-top: 0.7rem;
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+
+  .internship-strip {
+    padding-top: 1.25rem;
+  }
+
+  .internship-window {
+    margin-top: 0.7rem;
+  }
+
+  .internship-item {
+    height: 2.25rem;
+  }
+
+  .internship-logo {
+    height: calc(1.25rem * var(--logo-scale, 1));
+  }
+
+  .internship-wordmark {
+    font-size: 1.15rem;
   }
 
   .cyber-home-actions {
@@ -841,6 +1182,9 @@ body:has(.cyber-home) main {
 @media (prefers-reduced-motion: reduce) {
   .star.is-twinkling,
   .ambient-pulses,
+  .intro-traces,
+  .glitch-layer,
+  .internship-list-copy,
   .charge-trail,
   .charge-head,
   .ring-ripple,
@@ -854,5 +1198,27 @@ body:has(.cyber-home) main {
 
   .cyber-home-actions a:hover {
     transform: none;
+  }
+
+  .glitch-text {
+    animation: none !important;
+  }
+
+  /* A still, wrapped list instead of the scrolling strip. */
+  .internship-window {
+    mask-image: none;
+  }
+
+  .internship-track {
+    width: 100%;
+    animation: none;
+  }
+
+  .internship-list {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem 2.5rem;
+    padding: 0 1.25rem;
   }
 }

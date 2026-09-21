@@ -7,28 +7,28 @@
   Keep in sync with config/branding.ts (colors) when adjusting.
 */
 @theme {
-  --color-brand-50: #101e38;
-  --color-brand-100: #172b4f;
-  --color-brand-200: #30486e;
-  --color-brand-300: #8aacff;
-  --color-brand-400: #709aff;
-  --color-brand-500: #3869ee;
-  --color-brand-600: #285cff;
-  --color-brand-700: #8aacff;
-  --color-brand-800: #b9ceff;
+  --color-brand-50: #0b1a3a;
+  --color-brand-100: #11244d;
+  --color-brand-200: #2a4a86;
+  --color-brand-300: #8cc0ff;
+  --color-brand-400: #6fa8ff;
+  --color-brand-500: #2f7aff;
+  --color-brand-600: #176bff;
+  --color-brand-700: #9cc6ff;
+  --color-brand-800: #c2dbff;
   --color-brand-900: #0d2559;
-  --color-accent: #8aacff;
-  --color-ground: #05070d;
-  --color-surface: #0d1829;
+  --color-accent: #8cc0ff;
+  --color-ground: #01030a;
+  --color-surface: #071228;
 
   --color-navy-700: #c3cee0;
   --color-navy-800: #e2e9f5;
   --color-navy-900: #f3f6fc;
 
-  --color-pale: #08111f;
-  --color-pale-2: #122139;
-  --color-line: rgba(160, 183, 224, 0.16);
-  --color-line-strong: #51627f;
+  --color-pale: #030a1c;
+  --color-pale-2: #0d1a36;
+  --color-line: rgba(120, 165, 255, 0.14);
+  --color-line-strong: #3d5586;
   --color-ink: #e0e6f1;
   --color-muted: #b4bfd2;
   --color-faint: #8f9eb6;
@@ -154,15 +154,18 @@
     color: var(--color-accent);
   }
 
+  /* Glass panel over the star field, lit along its top edge. */
   .card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-line);
+    position: relative;
+    background: linear-gradient(180deg, rgba(12, 28, 64, 0.5), rgba(3, 10, 28, 0.72));
+    border: 1px solid rgba(120, 165, 255, 0.15);
     border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-card);
+    box-shadow: inset 0 1px 0 rgba(160, 200, 255, 0.07), 0 24px 48px -32px rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(6px);
   }
 
   .surface-pale {
-    background: var(--color-pale);
+    background: linear-gradient(180deg, rgba(10, 26, 62, 0.34), rgba(3, 9, 26, 0.18));
   }
 
   /* Fine network pattern used behind hero and marketing sections. */
@@ -172,9 +175,15 @@
   .bg-fade-white {
     background: var(--color-ground);
   }
+}
 
-  /* Prose tuned for lesson pages. */
-  .prose-club {
+@layer utilities {
+  /*
+   * Prose tuned for lesson and policy pages. The typography plugin writes its
+   * light-theme defaults into this layer, so these rules live here too;
+   * otherwise body text renders dark gray on the dark background.
+   */
+  .prose.prose-club {
     --tw-prose-body: var(--color-ink);
     --tw-prose-headings: var(--color-navy-900);
     --tw-prose-links: var(--color-accent);
@@ -192,42 +201,40 @@
     font-size: 1.0625rem;
     line-height: 1.7;
   }
-  .prose-club :where(code):not(:where(pre *))::before,
-  .prose-club :where(code):not(:where(pre *))::after {
+  .prose.prose-club :where(code):not(:where(pre *))::before,
+  .prose.prose-club :where(code):not(:where(pre *))::after {
     content: "";
   }
-  .prose-club :where(code):not(:where(pre *)) {
+  .prose.prose-club :where(code):not(:where(pre *)) {
     background: var(--color-pale-2);
     padding: 0.1em 0.4em;
     border-radius: 0.35em;
     font-weight: 500;
   }
-  .prose-club :where(pre) {
+  .prose.prose-club :where(pre) {
     border-radius: var(--radius-lg);
     font-size: 0.9rem;
   }
-  .prose-club :where(table) {
+  .prose.prose-club :where(table) {
     display: block;
     overflow-x: auto;
     font-size: 0.95rem;
   }
-  .prose-club :where(h2) {
+  .prose.prose-club :where(h2) {
     margin-top: 2.25em;
     scroll-margin-top: 6rem;
   }
-  .prose-club :where(h3) {
+  .prose.prose-club :where(h3) {
     scroll-margin-top: 6rem;
   }
-  .prose-club :where(a) {
+  .prose.prose-club :where(a) {
     text-decoration-thickness: 1px;
     text-underline-offset: 3px;
   }
-  .prose-club :where(a):hover {
+  .prose.prose-club :where(a):hover {
     color: var(--color-brand-700);
   }
-}
 
-@layer utilities {
   .text-balance { text-wrap: balance; }
   .scrollbar-none { scrollbar-width: none; }
   .scrollbar-none::-webkit-scrollbar { display: none; }

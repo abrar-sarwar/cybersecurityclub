@@ -1,6 +1,6 @@
 /**
  * Validates every content file against the schemas and cross-references
- * (lesson slugs, project slugs, interview topics, questionnaire weights).
+ * (lesson slugs, project slugs, interview topics).
  * Usage: npm run content:check
  */
 import fs from "node:fs";
@@ -15,7 +15,6 @@ import {
   pathSchema,
   practiceQuestionsSchema,
   projectSchema,
-  questionnaireSchema,
   LAB_GUIDE_SECTIONS,
   PATH_SLUGS,
 } from "../src/content/schemas";
@@ -181,19 +180,6 @@ if (lab) {
     for (const section of LAB_GUIDE_SECTIONS) {
       if (!new RegExp(`^## ${section}\\s*$`, "m").test(parsed.content)) errors.push(`${rel(gf)}: missing required section "## ${section}"`);
     }
-  }
-}
-
-// Questionnaire
-const qFile = path.join(ROOT, "questionnaire.json");
-const q = validate<{ questions: { id: string; options: { id: string; weights: Record<string, number> }[] }[] }>(questionnaireSchema, json(qFile), qFile);
-if (q) {
-  const ids = new Set<string>();
-  for (const question of q.questions) {
-    if (ids.has(question.id)) errors.push(`questionnaire.json: duplicate question id ${question.id}`);
-    ids.add(question.id);
-    for (const o of question.options)
-      for (const k of Object.keys(o.weights)) if (!(PATH_SLUGS as readonly string[]).includes(k)) errors.push(`questionnaire.json: ${question.id}/${o.id} weights unknown path ${k}`);
   }
 }
 

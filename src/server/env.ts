@@ -19,22 +19,6 @@ const schema = z.object({
   APP_URL: z.string().url().default("http://localhost:3000"),
   DATABASE_URL: z.string().min(1),
   DATABASE_PROVIDER: z.enum(["sqlite", "postgresql"]).default("sqlite"),
-  // Member portal (Supabase + Resend). Checked where used so public pages
-  // keep working before the portal is configured.
-  NEXT_PUBLIC_SUPABASE_URL: optionalString,
-  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: optionalString,
-  SUPABASE_SECRET_KEY: optionalString,
-  APP_SECRET: optionalString,
-  RESEND_API_KEY: optionalString,
-  EMAIL_FROM: z.string().default("Cybersecurity Club at GSU <no-reply@example.edu>"),
-  MEDIA_STORAGE: z.enum(["local", "s3"]).default("local"),
-  MEDIA_LOCAL_DIR: z.string().default("./storage/media"),
-  S3_BUCKET: optionalString,
-  S3_REGION: z.string().default("auto"),
-  S3_ENDPOINT: optionalString,
-  S3_ACCESS_KEY_ID: optionalString,
-  S3_SECRET_ACCESS_KEY: optionalString,
-  MEDIA_MAX_UPLOAD_MB: z.coerce.number().default(20),
   PIN_SYNC_ENABLED: bool,
   PIN_ORGANIZATION_KEY: z.string().default("cysecclub"),
   PIN_FEED_URL: z
@@ -61,20 +45,4 @@ export function env(): Env {
   }
   cached = parsed.data;
   return cached;
-}
-
-export function isProduction() {
-  return env().NODE_ENV === "production";
-}
-
-/**
- * Secret for signing unsubscribe links and keying rate-limit identifiers.
- * Required in production; development falls back to a fixed, clearly
- * non-secret value so the portal runs locally without extra setup.
- */
-export function appSecret() {
-  const secret = env().APP_SECRET;
-  if (secret && secret.length >= 32) return secret;
-  if (isProduction()) throw new Error("APP_SECRET must be set to at least 32 characters in production.");
-  return "development-only-app-secret-do-not-use-in-production";
 }

@@ -1,11 +1,108 @@
 {
   "employers": [
-    { "name": "IBM", "confirmed": true },
-    { "name": "Equifax", "confirmed": true },
-    { "name": "CrowdStrike", "confirmed": true },
-    { "name": "State Farm", "confirmed": true },
-    { "name": "USPS", "confirmed": true },
-    { "name": "Palo Alto Networks", "confirmed": true }
+    {
+      "name": "IBM",
+      "confirmed": true,
+      "logo": {
+        "src": "/assets/internships/ibm.svg",
+        "width": 1075,
+        "height": 401,
+        "treatment": "mono",
+        "source": "https://commons.wikimedia.org/wiki/File:IBM_logo.svg"
+      }
+    },
+    {
+      "name": "Palo Alto Networks",
+      "confirmed": true,
+      "logo": {
+        "src": "/assets/internships/palo-alto-networks.svg",
+        "width": 391,
+        "height": 71,
+        "treatment": "mono",
+        "source": "https://commons.wikimedia.org/wiki/File:PaloAltoNetworks_2020_Logo.svg"
+      }
+    },
+    {
+      "name": "CrowdStrike",
+      "confirmed": true,
+      "logo": {
+        "src": "/assets/internships/crowdstrike.svg",
+        "width": 173,
+        "height": 32,
+        "treatment": "mono",
+        "source": "https://commons.wikimedia.org/wiki/File:CrowdStrike_logo.svg"
+      }
+    },
+    {
+      "name": "USPS",
+      "confirmed": true,
+      "logo": {
+        "src": "/assets/internships/usps.png",
+        "width": 352,
+        "height": 60,
+        "treatment": "original",
+        "source": "https://about.usps.com/root/global/images/usps_hor-logo-white.png"
+      }
+    },
+    {
+      "name": "Equifax",
+      "confirmed": true,
+      "logo": {
+        "src": "/assets/internships/equifax.svg",
+        "width": 187,
+        "height": 37,
+        "treatment": "mono",
+        "source": "https://commons.wikimedia.org/wiki/File:Equifax_Logo.svg"
+      }
+    },
+    {
+      "name": "Grady Health",
+      "confirmed": true,
+      "logo": {
+        "src": "/assets/internships/grady.svg",
+        "width": 105,
+        "height": 33,
+        "treatment": "mono",
+        "source": "https://www.gradyhealth.org/wp-content/themes/grady/img/svgs/grady-logo.svg"
+      }
+    },
+    {
+      "name": "Steampunk Inc",
+      "confirmed": true,
+      "logo": {
+        "src": "/assets/internships/steampunk.png",
+        "width": 340,
+        "height": 64,
+        "treatment": "mono",
+        "source": "https://steampunk.com/wp-content/uploads/2021/02/SPLogo@2x.png"
+      }
+    },
+    {
+      "name": "AARC",
+      "confirmed": true
+    },
+    {
+      "name": "State Farm",
+      "confirmed": true,
+      "logo": {
+        "src": "/assets/internships/state-farm.svg",
+        "width": 200,
+        "height": 28,
+        "treatment": "mono",
+        "source": "https://commons.wikimedia.org/wiki/File:State_Farm_logo.svg"
+      }
+    },
+    {
+      "name": "GTRI",
+      "confirmed": true,
+      "logo": {
+        "src": "/assets/internships/gtri.png",
+        "width": 390,
+        "height": 66,
+        "treatment": "mono",
+        "source": "https://gtri.gatech.edu/themes/custom/georgia_tech/images/site_logo.png"
+      }
+    }
   ],
   "projects": [],
   "news": []

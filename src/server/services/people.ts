@@ -50,10 +50,3 @@ export async function listPublishedStories(): Promise<StoryView[]> {
 }
 
 /** Public directory: only members who opted in. Never exposes emails. */
-export async function listPublicDirectory() {
-  return prisma.memberProfile.findMany({
-    where: { publicProfileOptIn: true, membershipStatus: "approved", ...sampleFilter() },
-    select: { id: true, displayName: true, publicHeadline: true, linkedinUrl: true, educationStatus: true, user: { select: { name: true } } },
-    orderBy: { updatedAt: "desc" },
-  });
-}

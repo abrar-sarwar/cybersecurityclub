@@ -9,11 +9,12 @@ type Size = "sm" | "md" | "lg";
 const base =
   "inline-flex items-center justify-center gap-2 whitespace-normal text-center rounded-md font-semibold transition-[background-color,color,border-color,box-shadow,transform] duration-150 ease-out select-none disabled:opacity-60 disabled:pointer-events-none active:translate-y-px";
 
+/* Colors and edges come from the homepage buttons (.btn-cyber in signal.css). */
 const variants: Record<Variant, string> = {
-  primary: "bg-brand-600 text-white hover:bg-brand-500",
-  secondary: "bg-brand-50 text-brand-700 hover:bg-brand-100",
-  outline: "border border-line-strong bg-transparent text-navy-900 hover:bg-surface hover:border-brand-300",
-  ghost: "text-navy-900 hover:bg-pale",
+  primary: "btn-cyber btn-cyber-primary",
+  secondary: "btn-cyber btn-cyber-secondary",
+  outline: "btn-cyber btn-cyber-outline",
+  ghost: "btn-cyber btn-cyber-ghost",
   danger: "bg-red-800 text-white hover:bg-red-900",
   link: "text-accent underline-offset-4 hover:underline px-0 h-auto",
 };

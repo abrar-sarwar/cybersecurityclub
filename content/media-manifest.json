@@ -1,5 +1,5 @@
 {
-  "$comment": "Initial image import manifest. Map named slots to files placed under public/assets/club/. See ASSET-UPLOAD-GUIDE.md. Uploads made in the officer Media Manager take priority over entries here. Set status to \"published\" to show an asset; \"draft\" keeps it hidden.",
+  "$comment": "Initial image import manifest. Map named slots to files placed under public/assets/club/. See ASSET-UPLOAD-GUIDE.md. Media assets already stored in the database take priority over entries here. Set status to \"published\" to show an asset; \"draft\" keeps it hidden.",
   "version": 1,
   "assets": {
     "example-hero": {

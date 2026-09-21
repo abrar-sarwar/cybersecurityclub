@@ -4,20 +4,19 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import { buttonClasses } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 
 type Item = { href: string; label: string };
+type Action = Item & { external?: boolean };
 
 export function MobileNav({
   items,
-  primary,
-  secondary,
+  actions,
   brandLabel,
 }: {
   items: Item[];
-  primary: Item;
-  secondary: Item;
+  /** The first action is styled as the primary button. */
+  actions: Action[];
   brandLabel: string;
 }) {
   const pathname = usePathname();
@@ -77,7 +76,7 @@ export function MobileNav({
       <button
         ref={triggerRef}
         type="button"
-        className="inline-flex size-11 items-center justify-center rounded-lg text-navy-900 hover:bg-pale"
+        className="signal-menu-button"
         aria-expanded={open}
         aria-controls={id}
         aria-label={open ? "Close menu" : "Open menu"}
@@ -101,13 +100,13 @@ export function MobileNav({
             role="dialog"
             aria-modal="true"
             aria-label={`${brandLabel} menu`}
-            className="absolute inset-y-0 right-0 flex w-[min(22rem,100%)] flex-col bg-surface shadow-pop motion-safe:animate-[slide-in_200ms_var(--ease-out-quart)]"
+            className="signal-menu-panel motion-safe:animate-[slide-in_200ms_var(--ease-out-quart)]"
           >
             <div className="flex h-16 items-center justify-between border-b border-line px-4">
-              <span className="font-display text-base font-bold text-navy-900">Menu</span>
+              <span className="signal-menu-title">Menu</span>
               <button
                 type="button"
-                className="inline-flex size-11 items-center justify-center rounded-lg text-navy-900 hover:bg-pale"
+                className="signal-menu-button"
                 aria-label="Close menu"
                 onClick={() => setOpen(false)}
               >
@@ -124,10 +123,7 @@ export function MobileNav({
                         href={item.href}
                         onClick={() => setOpen(false)}
                         aria-current={active ? "page" : undefined}
-                        className={cn(
-                          "flex min-h-11 items-center rounded-lg px-3 text-[1.05rem] font-medium text-navy-900 hover:bg-pale",
-                          active && "bg-brand-50 text-brand-700",
-                        )}
+                        className={cn("signal-menu-link", active && "is-active")}
                       >
                         {item.label}
                       </Link>
@@ -137,12 +133,18 @@ export function MobileNav({
               </ul>
             </nav>
             <div className="space-y-2 border-t border-line p-4">
-              <Link href={primary.href} onClick={() => setOpen(false)} className={buttonClasses({ variant: "primary", size: "lg", className: "w-full" })}>
-                {primary.label}
-              </Link>
-              <Link href={secondary.href} onClick={() => setOpen(false)} className={buttonClasses({ variant: "outline", size: "lg", className: "w-full" })}>
-                {secondary.label}
-              </Link>
+              {actions.map((action, index) => {
+                const className = cn("btn-cyber btn-cyber-lg w-full", index === 0 ? "btn-cyber-primary" : "btn-cyber-outline");
+                return action.external ? (
+                  <a key={action.href} href={action.href} target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)} className={className}>
+                    {action.label}
+                  </a>
+                ) : (
+                  <Link key={action.href} href={action.href} onClick={() => setOpen(false)} className={className}>
+                    {action.label}
+                  </Link>
+                );
+              })}
             </div>
           </div>
           <style>{`@keyframes slide-in { from { transform: translateX(24px); opacity: 0 } to { transform: none; opacity: 1 } }`}</style>

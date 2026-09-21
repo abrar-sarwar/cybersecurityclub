@@ -2,9 +2,11 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import "./observatory.css";
+import "./signal.css";
 import { branding } from "@config/branding";
 import { siteUrl } from "@/lib/site";
 import { resolveSingle } from "@/server/services/media";
+import { safeDb } from "@/server/safe-db";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -20,7 +22,11 @@ const manrope = Manrope({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [favicon, social] = await Promise.all([resolveSingle(branding.favicon.slot), resolveSingle(branding.socialPreview.slot)]);
+  // Metadata must never be the thing that fails a build or a request.
+  const [favicon, social] = await Promise.all([
+    safeDb(() => resolveSingle(branding.favicon.slot), null, "favicon slot"),
+    safeDb(() => resolveSingle(branding.socialPreview.slot), null, "social slot"),
+  ]);
   const socialImage = social ? [{ url: social.src, width: social.width, height: social.height, alt: social.alt }] : undefined;
   return {
     metadataBase: new URL(siteUrl()),

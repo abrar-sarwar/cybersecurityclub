@@ -1,32 +1,24 @@
 import type { NextConfig } from "next";
 
 /**
- * Routes that must never be indexed. Private member content and officer tools
- * also enforce access on the server; this header is defence in depth for
- * crawlers that reach a redirect or a sign-in wall.
+ * Routes that must never be indexed. Career results are built from answers in
+ * the visitor's own browser session, so they have no meaningful public content.
  */
-const privateRoutePatterns = [
-  "/dashboard/:path*",
-  "/questionnaire/:path*",
-  "/learn/paths/:path/:module/:lesson*",
-  "/projects/:path*",
-  "/lab-setup/:path*",
-  "/certifications/:path*",
-  "/interview-prep/:path*",
-  "/account/:path*",
-  "/onboarding/:path*",
-  "/settings/:path*",
-  "/auth/:path*",
-  "/verify-student-email",
-  "/unsubscribe",
-  "/sign-in",
-  "/admin/:path*",
-  "/dev/:path*",
-  "/media/:path*",
-  "/api/:path*",
-];
+const privateRoutePatterns = ["/careers/results"];
 
 const nextConfig: NextConfig = {
+  // Learning material moved into the careers hub.
+  async redirects() {
+    return [
+      { source: "/learn", destination: "/careers", permanent: true },
+      // The community page was folded into the members page.
+      { source: "/community", destination: "/team", permanent: true },
+      // The members page was renamed to the team page.
+      { source: "/members", destination: "/team", permanent: true },
+      { source: "/learn/paths/:path", destination: "/careers/learning/:path", permanent: true },
+      { source: "/learn/paths/:path/:rest*", destination: "/careers/learning/:path", permanent: true },
+    ];
+  },
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
@@ -39,7 +31,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/**/*": ["./content/**/*", "./config/**/*"],
   },
-  serverExternalPackages: ["sharp", "@prisma/client", "nodemailer"],
+  serverExternalPackages: ["sharp", "@prisma/client"],
   async headers() {
     const security = [
       { key: "X-Content-Type-Options", value: "nosniff" },

@@ -328,39 +328,3 @@ export const LAB_GUIDE_SECTIONS = [
   "Success check",
   "Cleanup",
 ] as const;
-
-// ---------------------------------------------------------------------------
-// Questionnaire
-// ---------------------------------------------------------------------------
-
-export const questionnaireOptionSchema = z.object({
-  id: z.string(),
-  label: z.string(),
-  /** Points per path, e.g. { "security-operations": 2 } */
-  weights: z.record(z.string(), z.number()).default({}),
-  /** Optional flag used for explanation text */
-  tags: z.array(z.string()).default([]),
-  /** Marks the "I haven't learned this yet" style answer */
-  neutral: z.boolean().default(false),
-});
-
-export const questionnaireQuestionSchema = z.object({
-  id: z.string(),
-  dimension: z.enum(["interests", "knowledge", "experience", "preferences"]),
-  type: z.enum(["single", "multi", "scenario"]),
-  prompt: z.string(),
-  help: z.string().optional(),
-  scenario: z.string().optional(),
-  options: z.array(questionnaireOptionSchema).min(2),
-  maxSelections: z.number().int().min(1).optional(),
-});
-
-export const questionnaireSchema = z.object({
-  version: z.number().int(),
-  title: z.string(),
-  intro: z.string(),
-  questions: z.array(questionnaireQuestionSchema).min(12).max(18),
-});
-export type Questionnaire = z.infer<typeof questionnaireSchema>;
-export type QuestionnaireQuestion = z.infer<typeof questionnaireQuestionSchema>;
-export type QuestionnaireOption = z.infer<typeof questionnaireOptionSchema>;

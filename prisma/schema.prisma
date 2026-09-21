@@ -19,7 +19,10 @@ datasource db {
 }
 
 // ---------------------------------------------------------------------------
-// Authentication tables (owned by Better Auth). Field names must stay as-is.
+// Retired account tables. The website no longer has accounts, sign-in or
+// progress tracking. These models stay so existing records are never dropped
+// by a migration; only the public member directory still reads MemberProfile
+// rows whose owners chose to be listed. Do not add new features on them.
 // ---------------------------------------------------------------------------
 
 model User {

@@ -10,7 +10,6 @@ Schemas: `src/content/schemas.ts` (Zod). Loaders: `src/content/loaders.ts`.
 
 ```
 content/
-  questionnaire.json                 path questionnaire + scoring weights
   media-manifest.json                image slots for the initial asset import
   paths/<path-slug>/path.json        path metadata, modules, lesson order
   paths/<path-slug>/lessons/*.md     lessons and exercises (markdown + frontmatter)
@@ -89,10 +88,10 @@ project slug. `interviewTopics` must match ids in `interview/topics.json`.
 
 ## Content keys
 
-Progress records reference content by key:
+Events reference related lessons by key:
 
 - `lesson:<path-slug>/<lesson-slug>`
 - `cert-lesson:<track-slug>/<lesson-slug>`
 - `project:<slug>`
 
-Renaming a slug orphans progress; prefer editing in place.
+Renaming a slug breaks those references; prefer editing in place.
