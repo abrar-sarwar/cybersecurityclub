@@ -28,7 +28,7 @@ export const EXEC_BOARD: readonly BoardMember[] = [
   { name: "Marc", slug: "marc", role: "Co-President", remit: "Runs the club, sets the term plan and represents it on campus.", group: "leads" , linkedin: "https://www.linkedin.com/in/marc-donatien-jr/" },
   { name: "Siya", slug: "siya", role: "Co-President", remit: "Runs the club, sets the term plan and represents it on campus.", group: "leads" , linkedin: "https://www.linkedin.com/in/siya-katoch/" },
   { name: "Mikey", slug: "mikey", role: "Vice President", remit: "Keeps meetings and workshops running week to week.", group: "leads" , linkedin: "https://www.linkedin.com/in/mikeydonkor/" },
-  { name: "Abrar", slug: "abrar", role: "Vice President", remit: "Keeps meetings and workshops running week to week.", group: "leads" },
+  { name: "Abrar", slug: "abrar", role: "Vice President", remit: "Keeps meetings and workshops running week to week.", group: "leads", linkedin: "https://www.linkedin.com/in/abrar-sarwar/" },
   { name: "Alan", slug: "alan", role: "Treasurer", remit: "Budget, funding requests and reimbursements.", group: "officers" , linkedin: "https://www.linkedin.com/in/alan-mm/" },
   { name: "Kamal", slug: "kamal", role: "Secretary", remit: "Records, membership lists and club paperwork.", group: "officers" , linkedin: "https://www.linkedin.com/in/kamalgajavalli4311/" },
   { name: "Mazza", slug: "mazza", role: "Event Director", remit: "Plans the workshops, socials and competition nights.", group: "officers" , linkedin: "https://www.linkedin.com/in/mazza-adam/" },

@@ -15,7 +15,7 @@ export const branding = {
   /** Full display name used in headings and metadata. */
   displayName: "Cybersecurity Club at GSU",
   /** Short name for tight spaces (mobile header, footer, badges). */
-  shortName: "CySec Club",
+  shortName: "Cybersecurity Club",
   /** Two-line wordmark shown next to the mark. */
   wordmark: {
     primary: "Cybersecurity Club",
