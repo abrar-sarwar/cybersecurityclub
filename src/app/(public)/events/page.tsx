@@ -77,7 +77,14 @@ export default async function EventsPage() {
     safeDb(() => listPastPublished(), [], "past events"),
     safeDb(() => latestSyncRun(), null, "sync run"),
   ]);
-  const pinEnabled = env().PIN_SYNC_ENABLED;
+  // Reading configuration must not be able to take the page down: the flyers,
+  // the timeline and the CTF call-out are file-backed and always renderable.
+  let pinEnabled = false;
+  try {
+    pinEnabled = env().PIN_SYNC_ENABLED;
+  } catch (error) {
+    console.error("[env] events page:", (error as Error).message);
+  }
 
   return (
     <>

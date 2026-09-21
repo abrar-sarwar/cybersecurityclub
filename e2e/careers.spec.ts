@@ -690,3 +690,30 @@ test("club photos and member quotes render, and the photos actually load", async
 
   expect(errors).toEqual([]);
 });
+
+test("the board and the timeline are usable on a phone", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+
+  await page.goto("/team");
+  // The pyramid needs width it does not have here, so the card grid stands in.
+  await expect(page.locator(".team-network")).toBeHidden();
+  const cards = page.locator(".board-cards li");
+  await expect(cards).toHaveCount(EXEC_BOARD.length);
+  for (const member of EXEC_BOARD) {
+    await expect(page.locator(".board-cards").getByText(member.name, { exact: true })).toHaveCount(1);
+  }
+  // Profiles still open from the cards.
+  const linked = EXEC_BOARD.filter((m) => m.linkedin);
+  await expect(page.locator(".board-cards a[href^='https://www.linkedin.com']")).toHaveCount(linked.length);
+
+  await page.goto("/events");
+  await expect(page.locator(".rail-stop")).toHaveCount(EVENT_FLYERS.length + TEASERS.length);
+  await expect(page.locator(".rail-thumb img").first()).toHaveJSProperty("complete", true);
+
+  // Nothing may push the page sideways on a phone.
+  for (const path of ["/", "/about", "/team", "/events", "/careers", "/careers/projects"]) {
+    await page.goto(path);
+    const width = await page.evaluate(() => document.documentElement.scrollWidth);
+    expect(width, path).toBeLessThanOrEqual(390);
+  }
+});

@@ -2238,3 +2238,80 @@ a.voice-name:focus-visible {
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
+
+/* The timeline on narrow screens ------------------------------------------
+ * A horizontal rail has nowhere to go on a phone, so below 760px it becomes a
+ * vertical one: the line runs down the left and each stop hangs off it.
+ */
+
+@media (max-width: 759px) {
+  .rail-line {
+    top: 0.4rem;
+    right: auto;
+    bottom: 0.4rem;
+    left: 0.72rem;
+    width: 2px;
+    height: auto;
+    background: linear-gradient(180deg, rgba(62, 132, 255, 0.5), rgba(62, 132, 255, 0.18));
+  }
+
+  .rail-ping {
+    width: 100%;
+    height: 12%;
+    background: linear-gradient(180deg, transparent, #8cc0ff, transparent);
+    animation-name: rail-run-y;
+  }
+
+  @keyframes rail-run-y {
+    from {
+      transform: translateY(-100%);
+    }
+    to {
+      transform: translateY(820%);
+    }
+  }
+
+  .rail-stops {
+    display: block;
+  }
+
+  .rail-stop {
+    display: grid;
+    grid-template-columns: 2.4rem minmax(0, 1fr) 4.5rem;
+    align-items: start;
+    column-gap: 0.75rem;
+    padding-top: 0;
+    padding-bottom: 1.1rem;
+  }
+
+  .rail-dot {
+    position: static;
+    grid-row: 1 / span 4;
+    margin-top: 0.1rem;
+  }
+
+  /* The thumbnail sits beside the text instead of under it. */
+  .rail-thumb {
+    grid-row: 1 / span 4;
+    grid-column: 3;
+    margin-top: 0.1rem;
+    aspect-ratio: 1 / 1;
+  }
+
+  .rail-date,
+  .rail-title,
+  .rail-detail,
+  .rail-flag,
+  .rail-code {
+    grid-column: 2;
+  }
+
+  /* A badge, not a bar: it must not stretch to the grid track. */
+  .rail-flag {
+    justify-self: start;
+  }
+
+  .rail-title {
+    margin-top: 0.1rem;
+  }
+}

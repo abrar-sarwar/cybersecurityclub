@@ -3,6 +3,7 @@ import { branding } from "@config/branding";
 import { ButtonLink } from "@/components/ui/button";
 import { PageHero } from "@/components/site/page-hero";
 import { TeamNetwork } from "@/components/site/team-network";
+import { TeamCards } from "@/components/site/team-cards";
 import { boardPortraits } from "@/server/services/portraits";
 import { BOARD_HEADING, BOARD_TERM } from "@/content/club/board";
 
@@ -50,6 +51,7 @@ export default async function TeamPage() {
           {BOARD_HEADING}
         </h2>
         <TeamNetwork portraits={portraits} />
+        <TeamCards portraits={portraits} />
       </section>
 
       <div className="container-x board-page">
