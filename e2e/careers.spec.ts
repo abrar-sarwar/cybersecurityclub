@@ -634,8 +634,11 @@ test("club photos and member quotes render, and the photos actually load", async
   await expect(quote).toContainText("made my college degree worth it");
   await expect(quote.getByRole("link", { name: /Emran H\./ })).toHaveAttribute("href", "https://www.linkedin.com/in/emran-habib/");
   await expect(quote).toContainText("Ex President of Cybersecurity Club");
-  // Space is held for the quotes still to come.
-  await expect(page.locator(".voice-pending")).toHaveCount(2);
+  // All three slots are filled, so no placeholder is left standing.
+  await expect(page.locator(".voice")).toHaveCount(3);
+  await expect(page.locator(".voice-pending")).toHaveCount(0);
+  await expect(page.getByRole("link", { name: /Divine O\./ })).toHaveAttribute("href", "https://www.linkedin.com/in/divineokonkwo/");
+  await expect(page.getByRole("link", { name: /Tran Le/ })).toHaveAttribute("href", "https://www.linkedin.com/in/tran-thuy-bao-le/");
   await expect(quote.locator(".voice-photo")).toHaveJSProperty("complete", true);
 
   // The values read as a decoded trace, not a grid of cards.
