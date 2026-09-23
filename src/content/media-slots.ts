@@ -84,15 +84,6 @@ export const STATIC_SLOTS: SlotDefinition[] = [
     page: "About",
   },
   {
-    key: "join.photo",
-    label: "Join page photo",
-    description: "Welcoming photo used on the Join page.",
-    kind: "single",
-    ratio: "4:3",
-    minWidth: 1200,
-    page: "Join",
-  },
-  {
     key: "community.gallery",
     label: "Community page gallery",
     description: "Photos from meetings, workshops, competitions and socials.",

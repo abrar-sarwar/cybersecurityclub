@@ -1,7 +1,4 @@
-import { CalendarDays, Flag, MessageCircle } from "lucide-react";
-import { branding } from "@config/branding";
-import { ButtonLink } from "@/components/ui/button";
-import { Badge, SectionHeading } from "@/components/ui/primitives";
+import { Badge } from "@/components/ui/primitives";
 import { ResolvedImg } from "@/components/media/slot-image";
 import type { StoryView } from "@/server/services/people";
 
@@ -41,51 +38,6 @@ export function StoryCard({ story }: { story: StoryView }) {
         </a>
       ) : null}
     </li>
-  );
-}
-
-export const JOIN_STEPS = [
-  {
-    icon: MessageCircle,
-    title: "Join the Discord",
-    body: "Announcements, questions and study groups live on Discord. Introduce yourself in the welcome channel.",
-    cta: { label: "Open Discord invite", href: branding.links.discordInvite, external: true },
-  },
-  {
-    icon: Flag,
-    title: "Register on PIN",
-    body: "Request to join through GSU’s official student organization portal and find club events.",
-    cta: { label: "Club page on PIN", href: branding.links.pinOrganization, external: true },
-  },
-  {
-    icon: CalendarDays,
-    title: "Come to an event",
-    body: "Meetings and workshops are listed on the Events page. RSVP through each event’s PIN page.",
-    cta: { label: "View Events", href: "/events", external: false },
-  },
-];
-
-export function JoinSteps({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }) {
-  return (
-    <section className="section join-section" aria-label="How to join">
-      <div className="container-x">
-        <SectionHeading eyebrow="Your next chapter" title="There’s a place for you here." as={headingLevel} description="Start with a hello on Discord, then come to a meeting. Everything here is public; there is no website account to create." />
-        <ol className="join-steps">
-          {JOIN_STEPS.map((s, i) => (
-            <li key={s.title} className="join-step">
-              <div className="flex items-center gap-3">
-                <span className="step-number">0{i + 1}</span>
-              </div>
-              <h3 className="mt-4 font-display text-lg font-bold text-navy-900">{s.title}</h3>
-              <p className="mt-1.5 flex-1 text-[0.95rem] leading-6 text-muted">{s.body}</p>
-              <ButtonLink href={s.cta.href} variant={i === 0 ? "primary" : "outline"} className="mt-5 self-start" external={s.cta.external}>
-                {s.cta.label}
-              </ButtonLink>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </section>
   );
 }
 

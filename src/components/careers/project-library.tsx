@@ -9,7 +9,7 @@ type Filter = ProjectDifficulty | "all";
 type Sort = "start" | "resume";
 
 const SORTS: { id: Sort; label: string; hint: string }[] = [
-  { id: "start", label: "Best to start", hint: "Ranked for a first portfolio, easiest wins first." },
+  { id: "start", label: "Best to start", hint: "Ordered for a first portfolio, easiest wins first." },
   { id: "resume", label: "Best for résumé", hint: "Hardest first: the projects an interviewer digs into." },
 ];
 
@@ -94,9 +94,6 @@ export function ProjectLibrary({ projects }: { projects: readonly LibraryProject
                   <span className="project-card-ping" />
                 </span>
                 <span className="project-card-top">
-                  <span className="project-card-rank" aria-hidden="true">
-                    {String(project.rank).padStart(2, "0")}
-                  </span>
                   <span className="project-card-level">
                     <span className="project-card-meter" aria-hidden="true">
                       <i data-on={level.weight >= 1} />
@@ -107,7 +104,7 @@ export function ProjectLibrary({ projects }: { projects: readonly LibraryProject
                   </span>
                 </span>
                 <span className="sr-only">
-                  Ranked {project.rank}. {level.label}. {level.resumeValue}.{" "}
+                  {level.label}. {level.resumeValue}.{" "}
                 </span>
                 <span className="project-card-title">{project.title}</span>
                 <span className="project-card-summary">{project.summary}</span>

@@ -1794,13 +1794,6 @@
   gap: 0.5rem;
 }
 
-.project-card-rank {
-  color: var(--color-faint);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-}
-
 .project-card-level {
   display: inline-flex;
   align-items: center;

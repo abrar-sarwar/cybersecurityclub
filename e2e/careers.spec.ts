@@ -438,14 +438,14 @@ test("the footer carries the social accounts and keeps the legal pages reachable
 });
 
 test("account pages and sign-in prompts are gone, and public pages still work", async ({ page, request }) => {
-  for (const path of ["/dashboard", "/onboarding", "/settings", "/admin", "/admin/members", "/sign-in", "/auth/confirm", "/verify-student-email", "/unsubscribe"]) {
+  for (const path of ["/dashboard", "/onboarding", "/settings", "/admin", "/admin/members", "/sign-in", "/auth/confirm", "/verify-student-email", "/unsubscribe", "/join"]) {
     expect((await request.get(path)).status(), path).toBe(404);
   }
-  for (const path of ["/", "/about", "/events", "/join", "/privacy", "/careers", "/careers/quiz", "/careers/learning/product-application-security"]) {
+  for (const path of ["/", "/about", "/events", "/privacy", "/careers", "/careers/quiz", "/careers/learning/product-application-security"]) {
     expect((await request.get(path)).status(), path).toBe(200);
   }
 
-  for (const path of ["/about", "/events", "/join", "/careers"]) {
+  for (const path of ["/about", "/events", "/careers"]) {
     await page.goto(path);
     // Anchored, so project copy such as "Failed-Login Hunt" is not mistaken for an auth link.
     const authLabel = /^(log ?in|sign ?in|sign ?up|register( account)?|create account|my account|dashboard)$/i;
@@ -475,9 +475,10 @@ test("the project library lists every project and each opens a full walkthrough"
   const cards = page.locator(".project-card");
   await expect(cards).toHaveCount(LIBRARY_PROJECTS.length);
 
-  // Ranked: the grid reads 1, 2, 3 ... in order, best first.
-  const ranks = await page.locator(".project-card-rank").allInnerTexts();
-  expect(ranks).toEqual(LIBRARY_PROJECTS.map((_, index) => String(index + 1).padStart(2, "0")));
+  // The cards carry no rank badge, but the default order is still easiest first.
+  await expect(page.locator(".project-card-rank")).toHaveCount(0);
+  const titles = await page.locator(".project-card-title").allInnerTexts();
+  expect(titles).toEqual([...LIBRARY_PROJECTS].sort((a, b) => a.rank - b.rank).map((p) => p.title));
 
   const top = LIBRARY_PROJECTS.find((project) => project.rank === 1)!;
   await cards.first().getByRole("link").click();

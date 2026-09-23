@@ -97,15 +97,6 @@
 .news-list h3 { font-size: 1.5625rem; margin-top: 12px; }
 .spotlight-section { background: var(--color-pale); }
 .spotlight-role { color: var(--color-accent); margin-top: 16px; }
-.join-section { border-top: 1px solid var(--color-line); background: #0a1428; }
-.join-section h1, .join-section h2 { font-size: clamp(2rem, 3.8vw, 3.25rem); line-height: 1.12; font-weight: 500; }
-.join-section > div > div { max-width: 900px; }
-.join-section > div > div > div { max-width: 58ch; font-size: 1rem; }
-.join-steps { margin-top: 45px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 38px; }
-.join-step { display: flex; flex-direction: column; border-top: 1px solid #35435c; padding-top: 21px; }
-.join-step h3 { font-weight: 500; font-size: 1.25rem; }
-.join-step > p { font-size: 0.875rem; line-height: 1.75; }
-.join-step > a { font-size: 0.8125rem; border-radius: 6px; }
 footer nav a { display: inline-flex; align-items: center; min-height: 30px; line-height: 1.5; }
 footer .text-xs { line-height: 1.7; }
 section[id] { scroll-margin-top: 100px; }
@@ -175,10 +166,6 @@ section[id] { scroll-margin-top: 100px; }
   .learning-steps li { gap: 14px; padding-block: 23px; }
   .learning-steps h3 { font-size: 1.1875rem; }
   .learning-steps p { font-size: 1rem; }
-  .join-step > p { font-size: 1rem; }
-  .join-steps { grid-template-columns: 1fr; gap: 26px; margin-top: 30px; }
-  .join-step h3 { margin-top: 7px; }
-  .join-step > a { margin-top: 15px; }
   .agenda-row { gap: 20px; grid-template-columns: 65px 1fr; }
   .agenda-row h3 { font-size: 1.5rem; }
   .agenda-date strong { font-size: 3rem; }
