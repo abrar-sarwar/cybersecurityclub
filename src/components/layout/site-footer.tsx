@@ -37,8 +37,6 @@ const columns = [
       { href: "/about", label: "About" },
       { href: "/team", label: "Team and exec board" },
       { href: "/events", label: "Events" },
-      { href: "/stories", label: "Member stories" },
-      { href: "/join", label: "How to join" },
     ],
   },
   {

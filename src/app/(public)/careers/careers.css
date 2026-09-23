@@ -2511,3 +2511,13 @@
     display: none;
   }
 }
+
+/* An announced path with nothing to open yet: same row, no hover or arrow. */
+.careers-trace-soon {
+  opacity: 0.82;
+}
+
+.careers-trace-tag {
+  margin-left: 0.6rem;
+  vertical-align: middle;
+}

@@ -1,4 +1,4 @@
-import type { CareerId, CareerPath } from "./types";
+import type { CareerId, CareerPath, UpcomingPath } from "./types";
 
 /**
  * The twelve career paths. These describe areas of work to explore; several
@@ -988,6 +988,21 @@ export const CAREER_PATHS: readonly CareerPath[] = [
         description: "A shared vocabulary for describing the behaviors you compare.",
       },
     ],
+  },
+];
+
+/**
+ * Paths that are planned but not written yet. They are listed with the twelve
+ * above so the direction is visible, and stay out of CAREER_PATHS so the
+ * questionnaire, scoring and detail routes only ever deal with paths that
+ * actually have content.
+ */
+export const UPCOMING_PATHS: readonly UpcomingPath[] = [
+  {
+    name: "Solution Architect",
+    summary:
+      "Solution architects decide how the parts of a system fit together — which services are used, how data moves between them and which controls protect it — so a design meets what the business needs without leaving obvious security gaps.",
+    roles: ["Solutions Architect", "Cloud Solutions Architect", "Security Architect"],
   },
 ];
 

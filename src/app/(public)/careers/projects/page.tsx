@@ -10,7 +10,8 @@ import { LibraryHud } from "@/components/careers/library-hud";
 
 export const metadata: Metadata = {
   title: "Project Library",
-  description: `${LIBRARY_PROJECTS.length} cybersecurity projects you can finish on your own, ranked, each with the full stack, the framework to follow, name ideas and a GitHub walkthrough.`,
+  description:
+    "Cybersecurity projects you can work through at your own pace and put on a résumé, each with the full stack, the framework to follow, name ideas and a GitHub walkthrough.",
   alternates: { canonical: "/careers/projects" },
 };
 
@@ -21,8 +22,8 @@ export default function ProjectLibraryPage() {
         variant="compact"
         before={<Breadcrumbs items={[{ label: "Careers", href: "/careers" }, { label: "Project library" }]} />}
         eyebrow="Project library"
-        title={`${LIBRARY_PROJECTS.length} projects, ranked`}
-        description="Filter by difficulty, then open any project for the full stack, the framework to follow, five name ideas and how to publish it. The harder ones carry the most weight on a résumé."
+        title="Projects"
+        description="These are projects that can be beneficial to you: learn at your own pace and put them on your résumé. Filter by difficulty, then open any project for the full stack, the framework to follow, five name ideas and how to publish it."
         corner={<LibraryHud />}
       />
 

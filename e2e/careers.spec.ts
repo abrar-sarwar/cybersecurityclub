@@ -467,11 +467,11 @@ test("account pages and sign-in prompts are gone, and public pages still work", 
   }
 });
 
-test("the project library ranks thirty projects and each opens a full walkthrough", async ({ page }) => {
+test("the project library lists every project and each opens a full walkthrough", async ({ page }) => {
   const errors = watchErrors(page);
   await page.goto("/careers/projects");
 
-  await expect(page.getByRole("heading", { level: 1 })).toContainText(`${LIBRARY_PROJECTS.length} projects`);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Projects");
   const cards = page.locator(".project-card");
   await expect(cards).toHaveCount(LIBRARY_PROJECTS.length);
 

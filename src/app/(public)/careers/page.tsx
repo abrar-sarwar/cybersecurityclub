@@ -4,7 +4,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { CareerList } from "@/components/careers/career-list";
 import { ResumeNotice } from "@/components/careers/resume-notice";
 import { QuizLink } from "@/components/careers/quiz-link";
-import { CAREER_PATHS } from "@/content/careers/paths";
+import { CAREER_PATHS, UPCOMING_PATHS } from "@/content/careers/paths";
 import { PageHero } from "@/components/site/page-hero";
 
 export const metadata: Metadata = {
@@ -94,7 +94,7 @@ export default function CareersLandingPage() {
               Browse any path without taking the questionnaire. These are areas of work to explore; several related job titles usually require experience, and a starter project is a first step rather than proof of job readiness.
             </p>
           </div>
-          <CareerList />
+          <CareerList upcoming={UPCOMING_PATHS} />
         </div>
       </section>
 

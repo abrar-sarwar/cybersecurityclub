@@ -93,3 +93,14 @@ export type CareerPath = {
   related: CareerId[];
   resources: Resource[];
 };
+
+/**
+ * A path that has been announced but not yet written. It appears in the list
+ * so students can see what is coming, and carries no slug, starter project or
+ * quiz scoring until the full pathway exists.
+ */
+export type UpcomingPath = {
+  name: string;
+  summary: string;
+  roles: string[];
+};
