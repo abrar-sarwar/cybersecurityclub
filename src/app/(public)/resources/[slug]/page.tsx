@@ -7,6 +7,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { Breadcrumbs } from "@/components/ui/primitives";
 import { PageHero } from "@/components/site/page-hero";
 import { InterviewPractice } from "@/components/resources/interview-practice";
+import { PracticeTerminal } from "@/components/resources/practice-terminal";
 import { ToolExplorer } from "@/components/resources/tool-explorer";
 import { VideoEmbed } from "@/components/resources/video-embed";
 import { withCode } from "@/components/resources/with-code";
@@ -46,6 +47,7 @@ function Item({ item }: { item: GuideItem }) {
 /** The interactive block a section asks for. The question bank is read from the club's content files. */
 function Widget({ kind }: { kind: NonNullable<GuideSection["widget"]> }) {
   if (kind === "tools") return <ToolExplorer tools={TOOLS} categories={TOOL_CATEGORIES} />;
+  if (kind === "terminal") return <PracticeTerminal />;
   const topics = safeLoad(() => loadInterviewContent().topics, []);
   return topics.length ? <InterviewPractice topics={topics} /> : <p className="careers-note">The practice questions could not be loaded. Try again shortly.</p>;
 }

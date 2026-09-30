@@ -2832,12 +2832,15 @@
   font-size: 0.9em;
 }
 
+/* A long command has to be able to wrap, or it pushes a phone's page sideways. */
 .guide-code {
   padding: 0.1em 0.4em;
   border: 1px solid var(--color-line);
   border-radius: 0.3rem;
   background: var(--color-pale);
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 .guide-weights {
@@ -3252,5 +3255,234 @@
   .resource-link i,
   .resource-node:not(:last-child)::after {
     display: none;
+  }
+}
+
+/* Practice terminal ------------------------------------------------------- */
+
+.practice-terminal {
+  max-width: var(--careers-read);
+  margin-top: 1.5rem;
+}
+
+.terminal-mission {
+  padding: 1.25rem 1.5rem 1.35rem;
+  border: 1px solid var(--color-line-strong);
+  border-bottom: 0;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: rgba(13, 24, 41, 0.6);
+}
+
+.terminal-mission-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+.terminal-ticks {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.terminal-ticks li {
+  display: grid;
+  width: 1.1rem;
+  height: 1.1rem;
+  place-items: center;
+  border: 1px solid var(--color-line-strong);
+  border-radius: 0.25rem;
+  color: var(--color-ground);
+}
+
+.terminal-ticks li[data-state="done"] {
+  border-color: transparent;
+  background: var(--color-success-600);
+}
+
+.terminal-ticks li[data-state="current"] {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(140, 192, 255, 0.2);
+}
+
+.terminal-mission-title {
+  margin-top: 0.7rem;
+  color: var(--color-navy-900);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.terminal-mission-goal {
+  margin-top: 0.35rem;
+  color: var(--color-ink);
+  line-height: 1.65;
+}
+
+.terminal-hint summary {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--color-accent);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.terminal-hint summary::-webkit-details-marker {
+  display: none;
+}
+
+.terminal-hint summary::before {
+  width: 1ch;
+  content: "+";
+  font-family: var(--font-mono);
+}
+
+.terminal-hint[open] summary::before {
+  content: "\2212";
+}
+
+.terminal-hint pre {
+  padding: 0.6rem 0.9rem;
+  overflow-x: auto;
+  border: 1px solid var(--color-line);
+  border-radius: 0.5rem;
+  background: var(--color-pale);
+  color: var(--color-navy-900);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.terminal-window {
+  overflow: hidden;
+  border: 1px solid var(--color-line-strong);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  background: #02060f;
+}
+
+.terminal-bar {
+  display: grid;
+  /* Every column may shrink, so a long folder name is cut short instead of widening the page. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 0.5rem 0.35rem 0.9rem;
+  border-bottom: 1px solid var(--color-line);
+  background: rgba(13, 24, 41, 0.9);
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.terminal-dots i {
+  width: 0.6rem;
+  height: 0.6rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: 999px;
+}
+
+.terminal-title {
+  overflow: hidden;
+  color: var(--color-faint);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.terminal-reset {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  justify-self: end;
+  gap: 0.4rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 0.4rem;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.terminal-reset:hover {
+  background: rgba(120, 165, 255, 0.1);
+  color: var(--color-navy-900);
+}
+
+.terminal-screen {
+  height: 22rem;
+  padding: 0.9rem 1rem 1rem;
+  overflow-y: auto;
+  color: #cfe0ff;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  cursor: text;
+  overscroll-behavior: contain;
+}
+
+.terminal-line {
+  min-height: 1.6em;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.terminal-line[data-kind="note"] {
+  color: var(--color-success-600);
+}
+
+.terminal-prompt {
+  color: var(--color-accent);
+  overflow-wrap: anywhere;
+}
+
+.terminal-entry {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.6ch;
+}
+
+.terminal-entry input {
+  min-width: 8ch;
+  flex: 1;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-navy-900);
+  font: inherit;
+  caret-color: var(--color-accent);
+}
+
+.terminal-entry input:focus,
+.terminal-entry input:focus-visible {
+  outline: none;
+}
+
+/* The prompt is the focus target, so the whole window shows it. */
+.terminal-window:focus-within {
+  border-color: var(--color-accent);
+}
+
+.terminal-tips {
+  margin-top: 0.6rem;
+  color: var(--color-faint);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 640px) {
+  .terminal-screen {
+    height: 18rem;
+    padding-inline: 0.75rem;
+  }
+
+  /* 16px keeps a phone from zooming in when the prompt is tapped. */
+  .terminal-entry input {
+    font-size: 16px;
   }
 }

@@ -29,7 +29,7 @@ export type GuideSection = {
   weights?: { name: string; percent: number }[];
   video?: GuideVideo;
   /** An interactive block the page renders in this section. */
-  widget?: "tools" | "interview";
+  widget?: "tools" | "interview" | "terminal";
   note?: string;
 };
 

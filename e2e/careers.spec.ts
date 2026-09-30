@@ -4,6 +4,8 @@ import { DIFFICULTY, LIBRARY_PROJECTS, byResumeWeight } from "../src/content/car
 import { GITHUB_WALKTHROUGH } from "../src/content/careers/github";
 import { GUIDES, GUIDE_LINKS, linkedGuides } from "../src/content/resources";
 import { TOOLS, getTool } from "../src/content/resources/tools";
+import { MISSIONS } from "../src/lib/terminal/missions";
+import { FAILED_LOGINS, FLAG } from "../src/lib/terminal/shell";
 import { BOARD_HEADING, EXEC_BOARD } from "../src/content/club/board";
 import { CLUB_PHOTOS } from "../src/content/club/photos";
 import { EVENT_FLYERS, NCL, TEASERS } from "../src/content/club/flyers";
@@ -573,6 +575,79 @@ test("interview practice holds the notes back until you ask, one question at a t
   await expect(page.getByRole("button", { name: /^Play video:/ })).toHaveCount(3);
 });
 
+test("the practice terminal runs commands, tracks missions, and resets", async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.goto("/resources/linux-basics");
+  const terminal = page.locator(".practice-terminal");
+  const input = terminal.getByRole("textbox");
+  const log = terminal.getByRole("log");
+  const type = async (command: string) => {
+    await input.fill(command);
+    await input.press("Enter");
+  };
+
+  await expect(terminal.getByText(`Mission 1 of ${MISSIONS.length}`)).toBeVisible();
+  await expect(terminal.getByText(MISSIONS[0].title, { exact: true })).toBeVisible();
+  await expect(terminal.locator('.terminal-ticks [data-state="done"]')).toHaveCount(0);
+
+  // A command prints its result and finishes the mission it answers.
+  await type("pwd");
+  await expect(log).toContainText("/home/student");
+  await expect(terminal.getByText(`Mission 2 of ${MISSIONS.length}`)).toBeVisible();
+  await expect(terminal.locator('.terminal-ticks [data-state="done"]')).toHaveCount(1);
+
+  // The hint stays shut until asked for.
+  const hint = terminal.locator("details");
+  await expect(hint).toHaveJSProperty("open", false);
+  await terminal.getByText("Show a hint").click();
+  await expect(hint.locator("pre")).toHaveText(MISSIONS[1].hint.join("\n"));
+
+  await type("ls -a");
+  await expect(log).toContainText(".hidden_note");
+  await expect(terminal.getByText(`Mission 3 of ${MISSIONS.length}`)).toBeVisible();
+
+  // Tab finishes a name, and the up arrow brings a command back.
+  await input.fill("cat re");
+  await input.press("Tab");
+  await expect(input).toHaveValue("cat readme.txt ");
+  await input.fill("");
+  await input.press("ArrowUp");
+  await expect(input).toHaveValue("ls -a");
+  await input.fill("");
+
+  // Moving changes the prompt, and a wrong command explains itself.
+  await type("cd logs");
+  await expect(terminal.locator(".terminal-entry .terminal-prompt")).toContainText("student@lab:~/logs$");
+  await type("frobnicate");
+  await expect(log).toContainText("command not found");
+  await type("grep Failed auth.log | wc -l");
+  await expect(log.locator(".terminal-line").last()).toHaveText(String(FAILED_LOGINS));
+
+  // Reset returns to a clean system and the first mission.
+  await terminal.getByRole("button", { name: "Reset" }).click();
+  await expect(terminal.getByText(`Mission 1 of ${MISSIONS.length}`)).toBeVisible();
+  await expect(terminal.locator(".terminal-entry .terminal-prompt")).toContainText("student@lab:~$");
+  await expect(log).not.toContainText("frobnicate");
+  await expect(input).toBeFocused();
+  expect(errors).toEqual([]);
+});
+
+test("every mission can be finished from its own hint", async ({ page }) => {
+  await page.goto("/resources/linux-basics");
+  const terminal = page.locator(".practice-terminal");
+  const input = terminal.getByRole("textbox");
+  for (const mission of MISSIONS) {
+    await expect(terminal.getByText(mission.title, { exact: true })).toBeVisible();
+    for (const command of mission.hint) {
+      await input.fill(command);
+      await input.press("Enter");
+    }
+  }
+  await expect(terminal.getByText("All missions done")).toBeVisible();
+  await expect(terminal.locator('.terminal-ticks [data-state="done"]')).toHaveCount(MISSIONS.length);
+  await expect(terminal.getByRole("log")).toContainText(FLAG);
+});
+
 test("a guide video contacts YouTube only after play is pressed", async ({ page }) => {
   const guide = GUIDES[0];
   const video = guide.sections.find((section) => section.video)!.video!;
@@ -891,7 +966,7 @@ test("the board and the timeline are usable on a phone", async ({ page }) => {
   await expect(page.locator(".rail-thumb img").first()).toHaveJSProperty("complete", true);
 
   // Nothing may push the page sideways on a phone.
-  for (const path of ["/", "/about", "/team", "/events", "/careers", "/careers/projects", "/resources"]) {
+  for (const path of ["/", "/about", "/team", "/events", "/careers", "/careers/projects", "/resources", ...GUIDES.map((guide) => `/resources/${guide.slug}`)]) {
     await page.goto(path);
     const width = await page.evaluate(() => document.documentElement.scrollWidth);
     expect(width, path).toBeLessThanOrEqual(390);

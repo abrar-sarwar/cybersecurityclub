@@ -6,11 +6,11 @@ export const linuxBasics: Guide = {
   title: "Linux command line basics",
   eyebrow: "Skills guide",
   summary:
-    "Most security tools and most servers run on Linux. A little practice every day gets you comfortable in a terminal, and a free game makes the practice stick.",
-  card: "Get comfortable in a terminal with a short daily habit and a free game.",
+    "Most security tools and most servers run on Linux. Start in the practice terminal on this page, then keep going with a short daily habit and a free game.",
+  card: "Practice in a terminal right on the page, then keep going with a free game.",
   facts: [
     { label: "Cost", value: "Free" },
-    { label: "Where", value: "WSL, a VM or SSH" },
+    { label: "Start", value: "On this page" },
     { label: "First goal", value: "OverTheWire Bandit" },
     { label: "Habit", value: "15 minutes a day" },
   ],
@@ -20,8 +20,16 @@ export const linuxBasics: Guide = {
   },
   sections: [
     {
+      id: "practice",
+      title: "Try it right here",
+      intro:
+        "This terminal is a pretend Linux system that runs in your browser, so nothing you type can break anything. Work through the ten missions, or type `help` and explore on your own.",
+      widget: "terminal",
+    },
+    {
       id: "terminal",
-      title: "Get a terminal",
+      title: "Get a real terminal",
+      intro: "The practice terminal covers the first commands. For everything after that you want the real thing.",
       bullets: [
         { label: "Windows.", body: "Run `wsl --install` in an administrator PowerShell to get Ubuntu inside Windows." },
         { label: "Mac.", body: "The built-in Terminal app is close enough for the basics." },
