@@ -1,16 +1,19 @@
 import type { Metadata } from "next";
-import { BookOpenCheck, FlaskConical, MessagesSquare } from "lucide-react";
+import Link from "next/link";
+import { FlaskConical, MessagesSquare, Network, ShieldCheck, type LucideIcon } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
+import { Badge } from "@/components/ui/primitives";
 import { CareerList } from "@/components/careers/career-list";
 import { ResumeNotice } from "@/components/careers/resume-notice";
 import { QuizLink } from "@/components/careers/quiz-link";
 import { CAREER_PATHS, UPCOMING_PATHS } from "@/content/careers/paths";
+import { GUIDES } from "@/content/careers/guides";
 import { PageHero } from "@/components/site/page-hero";
 
 export const metadata: Metadata = {
   title: "Careers and Learning",
   description:
-    "Answer 20 questions about the work that interests you, explore twelve cybersecurity career paths, and work through learning paths, projects, home-lab guides and certification tracks. No account needed.",
+    "Answer 20 questions about the work that interests you, explore twelve cybersecurity career paths, and work through projects, a home-lab setup guide and Security+ and Network+ study guides. No account needed.",
   alternates: { canonical: "/careers" },
 };
 
@@ -19,10 +22,15 @@ export const dynamic = "force-dynamic";
 
 const JUMP_LINKS = [
   { href: "#paths", label: "Career paths" },
-  { href: "#home-lab", label: "Home lab" },
-  { href: "#certifications", label: "Certifications" },
+  { href: "#guides", label: "Study guides" },
   { href: "#interview-prep", label: "Interview prep" },
 ];
+
+const GUIDE_ICONS: Record<string, LucideIcon> = {
+  "security-plus": ShieldCheck,
+  "network-plus": Network,
+  "home-lab": FlaskConical,
+};
 
 const STEPS = [
   { title: "Answer twenty questions", body: "Pick the work that sounds interesting. There are no right answers, and nothing asks about experience." },
@@ -98,37 +106,36 @@ export default function CareersLandingPage() {
         </div>
       </section>
 
-      <section className="container-x section" id="home-lab" aria-labelledby="lab-heading">
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="card p-6 sm:p-8">
-            <div className="flex size-11 items-center justify-center rounded-xl bg-cyan-100 text-cyan-700">
-              <FlaskConical className="size-5" aria-hidden />
-            </div>
-            <h2 id="lab-heading" className="mt-4 font-display text-2xl font-bold text-navy-900">
-              Home lab setup guides
-            </h2>
-            <p className="mt-2 text-[0.95rem] leading-6 text-muted">
-              Set up a safe practice environment on your own computer, with verified official download links, resource allocation, network isolation, snapshots, common errors, a first exercise and cleanup.
-            </p>
-            <p className="soon">
-              <span className="soon-tag">Coming soon</span>
-              Step by step guides are being written.
-            </p>
-          </div>
-          <div className="card p-6 sm:p-8" id="certifications">
-            <div className="flex size-11 items-center justify-center rounded-xl bg-brand-50 text-accent">
-              <BookOpenCheck className="size-5" aria-hidden />
-            </div>
-            <h2 className="mt-4 font-display text-2xl font-bold text-navy-900">Network+ and Security+ study tracks</h2>
-            <p className="mt-2 text-[0.95rem] leading-6 text-muted">
-              Plain-language overviews, topic maps, lessons, original practice questions with explanations, practical exercises and a review checklist. Useful foundations during college; they are not required for every role and do not guarantee a job.
-            </p>
-            <p className="soon">
-              <span className="soon-tag">Coming soon</span>
-              Step by step guides are being written.
-            </p>
-          </div>
+      <section className="container-x section" id="guides" aria-labelledby="guides-heading">
+        <div className="max-w-2xl">
+          <h2 id="guides-heading" className="signal-section-title">
+            Study and setup guides
+          </h2>
+          <p className="careers-prose">
+            Short guides with a video to follow and links worth your time. Certifications are a useful foundation during college; they are not required for every role and do not guarantee a job.
+          </p>
         </div>
+        <ul className="guide-cards">
+          {GUIDES.map((guide) => {
+            const Icon = GUIDE_ICONS[guide.slug] ?? FlaskConical;
+            return (
+              <li key={guide.slug} className="card guide-card p-6 sm:p-8">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex size-11 items-center justify-center rounded-xl bg-brand-50 text-accent">
+                    <Icon className="size-5" aria-hidden />
+                  </div>
+                  <Badge tone="muted">{guide.facts[0].value}</Badge>
+                </div>
+                <h3 className="mt-4 font-display text-xl font-bold text-navy-900">
+                  <Link href={`/careers/guides/${guide.slug}`} className="guide-card-link">
+                    {guide.title}
+                  </Link>
+                </h3>
+                <p className="mt-2 text-[0.95rem] leading-6 text-muted">{guide.card}</p>
+              </li>
+            );
+          })}
+        </ul>
       </section>
 
       <section className="surface-pale section" id="interview-prep" aria-labelledby="interview-heading">

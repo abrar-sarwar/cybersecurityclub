@@ -6,6 +6,7 @@ import { CAREER_FLOWS } from "@/content/careers/flows";
 import { QUESTIONS } from "@/content/careers/questions";
 import { DIFFICULTY, DIFFICULTY_ORDER, LIBRARY_PROJECTS, PROJECTS_BY_PATH, byResumeWeight, getLibraryProject } from "@/content/careers/projects";
 import { FRAMEWORK_HOWTO, GITHUB_WALKTHROUGH, PROJECT_BENEFITS } from "@/content/careers/github";
+import { GUIDES, getGuide } from "@/content/careers/guides";
 import { CAREER_IDS, type CareerId, type Question } from "@/content/careers/types";
 import { MAX_CHOICES, isAnswered, sanitizeAnswers, toggleChoice, toggleUnsure, type Answer, type Answers } from "./answers";
 import { EARLY_THRESHOLD, TOP_COUNT, compareScores, optionCounts, rankMatches, scoreAnswers } from "./scoring";
@@ -360,4 +361,55 @@ test("the GitHub and framework guides teach the whole loop", () => {
   assert.ok(FRAMEWORK_HOWTO.steps.length >= 4, "framework steps");
   assert.ok(PROJECT_BENEFITS.length >= 3, "benefits");
   assert.doesNotMatch(JSON.stringify([GITHUB_WALKTHROUGH, FRAMEWORK_HOWTO, PROJECT_BENEFITS]), /—/, "no em dashes");
+});
+
+// Study guides -----------------------------------------------------------------
+
+test("the three study guides exist and resolve by slug", () => {
+  assert.deepEqual(GUIDES.map((guide) => guide.slug), ["security-plus", "network-plus", "home-lab"]);
+  for (const guide of GUIDES) assert.equal(getGuide(guide.slug), guide);
+  assert.equal(getGuide("not-a-guide"), undefined);
+});
+
+test("every guide is short, sectioned, and free of em dashes", () => {
+  for (const guide of GUIDES) {
+    const ids = guide.sections.map((section) => section.id);
+    assert.equal(new Set(ids).size, ids.length, `${guide.slug} section ids are unique`);
+    assert.ok(!ids.includes("links"), `${guide.slug} leaves the links anchor to the page`);
+    assert.equal(guide.facts.length, 4, `${guide.slug} facts fill one row`);
+    for (const section of guide.sections) {
+      const hasBody = Boolean(section.intro || section.steps?.length || section.bullets?.length || section.weights?.length || section.video);
+      assert.ok(hasBody, `${guide.slug}#${section.id} has something to read`);
+    }
+    assert.doesNotMatch(JSON.stringify(guide), /—/, `${guide.slug} has no em dashes`);
+  }
+});
+
+test("every guide embeds exactly one video and links out over https", () => {
+  for (const guide of GUIDES) {
+    const videos = guide.sections.flatMap((section) => (section.video ? [section.video] : []));
+    assert.equal(videos.length, 1, `${guide.slug} has one video`);
+    assert.match(videos[0].id, /^[\w-]{11}$/, `${guide.slug} video id`);
+    assert.match(videos[0].length, /^\d{1,2}:\d{2}$/, `${guide.slug} video length`);
+
+    const links = guide.links.flatMap((group) => group.items);
+    assert.ok(links.length >= 5, `${guide.slug} has links to pull from`);
+    for (const link of links) {
+      assert.match(link.href, /^https:\/\//, `${guide.slug} ${link.label}`);
+      assert.ok(link.note.trim().length > 10, `${guide.slug} ${link.label} says why it is listed`);
+    }
+    const hrefs = links.map((link) => link.href);
+    assert.equal(new Set(hrefs).size, hrefs.length, `${guide.slug} lists each link once`);
+    assert.match(guide.checked, /^\d{4}-\d{2}-\d{2}$/);
+  }
+});
+
+test("the certification guides name their exam and weight its domains to 100", () => {
+  for (const [slug, code] of [["security-plus", "SY0-701"], ["network-plus", "N10-009"]] as const) {
+    const guide = getGuide(slug)!;
+    assert.ok(guide.facts.some((fact) => fact.value.includes(code)), `${slug} states ${code}`);
+    const weights = guide.sections.flatMap((section) => section.weights ?? []);
+    assert.equal(weights.length, 5, `${slug} lists five domains`);
+    assert.equal(weights.reduce((sum, domain) => sum + domain.percent, 0), 100, `${slug} weights`);
+  }
 });

@@ -30,6 +30,7 @@ export default function PrivacyPage() {
         <p>The site does not set sign-in cookies or run advertising trackers. It uses your browser’s storage only for questionnaire progress and small interface preferences.</p>
         <h2>Other services</h2>
         <p>Discord, PIN, Instagram and LinkedIn are separate services with their own privacy policies. Event RSVPs happen on PIN, not on this website.</p>
+        <p>The study guides include YouTube videos. YouTube is contacted only when you press play on one, and its own privacy policy applies from then on.</p>
         <h2 id="your-data">Questions about your data</h2>
         <p>
           Earlier versions of this website offered member accounts. That feature has been removed. To ask about information from it, or to request its deletion, email{" "}

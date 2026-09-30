@@ -5,6 +5,7 @@ import { listUpcomingPublished, listPastPublished } from "@/server/services/even
 import { loadPaths } from "@/content/loaders";
 import { CAREER_PATHS } from "@/content/careers/paths";
 import { LIBRARY_PROJECTS } from "@/content/careers/projects";
+import { GUIDES } from "@/content/careers/guides";
 
 export const dynamic = "force-dynamic";
 
@@ -34,5 +35,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
   const careers = CAREER_PATHS.map((p) => ({ url: `${base}/careers/${p.slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 }));
   const projects = LIBRARY_PROJECTS.map((p) => ({ url: `${base}/careers/projects/${p.slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 }));
-  return [...statics, ...careers, ...projects, ...paths, ...events];
+  const guides = GUIDES.map((g) => ({ url: `${base}/careers/guides/${g.slug}`, lastModified: new Date(g.checked), changeFrequency: "monthly" as const, priority: 0.6 }));
+  return [...statics, ...careers, ...projects, ...guides, ...paths, ...events];
 }
