@@ -3,7 +3,7 @@ import { CAREER_BY_ID, CAREER_PATHS } from "../src/content/careers/paths";
 import { DIFFICULTY, LIBRARY_PROJECTS, byResumeWeight } from "../src/content/careers/projects";
 import { GITHUB_WALKTHROUGH } from "../src/content/careers/github";
 import { GUIDES, GUIDE_LINKS, linkedGuides } from "../src/content/resources";
-import { TOOLS, getTool } from "../src/content/resources/tools";
+import { TOOLS, TOOL_FLOWS, TOOL_ZONES, getTool } from "../src/content/resources/tools";
 import { MISSIONS } from "../src/lib/terminal/missions";
 import { FAILED_LOGINS, FLAG } from "../src/lib/terminal/shell";
 import { BOARD_HEADING, EXEC_BOARD } from "../src/content/club/board";
@@ -515,31 +515,92 @@ test("each study guide page carries its facts, sections and outbound links", asy
   for (const path of ["/resources", ...GUIDES.map((guide) => `/resources/${guide.slug}`)]) expect(sitemap).toContain(`${path}<`);
 });
 
-test("the tool explorer shows a tool, its first exercise, and where to go next", async ({ page }) => {
+test("the tool map lays every tool out by where it is used", async ({ page }) => {
+  const errors = watchErrors(page);
   await page.goto("/resources/security-tools");
-  const explorer = page.locator(".tool-explorer");
-  const chips = explorer.locator(".tool-chips");
-  const panel = explorer.locator(".tool-panel");
-  await expect(chips.getByRole("button")).toHaveCount(TOOLS.length);
+  const map = page.locator(".tool-map");
+  await expect(map.locator(".tool-zone")).toHaveCount(Object.keys(TOOL_ZONES).length);
+  await expect(map.locator(".tool-wire")).toHaveCount(TOOL_FLOWS.length);
+  await expect(map.getByRole("button")).toHaveCount(TOOLS.length);
+  for (const [id, zone] of Object.entries(TOOL_ZONES)) {
+    const panel = map.locator(`.tool-zone[data-zone="${id}"]`);
+    await expect(panel.getByRole("heading", { name: zone.name, exact: true })).toBeVisible();
+    await expect(panel.getByRole("button")).toHaveCount(TOOLS.filter((tool) => tool.zone === id).length);
+  }
+  // Nothing is open until a tool is chosen.
+  await expect(page.getByRole("dialog")).toHaveCount(0);
 
-  // The first tool is open to begin with.
-  await expect(panel.getByRole("heading", { name: TOOLS[0].name, exact: true })).toBeVisible();
-  await expect(chips.getByRole("button", { name: TOOLS[0].name, exact: true })).toHaveAttribute("aria-pressed", "true");
+  // Pointing at a tool marks the ones it leads to.
+  const wireshark = getTool("wireshark")!;
+  await map.getByRole("button", { name: wireshark.name, exact: true }).hover();
+  await expect(map.locator('[data-next="true"]')).toHaveCount(wireshark.next.length);
+  expect(errors).toEqual([]);
+});
 
-  const nmap = getTool("nmap")!;
-  await chips.getByRole("button", { name: nmap.name, exact: true }).click();
-  await expect(panel.getByRole("heading", { name: nmap.name, exact: true })).toBeVisible();
-  await expect(panel).toContainText(nmap.what);
-  await expect(panel.getByRole("link", { name: /^Official site/ })).toHaveAttribute("href", nmap.href);
-  await expect(panel.getByRole("link", { name: /^Watch a walkthrough/ })).toHaveAttribute("href", nmap.watch!);
+test("choosing a tool opens a window that explains it in depth", async ({ page }) => {
+  await page.goto("/resources/security-tools");
+  const map = page.locator(".tool-map");
+  const wireshark = getTool("wireshark")!;
+  const depth = wireshark.depth!;
+  const opener = map.getByRole("button", { name: wireshark.name, exact: true });
+  await opener.click();
 
-  // The tools it leads to are marked among the chips, and open from the panel.
-  await expect(chips.locator('[data-next="true"]')).toHaveCount(nmap.next.length);
-  const next = getTool(nmap.next[0])!;
-  await panel.getByRole("button", { name: next.name, exact: true }).click();
-  await expect(panel.getByRole("heading", { name: next.name, exact: true })).toBeVisible();
-  await expect(chips.getByRole("button", { name: next.name, exact: true })).toHaveAttribute("aria-pressed", "true");
-  await expect(chips.locator('[aria-pressed="true"]')).toHaveCount(1);
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("heading", { level: 3, name: wireshark.name, exact: true })).toBeVisible();
+  await expect(dialog).toContainText(wireshark.what);
+  await expect(dialog.getByRole("heading", { name: "Why it matters" })).toBeVisible();
+  await expect(dialog).toContainText(depth.why);
+  await expect(dialog.getByRole("heading", { name: "How it works" })).toBeVisible();
+  await expect(dialog.locator(".careers-numbered > li")).toHaveCount(depth.how.length);
+  await expect(dialog.getByRole("heading", { name: "Try this first" })).toBeVisible();
+  await expect(dialog.getByRole("link", { name: /^Official site/ })).toHaveAttribute("href", wireshark.href);
+
+  // Its own video plays inside the window.
+  await expect(dialog.locator("iframe")).toHaveCount(0);
+  await dialog.getByRole("button", { name: `Play video: ${depth.video.title}` }).click();
+  await expect(dialog.locator("iframe")).toHaveAttribute("src", new RegExp(`/embed/${depth.video.id}\\?`));
+
+  // "Learn next" moves to another tool without leaving the window, and drops the old video.
+  const next = getTool(wireshark.next[0])!;
+  await dialog.getByRole("button", { name: next.name, exact: true }).click();
+  await expect(dialog.getByRole("heading", { level: 3, name: next.name, exact: true })).toBeVisible();
+  await expect(dialog.locator("iframe")).toHaveCount(0);
+
+  // Escape closes it and hands focus back to the tool that opened it.
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(opener).toBeFocused();
+
+  // The close button does the same.
+  await opener.click();
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole("button", { name: "Close" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+
+  // A playing video does not take the keyboard with it: Escape still closes the window.
+  await opener.click();
+  await dialog.getByRole("button", { name: `Play video: ${depth.video.title}` }).click();
+  await expect(dialog.locator("iframe")).toHaveCount(1);
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page.locator("iframe")).toHaveCount(0);
+});
+
+test("every tool opens, and each longer look carries its own video", async ({ page }) => {
+  await page.goto("/resources/security-tools");
+  const map = page.locator(".tool-map");
+  const dialog = page.getByRole("dialog");
+  for (const tool of TOOLS) {
+    await map.getByRole("button", { name: tool.name, exact: true }).click();
+    await expect(dialog.getByRole("heading", { level: 3, name: tool.name, exact: true })).toBeVisible();
+    await expect(dialog.getByRole("link", { name: /^Official site/ })).toHaveAttribute("href", tool.href);
+    await expect(dialog.locator(".tool-next").getByRole("button")).toHaveCount(tool.next.length);
+    await expect(dialog.getByRole("button", { name: /^Play video:/ })).toHaveCount(tool.depth ? 1 : 0);
+    await expect(dialog.getByRole("heading", { name: "How it works" })).toHaveCount(tool.depth ? 1 : 0);
+    await page.keyboard.press("Escape");
+    await expect(dialog).toHaveCount(0);
+  }
 });
 
 test("interview practice holds the notes back until you ask, one question at a time", async ({ page }) => {

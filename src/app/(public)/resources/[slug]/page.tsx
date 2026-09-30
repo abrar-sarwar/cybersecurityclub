@@ -8,12 +8,12 @@ import { Breadcrumbs } from "@/components/ui/primitives";
 import { PageHero } from "@/components/site/page-hero";
 import { InterviewPractice } from "@/components/resources/interview-practice";
 import { PracticeTerminal } from "@/components/resources/practice-terminal";
-import { ToolExplorer } from "@/components/resources/tool-explorer";
+import { ToolMap } from "@/components/resources/tool-map";
 import { VideoEmbed } from "@/components/resources/video-embed";
 import { withCode } from "@/components/resources/with-code";
 import { loadInterviewContent } from "@/content/loaders";
 import { GUIDES, getGuide, linkedGuides, type GuideItem, type GuideSection } from "@/content/resources";
-import { TOOLS, TOOL_CATEGORIES } from "@/content/resources/tools";
+import { TOOLS, TOOL_FLOWS, TOOL_ZONES } from "@/content/resources/tools";
 import { safeLoad } from "@/content/safe";
 
 export const dynamicParams = false;
@@ -46,7 +46,7 @@ function Item({ item }: { item: GuideItem }) {
 
 /** The interactive block a section asks for. The question bank is read from the club's content files. */
 function Widget({ kind }: { kind: NonNullable<GuideSection["widget"]> }) {
-  if (kind === "tools") return <ToolExplorer tools={TOOLS} categories={TOOL_CATEGORIES} />;
+  if (kind === "tools") return <ToolMap tools={TOOLS} zones={TOOL_ZONES} flows={TOOL_FLOWS} />;
   if (kind === "terminal") return <PracticeTerminal />;
   const topics = safeLoad(() => loadInterviewContent().topics, []);
   return topics.length ? <InterviewPractice topics={topics} /> : <p className="careers-note">The practice questions could not be loaded. Try again shortly.</p>;
@@ -58,6 +58,9 @@ export default async function GuidePage(props: PageProps<"/resources/[slug]">) {
   if (!guide) notFound();
   const videoSection = guide.sections.find((section) => section.video);
   const linked = linkedGuides(guide.slug);
+  // The tool map needs the full width of the page, so it sits above the reading column.
+  const wide = guide.sections.filter((section) => section.widget === "tools");
+  const reading = guide.sections.filter((section) => !wide.includes(section));
 
   return (
     <article>
@@ -69,10 +72,21 @@ export default async function GuidePage(props: PageProps<"/resources/[slug]">) {
         description={guide.summary}
       >
         {videoSection ? <ButtonLink href={`#${videoSection.id}`}>Watch the video</ButtonLink> : null}
+        {wide[0] ? <ButtonLink href={`#${wide[0].id}`}>Open the tool map</ButtonLink> : null}
         <ButtonLink href="#links" variant="outline">
           Jump to the links
         </ButtonLink>
       </PageHero>
+
+      {wide.map((section) => (
+        <section key={section.id} id={section.id} className="container-x guide-wide" aria-labelledby={`${section.id}-heading`}>
+          <h2 id={`${section.id}-heading`} className="signal-section-title">
+            {section.title}
+          </h2>
+          {section.intro ? <p className="careers-prose">{withCode(section.intro)}</p> : null}
+          {section.widget ? <Widget kind={section.widget} /> : null}
+        </section>
+      ))}
 
       <div className="container-x careers-detail careers-detail-grid">
         <nav className="careers-toc" aria-label="On this page">
@@ -104,7 +118,7 @@ export default async function GuidePage(props: PageProps<"/resources/[slug]">) {
             {withCode(guide.notice.body)}
           </p>
 
-          {guide.sections.map((section, index) => (
+          {reading.map((section, index) => (
             <section
               key={section.id}
               id={section.id}

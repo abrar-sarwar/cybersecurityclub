@@ -2894,6 +2894,11 @@
   aspect-ratio: 16 / 9;
 }
 
+/* Focus lands here when play is pressed; the ring would only outline a playing video. */
+.guide-video-frame:focus {
+  outline: none;
+}
+
 .guide-video-frame iframe {
   position: absolute;
   inset: 0;
@@ -3005,114 +3010,373 @@
   user-select: all;
 }
 
-/* Tool explorer ----------------------------------------------------------- */
+/* Tool map ---------------------------------------------------------------- */
 
-.tool-explorer {
+.guide-wide {
+  padding-top: clamp(2.5rem, 6vw, 4rem);
+  scroll-margin-top: 5rem;
+}
+
+.tool-map-frame {
+  --gap: clamp(3rem, 5vw, 4.5rem);
+  --wire: rgba(62, 132, 255, 0.5);
+  margin-top: 2rem;
+}
+
+.tool-map {
   display: grid;
-  gap: 1.5rem;
-  max-width: var(--careers-read);
-  margin-top: 1.5rem;
+  gap: var(--gap);
+  max-width: 36rem;
 }
 
-@media (min-width: 720px) {
-  .tool-explorer {
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    align-items: start;
-  }
-
-  .tool-panel {
-    position: sticky;
-    top: 6.5rem;
-  }
+.tool-zone {
+  position: relative;
+  padding: 1.4rem 1.5rem 1.5rem;
+  border: 1px dashed rgba(120, 165, 255, 0.34);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, rgba(12, 28, 64, 0.5), rgba(3, 10, 28, 0.85));
 }
 
-.tool-group + .tool-group {
+.tool-zone-head {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.tool-zone-icon {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: none;
+  place-items: center;
+  border: 1px solid rgba(120, 165, 255, 0.22);
+  border-radius: 0.6rem;
+  background: var(--color-brand-50);
+  color: var(--color-accent);
+}
+
+.tool-zone-name {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+/* The piece of equipment this part of the network stands for. */
+.tool-zone-node {
+  margin-top: 0.15rem;
+  color: var(--color-faint);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.tool-zone-blurb {
+  margin-top: 0.9rem;
+  color: var(--color-muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.tool-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin-top: 1rem;
 }
 
-.tool-group-label {
-  color: var(--color-faint);
-  font-size: 0.8rem;
-}
-
-.tool-group ul,
-.tool-next {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-top: 0.45rem;
-}
-
 .tool-chip {
-  min-height: 2.5rem;
-  padding: 0.35rem 0.85rem;
-  border: 1px solid var(--color-line);
-  border-radius: 999px;
-  background: rgba(8, 16, 30, 0.6);
-  color: var(--color-ink);
-  font-size: 0.88rem;
-  font-weight: 500;
+  min-height: 2.75rem;
+  padding: 0.4rem 1rem;
+  border: 1px solid rgba(120, 165, 255, 0.3);
+  border-radius: 0.5rem;
+  background: rgba(8, 16, 30, 0.85);
+  color: var(--color-navy-900);
+  font-size: 0.92rem;
+  font-weight: 600;
   transition:
     border-color 150ms ease-out,
     background-color 150ms ease-out,
-    color 150ms ease-out;
+    box-shadow 150ms ease-out;
 }
 
-.tool-chip:hover {
+.tool-chip:hover,
+.tool-chip:focus-visible {
   border-color: var(--color-accent);
-  color: var(--color-navy-900);
+  background: rgba(23, 107, 255, 0.22);
+  box-shadow: 0 0 18px -4px rgba(47, 122, 255, 0.7);
 }
 
-/* Where the open tool leads: marked before it is chosen. */
+/* Where the tool in hand leads: marked before it is chosen. */
 .tool-chip[data-next="true"] {
-  border-color: rgba(140, 192, 255, 0.55);
+  border-color: var(--color-accent);
   border-style: dashed;
-  color: var(--color-navy-900);
 }
 
-.tool-chip[aria-pressed="true"] {
-  border-color: transparent;
-  border-style: solid;
-  background: var(--color-brand-600);
-  color: #fff;
+/* Wires between the parts, each labelled with what it carries. */
+.tool-wire {
+  position: absolute;
+  display: none;
+  background: var(--wire);
+  pointer-events: none;
 }
 
-.tool-panel {
-  padding: 1.4rem 1.5rem 1.5rem;
+.tool-wire i {
+  position: absolute;
+  top: -2.5px;
+  left: -2.5px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #d9ebff;
+  box-shadow: 0 0 10px 2px rgba(140, 192, 255, 0.85);
+  opacity: 0;
+  animation: resource-signal 3.6s linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.tool-wire-label {
+  position: absolute;
+  color: rgba(140, 184, 255, 0.75);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.tool-wire[data-direction="right"],
+.tool-wire[data-direction="left"] {
+  top: 50%;
+  width: var(--gap);
+  height: 1px;
+  --dy: 0px;
+}
+
+.tool-wire[data-direction="right"] {
+  left: 100%;
+  --dx: var(--gap);
+}
+
+.tool-wire[data-direction="left"] {
+  right: 100%;
+  --dx: calc(var(--gap) * -1);
+}
+
+.tool-wire[data-direction="left"] i {
+  right: -2.5px;
+  left: auto;
+}
+
+.tool-wire[data-direction="right"] .tool-wire-label,
+.tool-wire[data-direction="left"] .tool-wire-label {
+  bottom: 0.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tool-wire[data-direction="down"] {
+  top: 100%;
+  left: 50%;
+  width: 1px;
+  height: var(--gap);
+  --dx: 0px;
+  --dy: var(--gap);
+}
+
+.tool-wire[data-direction="down"] .tool-wire-label {
+  top: 50%;
+  left: 0.6rem;
+  transform: translateY(-50%);
+}
+
+/* One column: the parts become a chain in the order traffic moves through them. */
+.tool-zone:not(:last-child)::before {
+  position: absolute;
+  top: 100%;
+  left: 2.75rem;
+  width: 1px;
+  height: var(--gap);
+  background: var(--wire);
+  content: "";
+}
+
+.tool-zone:not(:last-child)::after {
+  position: absolute;
+  top: calc(100% - 2.5px);
+  left: calc(2.75rem - 2.5px);
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #d9ebff;
+  box-shadow: 0 0 10px 2px rgba(140, 192, 255, 0.85);
+  content: "";
+  opacity: 0;
+  animation: resource-signal 3.6s linear infinite;
+  --dx: 0px;
+  --dy: var(--gap);
+}
+
+.tool-zone:nth-child(even)::after {
+  animation-delay: 1.4s;
+}
+
+@media (min-width: 1024px) {
+  .tool-map {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: none;
+  }
+
+  /* Placed by cell, so the bottom row can run right to left and the flow reads as a loop. */
+  .tool-zone {
+    grid-row: var(--row);
+    grid-column: var(--column);
+  }
+
+  .tool-wire {
+    display: block;
+  }
+
+  .tool-zone:not(:last-child)::before,
+  .tool-zone:not(:last-child)::after {
+    content: none;
+  }
+}
+
+/* The window a tool opens in. */
+html:has(.tool-window[open]) {
+  overflow: hidden;
+}
+
+.tool-window {
+  width: min(46rem, calc(100vw - 1.5rem));
+  max-width: none;
+  max-height: min(90dvh, 58rem);
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
   border: 1px solid var(--color-line-strong);
   border-radius: var(--radius-lg);
-  background: rgba(13, 24, 41, 0.6);
-  scroll-margin-block: 6rem 1rem;
+  background: #040b1c;
+  color: var(--color-ink);
+  box-shadow: 0 0 0 1px rgba(140, 192, 255, 0.12), 0 40px 90px -30px rgba(0, 0, 0, 0.9), 0 0 60px -20px rgba(47, 122, 255, 0.5);
+}
+
+.tool-window::backdrop {
+  background: rgba(1, 3, 10, 0.78);
+  backdrop-filter: blur(3px);
+}
+
+.tool-window[open] {
+  animation: tool-window-open 160ms ease-out;
+}
+
+@keyframes tool-window-open {
+  from {
+    opacity: 0;
+    transform: translateY(0.6rem) scale(0.985);
+  }
+}
+
+.tool-window-frame {
+  display: flex;
+  max-height: min(90dvh, 58rem);
+  flex-direction: column;
+}
+
+.tool-window-bar {
+  display: grid;
+  flex: none;
+  grid-template-columns: minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.3rem 0.4rem 0.3rem 0.9rem;
+  border-bottom: 1px solid var(--color-line);
+  background: rgba(13, 24, 41, 0.95);
+}
+
+.tool-window-path {
+  overflow: hidden;
+  color: var(--color-faint);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tool-window-close {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  justify-self: end;
+  border-radius: 0.5rem;
+  color: var(--color-muted);
+}
+
+.tool-window-close:hover {
+  background: rgba(120, 165, 255, 0.12);
+  color: var(--color-navy-900);
+}
+
+.tool-window-body {
+  padding: 1.5rem clamp(1.1rem, 4vw, 2rem) 2rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .tool-name {
   margin-top: 0.35rem;
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: clamp(1.6rem, 4vw, 2rem);
   font-weight: 700;
-  letter-spacing: -0.03em;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
 }
 
-.tool-what,
-.tool-first {
-  margin-top: 0.5rem;
-  color: var(--color-ink);
-  line-height: 1.65;
+.tool-what {
+  margin-top: 0.6rem;
+  color: var(--color-navy-700);
+  font-size: 1.0625rem;
+  line-height: 1.6;
 }
 
 .tool-heading {
-  margin-top: 1.25rem;
+  margin-top: 1.75rem;
   color: var(--color-navy-900);
-  font-size: 0.95rem;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
   font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.tool-text {
+  margin-top: 0.5rem;
+  color: var(--color-ink);
+  font-size: 1.0125rem;
+  line-height: 1.7;
+}
+
+.tool-window .careers-numbered {
+  margin-top: 0.5rem;
+}
+
+.tool-window .careers-numbered li {
+  margin-top: 0.7rem;
+  font-size: 1.0125rem;
+}
+
+.tool-window .guide-video {
+  margin-top: 0.85rem;
 }
 
 .tool-links {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem 1.5rem;
-  margin-top: 1rem;
-  font-size: 0.95rem;
+  margin-top: 1.1rem;
+}
+
+.tool-next {
+  margin-top: 0.7rem;
 }
 
 /* Interview practice ------------------------------------------------------ */
@@ -3253,8 +3517,14 @@
 
 @media (prefers-reduced-motion: reduce) {
   .resource-link i,
-  .resource-node:not(:last-child)::after {
+  .resource-node:not(:last-child)::after,
+  .tool-wire i,
+  .tool-zone:not(:last-child)::after {
     display: none;
+  }
+
+  .tool-window[open] {
+    animation: none;
   }
 }
 

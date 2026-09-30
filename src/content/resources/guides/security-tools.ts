@@ -6,10 +6,10 @@ export const securityTools: Guide = {
   title: "Security tools to learn first",
   eyebrow: "Tool guide",
   summary:
-    "The tools that come up again and again in classes, competitions and entry-level roles: what each one is for, a first exercise, and which to pick up next.",
-  card: "What each tool is for, a first exercise for it, and which one to pick up next.",
+    "The tools that come up again and again in classes, competitions and entry-level roles, laid out across the network they are used on. Open one to see why it matters, how it works and what to pick up next.",
+  card: "A map of the tools across a network. Open one to see how it works and what to learn next.",
   facts: [
-    { label: "Tools", value: "17 to explore" },
+    { label: "Tools", value: "22 to explore" },
     { label: "Cost", value: "Free to start" },
     { label: "Where to run them", value: "Your home lab" },
     { label: "Start with", value: "Wireshark" },
@@ -20,32 +20,22 @@ export const securityTools: Guide = {
   },
   sections: [
     {
+      id: "explore",
+      title: "The tool map",
+      intro:
+        "A small company's network, from the tester outside to the analyst's desk. Each tool sits in the part where it is used, and the wires show what passes between the parts. Choose a tool to open it.",
+      widget: "tools",
+    },
+    {
       id: "how-to-learn",
       title: "How to learn a tool",
       steps: [
         { label: "Pick one, not five.", body: "One tool you can explain is worth more than a list you have only installed." },
-        { label: "Do the first exercise in your lab.", body: "Each tool below has one. It should take less than an hour." },
+        { label: "Watch it used.", body: "Most tools on the map open a window with a walkthrough video. Watch it before you install anything." },
+        { label: "Do the first exercise in your lab.", body: "Each tool has one. It should take less than an hour." },
         { label: "Write down what you ran and what came back.", body: "Those notes are the start of a project write-up." },
-        { label: "Follow the next link.", body: "Every tool points to the ones that build on it, so you never run out of a next step." },
+        { label: "Follow \"learn next\".", body: "Every tool points to the ones that build on it, so you never run out of a next step." },
       ],
-    },
-    {
-      id: "explore",
-      title: "Explore the tools",
-      intro: "Choose a tool to see what it does and what to try first. Then follow \"learn next\" to move through the rest.",
-      widget: "tools",
-    },
-    {
-      id: "watch",
-      title: "Start with Wireshark",
-      intro: "If you have not used any of these, start here. Seeing real packets makes every other tool easier to understand.",
-      video: {
-        id: "qTaOZrDnMzQ",
-        title: "Wireshark Tutorial for Beginners | Network Scanning Made Easy",
-        channel: "Anson Alexander",
-        length: "20:11",
-        caption: "Installing Wireshark, capturing your first traffic and filtering it down to what matters.",
-      },
     },
     {
       id: "proof",
@@ -69,27 +59,32 @@ export const securityTools: Guide = {
       ],
     },
     {
-      group: "Beginner walkthroughs",
+      group: "Practice data",
       items: [
         {
-          label: "NetworkChuck: Nmap Tutorial to find Network Vulnerabilities",
-          href: "https://www.youtube.com/watch?v=4t4kBkMsDbQ",
-          note: "Seventeen minutes on scanning, with the common flags explained.",
+          label: "Boss of the SOC v3 dataset",
+          href: "https://github.com/splunk/botsv3",
+          note: "Realistic logs published by Splunk, for the SIEM tools.",
         },
         {
-          label: "HackerSploit: Setting Up Burp Suite",
-          href: "https://www.youtube.com/watch?v=YCCrVtvAu2I",
-          note: "Ten minutes to get Burp proxying your browser.",
+          label: "Malware Traffic Analysis",
+          href: "https://www.malware-traffic-analysis.net/",
+          note: "Packet captures with exercises, for Wireshark, Suricata and Zeek.",
+        },
+      ],
+    },
+    {
+      group: "Practice targets",
+      items: [
+        {
+          label: "OWASP Juice Shop",
+          href: "https://owasp.org/www-project-juice-shop/",
+          note: "An intentionally vulnerable web app to run on your own machine.",
         },
         {
-          label: "Jon Good: Splunk Tutorial for Beginners",
-          href: "https://www.youtube.com/watch?v=3CiRs6WaWaU",
-          note: "Twelve minutes on what Splunk is and how a search works.",
-        },
-        {
-          label: "Almond Force: A Beginner's Guide to CyberChef",
-          href: "https://www.youtube.com/watch?v=6S0v8lIk9oA",
-          note: "Nineteen minutes of decoding and chaining operations.",
+          label: "Metasploitable 2",
+          href: "https://docs.rapid7.com/metasploit/metasploitable-2/",
+          note: "An intentionally vulnerable Linux machine. Host-only networking, always.",
         },
       ],
     },

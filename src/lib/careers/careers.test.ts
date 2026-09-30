@@ -7,7 +7,7 @@ import { QUESTIONS } from "@/content/careers/questions";
 import { DIFFICULTY, DIFFICULTY_ORDER, LIBRARY_PROJECTS, PROJECTS_BY_PATH, byResumeWeight, getLibraryProject } from "@/content/careers/projects";
 import { FRAMEWORK_HOWTO, GITHUB_WALKTHROUGH, PROJECT_BENEFITS } from "@/content/careers/github";
 import { GUIDES, GUIDE_GROUPS, GUIDE_LINKS, getGuide, linkedGuides } from "@/content/resources";
-import { TOOLS, TOOL_CATEGORIES } from "@/content/resources/tools";
+import { TOOLS, TOOL_FLOWS, TOOL_ZONES, type ToolZone } from "@/content/resources/tools";
 import { CAREER_IDS, type CareerId, type Question } from "@/content/careers/types";
 import { MAX_CHOICES, isAnswered, sanitizeAnswers, toggleChoice, toggleUnsure, type Answer, type Answers } from "./answers";
 import { EARLY_THRESHOLD, TOP_COUNT, compareScores, optionCounts, rankMatches, scoreAnswers } from "./scoring";
@@ -401,7 +401,9 @@ test("every guide embeds a video and links out over https", () => {
   const seen = new Set<string>();
   for (const guide of GUIDES) {
     const videos = guide.sections.flatMap((section) => (section.video ? [section.video] : []));
-    assert.ok(videos.length >= 1, `${guide.slug} has a video`);
+    // The tools guide keeps its videos inside each tool's window instead.
+    const hasToolMap = guide.sections.some((section) => section.widget === "tools");
+    assert.ok(videos.length >= 1 || hasToolMap, `${guide.slug} has a video`);
     for (const video of videos) {
       assert.match(video.id, /^[\w-]{11}$/, `${guide.slug} video id`);
       assert.match(video.length, /^\d{1,2}:\d{2}$/, `${guide.slug} video length`);
@@ -462,11 +464,11 @@ test("every map link joins two neighbouring resources, and no two links cross", 
 });
 
 test("every tool says what it is for, what to try first, and what to learn next", () => {
-  assert.ok(TOOLS.length >= 12, "enough tools to explore");
+  assert.ok(TOOLS.length >= 20, "enough tools to explore");
   const ids = TOOLS.map((tool) => tool.id);
   assert.equal(new Set(ids).size, ids.length, "tool ids are unique");
   for (const tool of TOOLS) {
-    assert.ok(tool.category in TOOL_CATEGORIES, `${tool.id} category`);
+    assert.ok(tool.zone in TOOL_ZONES, `${tool.id} zone`);
     assert.match(tool.href, /^https:\/\//, `${tool.id} link`);
     assert.ok(tool.what.length > 20 && tool.what.length < 170, `${tool.id} is described in a sentence`);
     assert.ok(tool.first.length > 20 && tool.first.length < 190, `${tool.id} has a first exercise`);
@@ -477,8 +479,8 @@ test("every tool says what it is for, what to try first, and what to learn next"
     }
     if (tool.watch) assert.match(tool.watch, /^https:\/\/www\.youtube\.com\/watch\?v=[\w-]{11}$/, `${tool.id} video`);
   }
-  for (const category of Object.keys(TOOL_CATEGORIES)) {
-    assert.ok(TOOLS.filter((tool) => tool.category === category).length >= 2, `${category} has more than one tool`);
+  for (const zone of Object.keys(TOOL_ZONES)) {
+    assert.ok(TOOLS.filter((tool) => tool.zone === zone).length >= 2, `${zone} has more than one tool`);
   }
   // Nothing is a dead end: every tool is someone's next step.
   const reached = new Set(TOOLS.flatMap((tool) => tool.next));
@@ -486,4 +488,44 @@ test("every tool says what it is for, what to try first, and what to learn next"
   assert.doesNotMatch(JSON.stringify(TOOLS), /\u2014/, "no em dashes");
   // The tools guide advertises the count, so the two must agree.
   assert.ok(getGuide("security-tools")!.facts.some((fact) => fact.value.startsWith(`${TOOLS.length} `)));
+});
+
+test("the tools that open a longer look explain why, how, and carry their own video", () => {
+  const deep = TOOLS.filter((tool) => tool.depth);
+  assert.ok(deep.length >= 14, "most tools go into depth");
+  const videos = new Set<string>();
+  for (const tool of deep) {
+    const depth = tool.depth!;
+    assert.ok(depth.why.length > 80 && depth.why.length < 330, `${tool.id} says why it matters, briefly`);
+    assert.ok(depth.how.length >= 3 && depth.how.length <= 5, `${tool.id} explains how it works in a few steps`);
+    for (const step of depth.how) assert.ok(step.length > 15 && step.length < 140, `${tool.id}: ${step}`);
+    assert.match(depth.video.id, /^[\w-]{11}$/, `${tool.id} video id`);
+    assert.match(depth.video.length, /^\d{1,3}:\d{2}$/, `${tool.id} video length`);
+    assert.ok(depth.video.title.length > 5 && depth.video.channel.length > 1, `${tool.id} video credit`);
+    assert.ok(!videos.has(depth.video.id), `${tool.id} has a video of its own`);
+    videos.add(depth.video.id);
+    assert.equal(tool.watch, undefined, `${tool.id} plays its video in the window, so it needs no second link`);
+  }
+  // Every part of the map that watches, records or analyzes goes into depth.
+  for (const zone of ["wire", "endpoint", "soc", "bench"] satisfies ToolZone[]) {
+    for (const tool of TOOLS.filter((candidate) => candidate.zone === zone)) assert.ok(tool.depth, `${tool.id} has a longer look`);
+  }
+});
+
+test("the tool map places each zone once and wires neighbours together", () => {
+  const cells = Object.values(TOOL_ZONES).map((zone) => zone.at.join(":"));
+  assert.equal(new Set(cells).size, cells.length, "no two zones share a cell");
+  assert.deepEqual([...cells].sort(), ["0:0", "0:1", "0:2", "1:0", "1:1", "1:2"], "two rows of three");
+  const pairs = new Set<string>();
+  for (const [from, to, carries] of TOOL_FLOWS) {
+    const a = TOOL_ZONES[from].at;
+    const b = TOOL_ZONES[to].at;
+    assert.equal(Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]), 1, `${from} and ${to} share an edge`);
+    assert.ok(carries.length > 2, `${from} -> ${to} says what it carries`);
+    const key = [from, to].sort().join(" ");
+    assert.ok(!pairs.has(key), `${key} is wired once`);
+    pairs.add(key);
+  }
+  // Everything is joined up: each zone sends or receives something.
+  for (const zone of Object.keys(TOOL_ZONES)) assert.ok(TOOL_FLOWS.some(([from, to]) => from === zone || to === zone), `${zone} is wired in`);
 });

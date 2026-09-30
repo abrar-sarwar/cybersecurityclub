@@ -1,24 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ExternalLink, Play } from "lucide-react";
 import type { GuideVideo } from "@/content/resources";
+
+/** A guide's video says why it was picked; a tool's window already says that around the player. */
+type Video = Omit<GuideVideo, "caption"> & { caption?: string };
 
 /**
  * A YouTube video that stays a plain panel until someone presses play, so
  * opening a guide sends nothing to YouTube. The player then loads from the
  * no-cookie domain.
  */
-export function VideoEmbed({ video }: { video: GuideVideo }) {
+export function VideoEmbed({ video }: { video: Video }) {
   const [playing, setPlaying] = useState(false);
+  const frame = useRef<HTMLDivElement>(null);
+
+  function play() {
+    setPlaying(true);
+    // The button is about to be replaced. Focus goes to the frame around the player, not into
+    // the player itself: keys pressed inside YouTube's frame never reach this page, so Escape
+    // would stop closing a window the video sits in.
+    frame.current?.focus();
+  }
 
   return (
     <figure className="guide-video">
-      <div className="guide-video-frame">
+      <div className="guide-video-frame" ref={frame} tabIndex={-1}>
         {playing ? (
           <iframe
-            // Focus follows the press, so the keyboard lands on the player that replaced the button.
-            ref={(frame) => frame?.focus()}
             src={`https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&rel=0`}
             title={video.title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -26,7 +36,7 @@ export function VideoEmbed({ video }: { video: GuideVideo }) {
             allowFullScreen
           />
         ) : (
-          <button type="button" className="guide-video-play" onClick={() => setPlaying(true)} aria-label={`Play video: ${video.title}`}>
+          <button type="button" className="guide-video-play" onClick={play} aria-label={`Play video: ${video.title}`}>
             <span className="guide-video-button" aria-hidden="true">
               <Play className="size-6" />
             </span>
@@ -38,7 +48,7 @@ export function VideoEmbed({ video }: { video: GuideVideo }) {
         )}
       </div>
       <figcaption>
-        <p>{video.caption}</p>
+        {video.caption ? <p>{video.caption}</p> : null}
         <p className="guide-video-source">
           Plays from YouTube, which is only contacted once you press play.{" "}
           <a href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noopener noreferrer" className="careers-inline-link">
