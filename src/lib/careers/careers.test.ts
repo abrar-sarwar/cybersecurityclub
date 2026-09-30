@@ -6,7 +6,8 @@ import { CAREER_FLOWS } from "@/content/careers/flows";
 import { QUESTIONS } from "@/content/careers/questions";
 import { DIFFICULTY, DIFFICULTY_ORDER, LIBRARY_PROJECTS, PROJECTS_BY_PATH, byResumeWeight, getLibraryProject } from "@/content/careers/projects";
 import { FRAMEWORK_HOWTO, GITHUB_WALKTHROUGH, PROJECT_BENEFITS } from "@/content/careers/github";
-import { GUIDES, getGuide } from "@/content/careers/guides";
+import { GUIDES, GUIDE_GROUPS, GUIDE_LINKS, getGuide, linkedGuides } from "@/content/resources";
+import { TOOLS, TOOL_CATEGORIES } from "@/content/resources/tools";
 import { CAREER_IDS, type CareerId, type Question } from "@/content/careers/types";
 import { MAX_CHOICES, isAnswered, sanitizeAnswers, toggleChoice, toggleUnsure, type Answer, type Answers } from "./answers";
 import { EARLY_THRESHOLD, TOP_COUNT, compareScores, optionCounts, rankMatches, scoreAnswers } from "./scoring";
@@ -363,34 +364,50 @@ test("the GitHub and framework guides teach the whole loop", () => {
   assert.doesNotMatch(JSON.stringify([GITHUB_WALKTHROUGH, FRAMEWORK_HOWTO, PROJECT_BENEFITS]), /—/, "no em dashes");
 });
 
-// Study guides -----------------------------------------------------------------
+// Resources ---------------------------------------------------------------------
 
-test("the three study guides exist and resolve by slug", () => {
-  assert.deepEqual(GUIDES.map((guide) => guide.slug), ["security-plus", "network-plus", "home-lab"]);
+/** The resources page lays the guides out three to a row, in this order. */
+const gridCell = (slug: string) => {
+  const index = GUIDES.findIndex((guide) => guide.slug === slug);
+  return { row: Math.floor(index / 3), column: index % 3 };
+};
+
+test("the nine resources exist, in map order, and resolve by slug", () => {
+  assert.deepEqual(
+    GUIDES.map((guide) => guide.slug),
+    ["network-plus", "security-plus", "interview-prep", "home-lab", "security-tools", "soc-practice", "linux-basics", "ctf", "web-security"],
+  );
   for (const guide of GUIDES) assert.equal(getGuide(guide.slug), guide);
   assert.equal(getGuide("not-a-guide"), undefined);
+  assert.deepEqual([...new Set(GUIDES.map((guide) => guide.group))].sort(), Object.keys(GUIDE_GROUPS).sort());
 });
 
 test("every guide is short, sectioned, and free of em dashes", () => {
   for (const guide of GUIDES) {
     const ids = guide.sections.map((section) => section.id);
     assert.equal(new Set(ids).size, ids.length, `${guide.slug} section ids are unique`);
-    assert.ok(!ids.includes("links"), `${guide.slug} leaves the links anchor to the page`);
+    for (const reserved of ["links", "next"]) assert.ok(!ids.includes(reserved), `${guide.slug} leaves #${reserved} to the page`);
     assert.equal(guide.facts.length, 4, `${guide.slug} facts fill one row`);
+    assert.ok(guide.sections.length <= 7, `${guide.slug} stays short`);
     for (const section of guide.sections) {
-      const hasBody = Boolean(section.intro || section.steps?.length || section.bullets?.length || section.weights?.length || section.video);
+      const hasBody = Boolean(section.intro || section.steps?.length || section.bullets?.length || section.weights?.length || section.video || section.widget);
       assert.ok(hasBody, `${guide.slug}#${section.id} has something to read`);
     }
-    assert.doesNotMatch(JSON.stringify(guide), /—/, `${guide.slug} has no em dashes`);
+    assert.doesNotMatch(JSON.stringify(guide), /\u2014/, `${guide.slug} has no em dashes`);
   }
 });
 
-test("every guide embeds exactly one video and links out over https", () => {
+test("every guide embeds a video and links out over https", () => {
+  const seen = new Set<string>();
   for (const guide of GUIDES) {
     const videos = guide.sections.flatMap((section) => (section.video ? [section.video] : []));
-    assert.equal(videos.length, 1, `${guide.slug} has one video`);
-    assert.match(videos[0].id, /^[\w-]{11}$/, `${guide.slug} video id`);
-    assert.match(videos[0].length, /^\d{1,2}:\d{2}$/, `${guide.slug} video length`);
+    assert.ok(videos.length >= 1, `${guide.slug} has a video`);
+    for (const video of videos) {
+      assert.match(video.id, /^[\w-]{11}$/, `${guide.slug} video id`);
+      assert.match(video.length, /^\d{1,2}:\d{2}$/, `${guide.slug} video length`);
+      assert.ok(!seen.has(video.id), `${video.id} is embedded once across the site`);
+      seen.add(video.id);
+    }
 
     const links = guide.links.flatMap((group) => group.items);
     assert.ok(links.length >= 5, `${guide.slug} has links to pull from`);
@@ -402,6 +419,8 @@ test("every guide embeds exactly one video and links out over https", () => {
     assert.equal(new Set(hrefs).size, hrefs.length, `${guide.slug} lists each link once`);
     assert.match(guide.checked, /^\d{4}-\d{2}-\d{2}$/);
   }
+  // Interview prep is the one students rehearse with, so it carries several.
+  assert.ok(getGuide("interview-prep")!.sections.filter((section) => section.video).length >= 3);
 });
 
 test("the certification guides name their exam and weight its domains to 100", () => {
@@ -412,4 +431,59 @@ test("the certification guides name their exam and weight its domains to 100", (
     assert.equal(weights.length, 5, `${slug} lists five domains`);
     assert.equal(weights.reduce((sum, domain) => sum + domain.percent, 0), 100, `${slug} weights`);
   }
+});
+
+test("every map link joins two neighbouring resources, and no two links cross", () => {
+  const keys = new Set<string>();
+  for (const [from, to] of GUIDE_LINKS) {
+    assert.ok(getGuide(from) && getGuide(to), `${from} and ${to} exist`);
+    const a = gridCell(from);
+    const b = gridCell(to);
+    const rows = Math.abs(a.row - b.row);
+    const columns = Math.abs(a.column - b.column);
+    assert.ok(rows <= 1 && columns <= 1 && rows + columns > 0, `${from} and ${to} sit side by side on the map`);
+    const key = [from, to].sort().join(" ");
+    assert.ok(!keys.has(key), `${key} is listed once`);
+    keys.add(key);
+  }
+  // Two diagonals through the same gap would draw an X.
+  const diagonals = GUIDE_LINKS.map(([from, to]) => [gridCell(from), gridCell(to)]).filter(([a, b]) => a.row !== b.row && a.column !== b.column);
+  const gaps = diagonals.map(([a, b]) => `${Math.min(a.row, b.row)}:${Math.min(a.column, b.column)}`);
+  assert.equal(new Set(gaps).size, gaps.length, "one diagonal per gap");
+
+  for (const guide of GUIDES) {
+    const linked = linkedGuides(guide.slug);
+    assert.ok(linked.length >= 2, `${guide.slug} leads somewhere`);
+    assert.ok(!linked.includes(guide), `${guide.slug} does not link to itself`);
+  }
+  // Tools is the hub people explore outward from.
+  const degree = (slug: string) => linkedGuides(slug).length;
+  assert.equal(Math.max(...GUIDES.map((guide) => degree(guide.slug))), degree("security-tools"));
+});
+
+test("every tool says what it is for, what to try first, and what to learn next", () => {
+  assert.ok(TOOLS.length >= 12, "enough tools to explore");
+  const ids = TOOLS.map((tool) => tool.id);
+  assert.equal(new Set(ids).size, ids.length, "tool ids are unique");
+  for (const tool of TOOLS) {
+    assert.ok(tool.category in TOOL_CATEGORIES, `${tool.id} category`);
+    assert.match(tool.href, /^https:\/\//, `${tool.id} link`);
+    assert.ok(tool.what.length > 20 && tool.what.length < 170, `${tool.id} is described in a sentence`);
+    assert.ok(tool.first.length > 20 && tool.first.length < 190, `${tool.id} has a first exercise`);
+    assert.ok(tool.next.length >= 2, `${tool.id} leads to other tools`);
+    for (const id of tool.next) {
+      assert.ok(ids.includes(id), `${tool.id} -> ${id} exists`);
+      assert.notEqual(id, tool.id);
+    }
+    if (tool.watch) assert.match(tool.watch, /^https:\/\/www\.youtube\.com\/watch\?v=[\w-]{11}$/, `${tool.id} video`);
+  }
+  for (const category of Object.keys(TOOL_CATEGORIES)) {
+    assert.ok(TOOLS.filter((tool) => tool.category === category).length >= 2, `${category} has more than one tool`);
+  }
+  // Nothing is a dead end: every tool is someone's next step.
+  const reached = new Set(TOOLS.flatMap((tool) => tool.next));
+  for (const id of ids) assert.ok(reached.has(id), `${id} is reachable from another tool`);
+  assert.doesNotMatch(JSON.stringify(TOOLS), /\u2014/, "no em dashes");
+  // The tools guide advertises the count, so the two must agree.
+  assert.ok(getGuide("security-tools")!.facts.some((fact) => fact.value.startsWith(`${TOOLS.length} `)));
 });

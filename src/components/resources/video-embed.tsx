@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ExternalLink, Play } from "lucide-react";
-import type { GuideVideo } from "@/content/careers/guides";
+import type { GuideVideo } from "@/content/resources";
 
 /**
  * A YouTube video that stays a plain panel until someone presses play, so

@@ -110,10 +110,12 @@ export default function CareersLandingPage() {
             </p>
           </div>
           <div>
-            <p className="soon">
-              <span className="soon-tag">Coming soon</span>
-              A step by step guide is being written.
+            <p className="text-[0.95rem] leading-6 text-muted">
+              The guide covers what to expect, how to structure an answer, three short videos, and a question bank to practice out loud.
             </p>
+            <div className="mt-5">
+              <ButtonLink href="/resources/interview-prep">Open interview prep</ButtonLink>
+            </div>
           </div>
         </div>
       </section>

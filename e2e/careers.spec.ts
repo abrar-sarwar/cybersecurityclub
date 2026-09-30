@@ -2,7 +2,8 @@ import { expect, test, type Page } from "@playwright/test";
 import { CAREER_BY_ID, CAREER_PATHS } from "../src/content/careers/paths";
 import { DIFFICULTY, LIBRARY_PROJECTS, byResumeWeight } from "../src/content/careers/projects";
 import { GITHUB_WALKTHROUGH } from "../src/content/careers/github";
-import { GUIDES } from "../src/content/careers/guides";
+import { GUIDES, GUIDE_LINKS, linkedGuides } from "../src/content/resources";
+import { TOOLS, getTool } from "../src/content/resources/tools";
 import { BOARD_HEADING, EXEC_BOARD } from "../src/content/club/board";
 import { CLUB_PHOTOS } from "../src/content/club/photos";
 import { EVENT_FLYERS, NCL, TEASERS } from "../src/content/club/flyers";
@@ -417,12 +418,12 @@ test("the careers hub keeps its sections, and the study guides live under Resour
   }
   await expect(page.locator(".guide-card")).toHaveCount(0);
 
-  // Interview prep says plainly that it is not written yet.
-  await expect(page.locator(".soon")).toHaveCount(1);
-  await expect(page.locator("#interview-prep .soon")).toContainText("Coming soon");
+  // Interview prep is written now, so nothing on the hub is marked as coming soon.
+  await expect(page.locator(".soon")).toHaveCount(0);
+  await expect(page.locator("#interview-prep").getByRole("link", { name: "Open interview prep" })).toHaveAttribute("href", "/resources/interview-prep");
 });
 
-test("Resources is a header tab that lists every guide", async ({ page }) => {
+test("Resources is a header tab that opens a map of every guide", async ({ page }) => {
   const errors = watchErrors(page);
   await page.goto("/about");
   const nav = page.locator("header.site-header nav[aria-label='Site']");
@@ -432,16 +433,53 @@ test("Resources is a header tab that lists every guide", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1, name: "Resources" })).toBeVisible();
   await expect(nav.getByRole("link", { name: "Resources" })).toHaveAttribute("aria-current", "page");
 
-  await expect(page.locator(".guide-card")).toHaveCount(GUIDES.length);
+  // One box per guide, and one drawn link per connection.
+  const map = page.locator(".resource-map");
+  await expect(map.locator(".resource-node")).toHaveCount(GUIDES.length);
+  await expect(map.locator(".resource-link")).toHaveCount(GUIDE_LINKS.length);
   for (const guide of GUIDES) {
-    await expect(page.getByRole("link", { name: guide.title, exact: true })).toHaveAttribute("href", `/resources/${guide.slug}`);
+    await expect(map.getByRole("link", { name: guide.title, exact: true })).toHaveAttribute("href", `/resources/${guide.slug}`);
   }
 
   // A guide keeps the tab marked, and only that tab.
-  await page.getByRole("link", { name: GUIDES[0].title, exact: true }).click();
+  await map.getByRole("link", { name: GUIDES[0].title, exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`/resources/${GUIDES[0].slug}$`));
   await expect(nav.locator('[aria-current="page"]')).toHaveText(["Resources"]);
   expect(errors).toEqual([]);
+});
+
+test("the resource map lights up what a guide connects to", async ({ page }) => {
+  await page.goto("/resources");
+  const map = page.locator(".resource-map");
+  const node = (slug: string) => map.locator(`.resource-node[data-slug="${slug}"]`);
+  await expect(map.locator('[data-lit="true"]')).toHaveCount(0);
+
+  // Pointing at a box lights it, its neighbours and the links between them.
+  const linked = linkedGuides("security-tools");
+  await node("security-tools").hover();
+  await expect(map.locator('.resource-node[data-lit="true"]')).toHaveCount(linked.length + 1);
+  await expect(map.locator('.resource-link[data-lit="true"]')).toHaveCount(linked.length);
+  for (const guide of linked) await expect(node(guide.slug)).toHaveAttribute("data-lit", "true");
+  await page.getByRole("heading", { level: 1 }).hover();
+  await expect(map.locator('[data-lit="true"]')).toHaveCount(0);
+
+  // The keyboard gets the same trace.
+  const corner = GUIDES[0];
+  await map.getByRole("link", { name: corner.title, exact: true }).focus();
+  await expect(map.locator('.resource-node[data-lit="true"]')).toHaveCount(linkedGuides(corner.slug).length + 1);
+  await page.getByRole("heading", { level: 1 }).click();
+  await expect(map.locator('[data-lit="true"]')).toHaveCount(0);
+
+  // A group button traces one kind of resource, and pressing it again clears the trace.
+  const certifications = GUIDES.filter((guide) => guide.group === "certification");
+  const button = page.getByRole("button", { name: "Certifications", exact: true });
+  await expect(button).toHaveAttribute("aria-pressed", "false");
+  await button.click();
+  await expect(button).toHaveAttribute("aria-pressed", "true");
+  await expect(map.locator('.resource-node[data-lit="true"]')).toHaveCount(certifications.length);
+  for (const guide of certifications) await expect(node(guide.slug)).toHaveAttribute("data-lit", "true");
+  await button.click();
+  await expect(map.locator('[data-lit="true"]')).toHaveCount(0);
 });
 
 test("each study guide page carries its facts, sections and outbound links", async ({ page, request }) => {
@@ -462,14 +500,77 @@ test("each study guide page carries its facts, sections and outbound links", asy
       await expect(anchor, link.label).toHaveAttribute("target", "_blank");
       await expect(anchor, link.label).toHaveAttribute("rel", /noopener/);
     }
-    // The other two guides are offered at the end.
-    await expect(page.locator("#next a[href^='/resources/']")).toHaveCount(GUIDES.length - 1);
+    // The guides it is linked to on the map are offered at the end.
+    for (const linked of linkedGuides(guide.slug)) {
+      await expect(page.locator("#next").getByRole("link", { name: linked.title, exact: true })).toHaveAttribute("href", `/resources/${linked.slug}`);
+    }
+    await expect(page.locator("#next .project-next a")).toHaveCount(linkedGuides(guide.slug).length);
     expect(errors, guide.slug).toEqual([]);
   }
   expect((await request.get("/resources/not-a-guide")).status()).toBe(404);
 
   const sitemap = await (await request.get("/sitemap.xml")).text();
   for (const path of ["/resources", ...GUIDES.map((guide) => `/resources/${guide.slug}`)]) expect(sitemap).toContain(`${path}<`);
+});
+
+test("the tool explorer shows a tool, its first exercise, and where to go next", async ({ page }) => {
+  await page.goto("/resources/security-tools");
+  const explorer = page.locator(".tool-explorer");
+  const chips = explorer.locator(".tool-chips");
+  const panel = explorer.locator(".tool-panel");
+  await expect(chips.getByRole("button")).toHaveCount(TOOLS.length);
+
+  // The first tool is open to begin with.
+  await expect(panel.getByRole("heading", { name: TOOLS[0].name, exact: true })).toBeVisible();
+  await expect(chips.getByRole("button", { name: TOOLS[0].name, exact: true })).toHaveAttribute("aria-pressed", "true");
+
+  const nmap = getTool("nmap")!;
+  await chips.getByRole("button", { name: nmap.name, exact: true }).click();
+  await expect(panel.getByRole("heading", { name: nmap.name, exact: true })).toBeVisible();
+  await expect(panel).toContainText(nmap.what);
+  await expect(panel.getByRole("link", { name: /^Official site/ })).toHaveAttribute("href", nmap.href);
+  await expect(panel.getByRole("link", { name: /^Watch a walkthrough/ })).toHaveAttribute("href", nmap.watch!);
+
+  // The tools it leads to are marked among the chips, and open from the panel.
+  await expect(chips.locator('[data-next="true"]')).toHaveCount(nmap.next.length);
+  const next = getTool(nmap.next[0])!;
+  await panel.getByRole("button", { name: next.name, exact: true }).click();
+  await expect(panel.getByRole("heading", { name: next.name, exact: true })).toBeVisible();
+  await expect(chips.getByRole("button", { name: next.name, exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(chips.locator('[aria-pressed="true"]')).toHaveCount(1);
+});
+
+test("interview practice holds the notes back until you ask, one question at a time", async ({ page }) => {
+  await page.goto("/resources/interview-prep");
+  const practice = page.locator(".interview-practice");
+  const question = practice.locator(".interview-question");
+  const notes = practice.locator("details");
+  await expect(practice.getByText(/^Question 1 of \d+$/)).toBeVisible();
+  const first = await question.innerText();
+  expect(first.length).toBeGreaterThan(10);
+
+  await expect(notes).toHaveJSProperty("open", false);
+  await practice.getByText("Show what a strong answer includes").click();
+  await expect(practice.getByRole("heading", { name: "A strong answer includes" })).toBeVisible();
+  await expect(practice.getByRole("heading", { name: "Weak patterns" })).toBeVisible();
+  await expect(practice.getByRole("heading", { name: "Likely follow-ups" })).toBeVisible();
+
+  // The next question starts with its notes closed again.
+  await practice.getByRole("button", { name: "Next question" }).click();
+  await expect(practice.getByText(/^Question 2 of \d+$/)).toBeVisible();
+  await expect(question).not.toHaveText(first);
+  await expect(notes).toHaveJSProperty("open", false);
+  await practice.getByRole("button", { name: "Previous question" }).click();
+  await expect(question).toHaveText(first);
+
+  // Each type of question has its own run, starting from the top.
+  await practice.getByRole("button", { name: /^Behavioral/ }).click();
+  await expect(practice.getByRole("button", { name: /^Behavioral/ })).toHaveAttribute("aria-pressed", "true");
+  await expect(practice.getByText(/^Question 1 of \d+$/)).toBeVisible();
+  await expect(question).not.toHaveText(first);
+
+  // The guide carries a video for each kind of answer.
+  await expect(page.getByRole("button", { name: /^Play video:/ })).toHaveCount(3);
 });
 
 test("a guide video contacts YouTube only after play is pressed", async ({ page }) => {

@@ -5,7 +5,7 @@ import { listUpcomingPublished, listPastPublished } from "@/server/services/even
 import { loadPaths } from "@/content/loaders";
 import { CAREER_PATHS } from "@/content/careers/paths";
 import { LIBRARY_PROJECTS } from "@/content/careers/projects";
-import { GUIDES } from "@/content/careers/guides";
+import { GUIDES } from "@/content/resources";
 
 export const dynamic = "force-dynamic";
 

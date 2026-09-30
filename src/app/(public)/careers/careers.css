@@ -2517,41 +2517,298 @@
 
 /* Study guides ------------------------------------------------------------ */
 
-.guide-cards {
-  display: grid;
-  gap: 1.25rem;
+/* The resources map: boxes three to a row, wired through the gaps between them. */
+.resource-map-frame {
+  --gap: clamp(2.5rem, 4.4vw, 4rem);
+  --wire: rgba(62, 132, 255, 0.5);
   margin-top: 2rem;
 }
 
-@media (min-width: 900px) {
-  .guide-cards {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+.resource-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
 }
 
-.guide-card {
-  transition: border-color 150ms ease-out;
+.resource-group {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.95rem;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  background: rgba(8, 16, 30, 0.6);
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition:
+    border-color 150ms ease-out,
+    color 150ms ease-out;
 }
 
-.guide-card:hover,
-.guide-card:focus-within {
-  border-color: rgba(140, 192, 255, 0.45);
+.resource-group:hover,
+.resource-group[aria-pressed="true"] {
+  border-color: var(--mark);
+  color: var(--color-navy-900);
 }
 
-/* The title link covers the whole card, so the card is one target. */
-.guide-card-link::after {
+/* One colour per kind of resource, used for the mark and nothing else. */
+[data-group="certification"] {
+  --mark: #8cc0ff;
+}
+
+[data-group="hands-on"] {
+  --mark: #7fd6c8;
+}
+
+[data-group="career"] {
+  --mark: #eac77e;
+}
+
+.resource-group-mark {
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: none;
+  border: 1.5px solid var(--mark);
+  transform: rotate(45deg);
+}
+
+.resource-group[aria-pressed="true"] .resource-group-mark,
+.resource-node[data-lit="true"] .resource-group-mark {
+  background: var(--mark);
+}
+
+.resource-map {
+  display: grid;
+  gap: var(--gap);
+  max-width: 36rem;
+  margin-top: 2rem;
+}
+
+.resource-node {
+  position: relative;
+  padding: 1.4rem 1.5rem 1.5rem;
+  border: 1px solid rgba(120, 165, 255, 0.18);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, rgba(12, 28, 64, 0.62), rgba(3, 10, 28, 0.9));
+  transition:
+    border-color 180ms ease-out,
+    box-shadow 180ms ease-out,
+    opacity 180ms ease-out;
+}
+
+.resource-node:hover,
+.resource-node:focus-within,
+.resource-node[data-lit="true"] {
+  border-color: rgba(140, 192, 255, 0.7);
+  box-shadow: 0 0 0 1px rgba(140, 192, 255, 0.18), 0 0 28px -6px rgba(47, 122, 255, 0.55);
+}
+
+.resource-map[data-tracing] .resource-node[data-lit="false"] {
+  opacity: 0.42;
+}
+
+.resource-node-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.resource-node-icon {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border: 1px solid rgba(120, 165, 255, 0.22);
+  border-radius: 0.6rem;
+  background: var(--color-brand-50);
+  color: var(--color-accent);
+}
+
+.resource-node-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-faint);
+  font-size: 0.8rem;
+}
+
+.resource-node-title {
+  margin-top: 1rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+/* The title link covers the whole box, so the box is one target. */
+.resource-node-link::after {
   position: absolute;
+  z-index: 1;
   inset: 0;
   content: "";
 }
 
-.guide-card-link:focus-visible {
+.resource-node-link:focus-visible {
   outline: none;
 }
 
-.guide-card:has(.guide-card-link:focus-visible) {
+.resource-node:has(.resource-node-link:focus-visible) {
   outline: 2px solid var(--color-accent);
   outline-offset: 4px;
+}
+
+.resource-node-card {
+  margin-top: 0.5rem;
+  color: var(--color-muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+/* Wires. Each one belongs to the box it leaves and crosses exactly one gap. */
+.resource-link {
+  position: absolute;
+  display: none;
+  pointer-events: none;
+  transition: opacity 180ms ease-out;
+}
+
+.resource-link i {
+  position: absolute;
+  top: -2.5px;
+  left: -2.5px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #d9ebff;
+  box-shadow: 0 0 10px 2px rgba(140, 192, 255, 0.85);
+  opacity: 0;
+  animation: resource-signal 4.2s linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.resource-link[data-direction="right"] {
+  top: 50%;
+  left: 100%;
+  width: var(--gap);
+  height: 1px;
+  background: var(--wire);
+  --dx: var(--gap);
+  --dy: 0px;
+}
+
+.resource-link[data-direction="down"] {
+  top: 100%;
+  left: 50%;
+  width: 1px;
+  height: var(--gap);
+  background: var(--wire);
+  --dx: 0px;
+  --dy: var(--gap);
+}
+
+.resource-link[data-direction="down-right"],
+.resource-link[data-direction="down-left"] {
+  top: 100%;
+  width: var(--gap);
+  height: var(--gap);
+  --dy: var(--gap);
+}
+
+.resource-link[data-direction="down-right"] {
+  left: 100%;
+  /* A gradient paints its stripe across its own direction, hence the opposite corner. */
+  background: linear-gradient(to top right, transparent calc(50% - 0.6px), var(--wire) calc(50% - 0.6px), var(--wire) calc(50% + 0.6px), transparent calc(50% + 0.6px));
+  --dx: var(--gap);
+}
+
+.resource-link[data-direction="down-left"] {
+  right: 100%;
+  background: linear-gradient(to top left, transparent calc(50% - 0.6px), var(--wire) calc(50% - 0.6px), var(--wire) calc(50% + 0.6px), transparent calc(50% + 0.6px));
+  --dx: calc(var(--gap) * -1);
+}
+
+.resource-link[data-direction="down-left"] i {
+  right: -2.5px;
+  left: auto;
+}
+
+.resource-link[data-lit="true"] {
+  --wire: #8cc0ff;
+}
+
+.resource-link[data-lit="true"] i {
+  animation-duration: 1.3s;
+  animation-delay: 0s;
+}
+
+.resource-map[data-tracing] .resource-link[data-lit="false"] {
+  opacity: 0.22;
+}
+
+@keyframes resource-signal {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  12%,
+  82% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy));
+  }
+}
+
+/* One column: the boxes become a chain, each wired to the one below. */
+.resource-node:not(:last-child)::before {
+  position: absolute;
+  top: 100%;
+  left: 2.75rem;
+  width: 1px;
+  height: var(--gap);
+  background: var(--wire);
+  content: "";
+}
+
+.resource-node:not(:last-child)::after {
+  position: absolute;
+  top: calc(100% - 2.5px);
+  left: calc(2.75rem - 2.5px);
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #d9ebff;
+  box-shadow: 0 0 10px 2px rgba(140, 192, 255, 0.85);
+  content: "";
+  opacity: 0;
+  animation: resource-signal 4.2s linear infinite;
+  --dx: 0px;
+  --dy: var(--gap);
+}
+
+.resource-node:nth-child(odd)::after {
+  animation-delay: 1.6s;
+}
+
+@media (min-width: 900px) {
+  .resource-map {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: none;
+  }
+
+  .resource-link {
+    display: block;
+  }
+
+  .resource-node:not(:last-child)::before,
+  .resource-node:not(:last-child)::after {
+    content: none;
+  }
 }
 
 .guide-notice {
@@ -2743,4 +3000,257 @@
 .guide-promo code {
   letter-spacing: 0.04em;
   user-select: all;
+}
+
+/* Tool explorer ----------------------------------------------------------- */
+
+.tool-explorer {
+  display: grid;
+  gap: 1.5rem;
+  max-width: var(--careers-read);
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 720px) {
+  .tool-explorer {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: start;
+  }
+
+  .tool-panel {
+    position: sticky;
+    top: 6.5rem;
+  }
+}
+
+.tool-group + .tool-group {
+  margin-top: 1rem;
+}
+
+.tool-group-label {
+  color: var(--color-faint);
+  font-size: 0.8rem;
+}
+
+.tool-group ul,
+.tool-next {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.45rem;
+}
+
+.tool-chip {
+  min-height: 2.5rem;
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  background: rgba(8, 16, 30, 0.6);
+  color: var(--color-ink);
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition:
+    border-color 150ms ease-out,
+    background-color 150ms ease-out,
+    color 150ms ease-out;
+}
+
+.tool-chip:hover {
+  border-color: var(--color-accent);
+  color: var(--color-navy-900);
+}
+
+/* Where the open tool leads: marked before it is chosen. */
+.tool-chip[data-next="true"] {
+  border-color: rgba(140, 192, 255, 0.55);
+  border-style: dashed;
+  color: var(--color-navy-900);
+}
+
+.tool-chip[aria-pressed="true"] {
+  border-color: transparent;
+  border-style: solid;
+  background: var(--color-brand-600);
+  color: #fff;
+}
+
+.tool-panel {
+  padding: 1.4rem 1.5rem 1.5rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-lg);
+  background: rgba(13, 24, 41, 0.6);
+  scroll-margin-block: 6rem 1rem;
+}
+
+.tool-name {
+  margin-top: 0.35rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.tool-what,
+.tool-first {
+  margin-top: 0.5rem;
+  color: var(--color-ink);
+  line-height: 1.65;
+}
+
+.tool-heading {
+  margin-top: 1.25rem;
+  color: var(--color-navy-900);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.tool-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+/* Interview practice ------------------------------------------------------ */
+
+.interview-practice {
+  max-width: var(--careers-read);
+  margin-top: 1.5rem;
+}
+
+.interview-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.interview-type {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.95rem;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  background: rgba(8, 16, 30, 0.6);
+  color: var(--color-ink);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.interview-type:hover {
+  border-color: var(--color-accent);
+}
+
+.interview-type[aria-pressed="true"] {
+  border-color: transparent;
+  background: var(--color-brand-600);
+  color: #fff;
+}
+
+.interview-type-count {
+  color: var(--color-faint);
+  font-size: 0.8rem;
+}
+
+.interview-type[aria-pressed="true"] .interview-type-count {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.interview-card {
+  margin-top: 1rem;
+  padding: 1.5rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-lg);
+  background: rgba(13, 24, 41, 0.6);
+}
+
+.interview-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+}
+
+.interview-count {
+  color: var(--color-faint);
+  font-size: 0.85rem;
+}
+
+.interview-question {
+  margin-top: 0.85rem;
+  color: var(--color-navy-900);
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.4vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+}
+
+.interview-notes {
+  margin-top: 1.25rem;
+  border-top: 1px solid var(--color-line);
+}
+
+.interview-notes summary {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--color-accent);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.interview-notes summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Inline-flex drops the browser's own marker, so the state is drawn here. */
+.interview-notes summary::before {
+  width: 1ch;
+  content: "+";
+  font-family: var(--font-mono);
+}
+
+.interview-notes[open] summary::before {
+  content: "\2212";
+}
+
+.interview-notes h4 {
+  margin-top: 1rem;
+  color: var(--color-navy-900);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.interview-notes .careers-bullets {
+  margin-top: 0.25rem;
+}
+
+.interview-notes .careers-bullets li {
+  font-size: 0.98rem;
+}
+
+.interview-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.interview-nav button:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resource-link i,
+  .resource-node:not(:last-child)::after {
+    display: none;
+  }
 }

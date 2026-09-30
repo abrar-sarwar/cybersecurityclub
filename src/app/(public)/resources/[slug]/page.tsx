@@ -6,8 +6,14 @@ import { ArrowRight, ExternalLink } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 import { Breadcrumbs } from "@/components/ui/primitives";
 import { PageHero } from "@/components/site/page-hero";
-import { VideoEmbed } from "@/components/careers/video-embed";
-import { GUIDES, getGuide, type GuideItem } from "@/content/careers/guides";
+import { InterviewPractice } from "@/components/resources/interview-practice";
+import { ToolExplorer } from "@/components/resources/tool-explorer";
+import { VideoEmbed } from "@/components/resources/video-embed";
+import { withCode } from "@/components/resources/with-code";
+import { loadInterviewContent } from "@/content/loaders";
+import { GUIDES, getGuide, linkedGuides, type GuideItem, type GuideSection } from "@/content/resources";
+import { TOOLS, TOOL_CATEGORIES } from "@/content/resources/tools";
+import { safeLoad } from "@/content/safe";
 
 export const dynamicParams = false;
 
@@ -28,11 +34,6 @@ export async function generateMetadata(props: PageProps<"/resources/[slug]">): P
 
 const checkedFormat = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" });
 
-/** Sets `backticked` runs as code and leaves the rest as text. */
-function withCode(text: string) {
-  return text.split("`").map((part, index) => (index % 2 ? <code key={index} className="guide-code">{part}</code> : <Fragment key={index}>{part}</Fragment>));
-}
-
 function Item({ item }: { item: GuideItem }) {
   return (
     <li>
@@ -42,12 +43,19 @@ function Item({ item }: { item: GuideItem }) {
   );
 }
 
+/** The interactive block a section asks for. The question bank is read from the club's content files. */
+function Widget({ kind }: { kind: NonNullable<GuideSection["widget"]> }) {
+  if (kind === "tools") return <ToolExplorer tools={TOOLS} categories={TOOL_CATEGORIES} />;
+  const topics = safeLoad(() => loadInterviewContent().topics, []);
+  return topics.length ? <InterviewPractice topics={topics} /> : <p className="careers-note">The practice questions could not be loaded. Try again shortly.</p>;
+}
+
 export default async function GuidePage(props: PageProps<"/resources/[slug]">) {
   const { slug } = await props.params;
   const guide = getGuide(slug);
   if (!guide) notFound();
   const videoSection = guide.sections.find((section) => section.video);
-  const others = GUIDES.filter((other) => other.slug !== guide.slug);
+  const linked = linkedGuides(guide.slug);
 
   return (
     <article>
@@ -91,7 +99,7 @@ export default async function GuidePage(props: PageProps<"/resources/[slug]">) {
 
           <p className="careers-note guide-notice">
             <strong>{guide.notice.title}</strong>
-            {guide.notice.body}
+            {withCode(guide.notice.body)}
           </p>
 
           {guide.sections.map((section, index) => (
@@ -104,7 +112,8 @@ export default async function GuidePage(props: PageProps<"/resources/[slug]">) {
               <h2 id={`${section.id}-heading`} className="careers-section-title">
                 {section.title}
               </h2>
-              {section.intro ? <p className="careers-prose">{section.intro}</p> : null}
+              {section.intro ? <p className="careers-prose">{withCode(section.intro)}</p> : null}
+              {section.widget ? <Widget kind={section.widget} /> : null}
               {section.weights ? (
                 <div className="guide-weights">
                   <p className="careers-label">Share of the exam</p>
@@ -122,7 +131,6 @@ export default async function GuidePage(props: PageProps<"/resources/[slug]">) {
                   </ul>
                 </div>
               ) : null}
-              {section.video ? <VideoEmbed video={section.video} /> : null}
               {section.steps ? (
                 <ol className="careers-numbered">
                   {section.steps.map((step) => (
@@ -137,7 +145,8 @@ export default async function GuidePage(props: PageProps<"/resources/[slug]">) {
                   ))}
                 </ul>
               ) : null}
-              {section.note ? <p className="careers-note">{section.note}</p> : null}
+              {section.video ? <VideoEmbed video={section.video} /> : null}
+              {section.note ? <p className="careers-note">{withCode(section.note)}</p> : null}
             </section>
           ))}
 
@@ -174,10 +183,11 @@ export default async function GuidePage(props: PageProps<"/resources/[slug]">) {
 
           <section id="next" className="careers-section" aria-labelledby="next-heading">
             <h2 id="next-heading" className="careers-section-title">
-              Next
+              Where this leads
             </h2>
+            <p className="careers-prose">The resources this one is linked to on the map.</p>
             <ul className="project-next">
-              {others.map((other) => (
+              {linked.map((other) => (
                 <li key={other.slug}>
                   <Link href={`/resources/${other.slug}`} className="careers-inline-link">
                     {other.title}
