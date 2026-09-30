@@ -870,12 +870,43 @@ test("the board has its own page, linked from the nav and from About", async ({ 
   await expect(page.getByRole("heading", { name: BOARD_HEADING, exact: true })).toBeVisible();
   await expect(page.locator(".board-lines")).toHaveCount(0);
   await expect(page.locator(".board-card")).toHaveCount(0);
-  expect(EXEC_BOARD.some((member) => member.slug === "luigi")).toBe(false);
   for (const member of EXEC_BOARD) {
     await expect(page.locator(".team-node-name").filter({ hasText: member.name })).toHaveCount(1);
     // Roles stay on the diagram; what each seat does no longer appears anywhere.
     await expect(page.getByText(member.remit)).toHaveCount(0);
   }
+
+  // The seats added and renamed for this term.
+  for (const [name, role] of [
+    ["James", "Communication Director"],
+    ["Nate", "Project Director"],
+    ["Luigi", "Tech Director"],
+    ["Abdirahman", "External Affairs Director"],
+    ["David", "Sophomore Representative"],
+    ["Jahsean", "Freshman Representative"],
+  ]) {
+    expect(EXEC_BOARD.find((member) => member.name === name)?.role, name).toBe(role);
+    await expect(page.locator(".team-node").filter({ hasText: name }).locator(".team-node-role")).toHaveText(role);
+  }
+  expect(EXEC_BOARD.some((member) => member.role === "Social Media Director")).toBe(false);
+
+  // However many seats there are, one person's label never runs into another's.
+  const labels = await page.locator(".team-network .team-node").evaluateAll((nodes) =>
+    nodes.map((node) => {
+      const boxes = [...node.querySelectorAll(".team-node-name, .team-node-role")].map((element) => element.getBoundingClientRect());
+      return {
+        text: node.querySelector(".team-node-name")?.textContent ?? "",
+        left: Math.min(...boxes.map((box) => box.left)),
+        right: Math.max(...boxes.map((box) => box.right)),
+        top: Math.min(...boxes.map((box) => box.top)),
+        bottom: Math.max(...boxes.map((box) => box.bottom)),
+      };
+    }),
+  );
+  const collisions = labels.flatMap((a, index) =>
+    labels.slice(index + 1).filter((b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom).map((b) => `${a.text} / ${b.text}`),
+  );
+  expect(collisions).toEqual([]);
 
   // Projects and Members sit in the header next to Careers.
   const nav = page.locator("header.site-header nav[aria-label='Site']");

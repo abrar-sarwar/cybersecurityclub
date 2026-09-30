@@ -5,7 +5,8 @@ them automatically: no code change, no manifest entry.
 
     marc.jpg      siya.jpg      mikey.jpg     abrar.jpg
     alan.jpg      kamal.jpg     mazza.jpg     madison.jpg
-    james.jpg     luigi.jpg
+    james.jpg     nate.jpg      luigi.jpg     abdirahman.jpg
+    david.jpg     jahsean.jpg
 
 - Any of .jpg, .jpeg, .png, .webp or .avif works.
 - Square images look best; anything else is centre-cropped to a circle.

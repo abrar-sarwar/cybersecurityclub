@@ -4,18 +4,25 @@ import { EXEC_BOARD, type BoardMember } from "@/content/club/board";
 
 /**
  * The board as a pyramid: co-presidents at the apex, vice presidents under
- * them, officers along the base. Signals cascade down the branches and light
- * each node as they arrive. Decorative, so the roster list carries the same
- * names for anyone not looking at the picture.
+ * them, officers along the base in rows of five. Signals cascade down the
+ * branches and light each node as they arrive. Decorative, so the roster list
+ * carries the same names for anyone not looking at the picture.
  */
 const WIDTH = 1000;
-const HEIGHT = 520;
+/** Height with one row of officers; each further row adds ROW_GAP. */
+const BASE_HEIGHT = 520;
 /** Portrait radii: the two upper tiers sit larger than the base row. */
 const APEX_R = 30;
 const BASE_R = 24;
 const TIER = { top: 92, middle: 258, base: 424 };
 const SPINE_Y = 175;
 const BRANCH_Y = 350;
+/** A role label needs about 200 units, so five officers is what one row holds. */
+const PER_ROW = 5;
+const ROW_GAP = 165;
+/** How far above a row its rail runs, and how far in from the edge the rows are joined. */
+const RAIL_RISE = TIER.base - BRANCH_Y;
+const RISER_X = 30;
 
 type Node = BoardMember & { x: number; y: number; labelAbove: boolean; delay: number };
 
@@ -31,18 +38,21 @@ function layout() {
 
   const apexX = spread(presidents.length, 420);
   const middleX = spread(vices.length, 300);
-  const baseX = spread(officers.length, 96);
+  const rows = Array.from({ length: Math.ceil(officers.length / PER_ROW) }, (_, row) => officers.slice(row * PER_ROW, (row + 1) * PER_ROW));
 
   return {
     apex: presidents.map((member, i): Node => ({ ...member, x: apexX[i], y: TIER.top, labelAbove: true, delay: 0.45 })),
     middle: vices.map((member, i): Node => ({ ...member, x: middleX[i], y: TIER.middle, labelAbove: true, delay: 1.1 })),
-    base: officers.map((member, i): Node => ({
-      ...member,
-      x: baseX[i],
-      y: TIER.base,
-      labelAbove: false,
-      delay: 1.85 + i * 0.1,
-    })),
+    rows: rows.map((members, row) => {
+      const x = spread(members.length, 96);
+      return members.map((member, i): Node => ({
+        ...member,
+        x: x[i],
+        y: TIER.base + row * ROW_GAP,
+        labelAbove: false,
+        delay: 1.85 + (row * PER_ROW + i) * 0.1,
+      }));
+    }),
   };
 }
 
@@ -64,7 +74,8 @@ function trace(points: readonly [number, number][], radius = 18) {
 }
 
 export function TeamNetwork({ portraits = {} }: { portraits?: Record<string, string> }) {
-  const { apex, middle, base } = layout();
+  const { apex, middle, rows } = layout();
+  const height = BASE_HEIGHT + Math.max(0, rows.length - 1) * ROW_GAP;
   const apexMid = (apex[0].x + apex[apex.length - 1].x) / 2;
 
   // Apex bar, spine, then one branch per vice president.
@@ -78,29 +89,43 @@ export function TeamNetwork({ portraits = {} }: { portraits?: Record<string, str
   ];
 
   // Both vice presidents run to every officer, so each VP drops onto a shared
-  // rail and every officer rises to meet it.
-  const RAIL_LEFT = Math.min(...base.map((officer) => officer.x));
-  const RAIL_RIGHT = Math.max(...base.map((officer) => officer.x));
+  // rail and every officer rises to meet it. A further row gets a rail of its
+  // own, joined to the one above by a riser down each side of the diagram.
+  const rail = (row: number) => TIER.base + row * ROW_GAP - RAIL_RISE;
   const legs = [
     ...middle.map((vice, index) => ({
       d: trace([[vice.x, TIER.middle], [vice.x, BRANCH_Y]]),
       delay: 1.2 + index * 0.1,
     })),
-    { d: `M${RAIL_LEFT} ${BRANCH_Y} H${RAIL_RIGHT}`, delay: 1.4 },
-    ...base.map((officer, index) => ({
-      d: trace([[officer.x, BRANCH_Y], [officer.x, TIER.base]]),
-      delay: 1.6 + index * 0.1,
-    })),
+    ...rows.flatMap((officers, row) => {
+      const left = Math.min(...officers.map((officer) => officer.x));
+      const right = Math.max(...officers.map((officer) => officer.x));
+      const above = rows[row - 1];
+      const risers = above
+        ? [
+            { d: trace([[Math.min(...above.map((officer) => officer.x)), rail(row - 1)], [RISER_X, rail(row - 1)], [RISER_X, rail(row)], [left, rail(row)]]), delay: 1.5 + row * 0.5 },
+            { d: trace([[Math.max(...above.map((officer) => officer.x)), rail(row - 1)], [WIDTH - RISER_X, rail(row - 1)], [WIDTH - RISER_X, rail(row)], [right, rail(row)]]), delay: 1.5 + row * 0.5 },
+          ]
+        : [];
+      return [
+        ...risers,
+        { d: `M${left} ${rail(row)} H${right}`, delay: 1.4 + row * 0.6 },
+        ...officers.map((officer, index) => ({
+          d: trace([[officer.x, rail(row)], [officer.x, officer.y]]),
+          delay: 1.6 + row * 0.6 + index * 0.1,
+        })),
+      ];
+    }),
   ];
 
   const lines = [...branches, ...legs];
-  const nodes = [...apex, ...middle, ...base];
+  const nodes = [...apex, ...middle, ...rows.flat()];
 
   return (
     <BootReveal className="team-network">
       <div className="team-stage">
         <MatrixRain className="team-rain" speed={1.35} />
-        <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} preserveAspectRatio="xMidYMid meet" focusable="false">
+        <svg viewBox={`0 0 ${WIDTH} ${height}`} preserveAspectRatio="xMidYMid meet" focusable="false">
           <defs>
             <linearGradient id="team-scan-fade" gradientUnits="userSpaceOnUse" x1="0" x2="120" y1="0" y2="0">
               <stop offset="0" stopColor="#8cc0ff" stopOpacity="0" />
@@ -188,7 +213,7 @@ export function TeamNetwork({ portraits = {} }: { portraits?: Record<string, str
           })}
 
           {/* One sweep across the diagram as it comes up. */}
-          <rect className="team-scan" x={-120} y="0" width="120" height={HEIGHT} fill="url(#team-scan-fade)" aria-hidden="true" />
+          <rect className="team-scan" x={-120} y="0" width="120" height={height} fill="url(#team-scan-fade)" aria-hidden="true" />
         </svg>
       </div>
     </BootReveal>

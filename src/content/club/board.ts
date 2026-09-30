@@ -33,7 +33,12 @@ export const EXEC_BOARD: readonly BoardMember[] = [
   { name: "Kamal", slug: "kamal", role: "Secretary", remit: "Records, membership lists and club paperwork.", group: "officers" , linkedin: "https://www.linkedin.com/in/kamalgajavalli4311/" },
   { name: "Mazza", slug: "mazza", role: "Event Director", remit: "Plans the workshops, socials and competition nights.", group: "officers" , linkedin: "https://www.linkedin.com/in/mazza-adam/" },
   { name: "Madison", slug: "madison", role: "Social Director", remit: "Makes sure new members meet people and come back.", group: "officers" , linkedin: "https://www.linkedin.com/in/madison-dodard-b7767b217/" },
-  { name: "James", slug: "james", role: "Social Media Director", remit: "Announcements, posts and the club's presence online.", group: "officers" , linkedin: "https://www.linkedin.com/in/jamesafon/" },
+  { name: "James", slug: "james", role: "Communication Director", remit: "Announcements, posts and the club's presence online.", group: "officers" , linkedin: "https://www.linkedin.com/in/jamesafon/" },
+  { name: "Nate", slug: "nate", role: "Project Director", remit: "Helps members take a project from an idea to a finished write-up.", group: "officers" },
+  { name: "Luigi", slug: "luigi", role: "Tech Director", remit: "Looks after the website, the Discord server and the lab setups.", group: "officers" },
+  { name: "Abdirahman", slug: "abdirahman", role: "External Affairs Director", remit: "Builds the club's ties with employers, sponsors and other organizations.", group: "officers" },
+  { name: "David", slug: "david", role: "Sophomore Representative", remit: "Brings second-year members' questions and feedback to the board.", group: "officers" },
+  { name: "Jahsean", slug: "jahsean", role: "Freshman Representative", remit: "Brings first-year members' questions and feedback to the board.", group: "officers" },
 ];
 
 export const BOARD_GROUPS: { id: BoardGroup; label: string; note: string }[] = [
