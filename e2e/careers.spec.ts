@@ -552,7 +552,9 @@ test("choosing a tool opens a window that explains it in depth", async ({ page }
   await expect(dialog.getByRole("heading", { name: "Why it matters" })).toBeVisible();
   await expect(dialog).toContainText(depth.why);
   await expect(dialog.getByRole("heading", { name: "How it works" })).toBeVisible();
-  await expect(dialog.locator(".careers-numbered > li")).toHaveCount(depth.how.length);
+  await expect(dialog.locator(".tool-how > li")).toHaveCount(depth.how.length);
+  await expect(dialog.getByRole("heading", { name: "Run it step by step" })).toBeVisible();
+  await expect(dialog.locator(".tool-run > li")).toHaveCount(depth.run.length);
   await expect(dialog.getByRole("heading", { name: "Try this first" })).toBeVisible();
   await expect(dialog.getByRole("link", { name: /^Official site/ })).toHaveAttribute("href", wireshark.href);
 
@@ -598,6 +600,7 @@ test("every tool opens, and each longer look carries its own video", async ({ pa
     await expect(dialog.locator(".tool-next").getByRole("button")).toHaveCount(tool.next.length);
     await expect(dialog.getByRole("button", { name: /^Play video:/ })).toHaveCount(tool.depth ? 1 : 0);
     await expect(dialog.getByRole("heading", { name: "How it works" })).toHaveCount(tool.depth ? 1 : 0);
+    await expect(dialog.locator(".tool-run > li")).toHaveCount(tool.depth?.run.length ?? 0);
     await page.keyboard.press("Escape");
     await expect(dialog).toHaveCount(0);
   }

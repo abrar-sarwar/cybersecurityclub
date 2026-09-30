@@ -492,13 +492,16 @@ test("every tool says what it is for, what to try first, and what to learn next"
 
 test("the tools that open a longer look explain why, how, and carry their own video", () => {
   const deep = TOOLS.filter((tool) => tool.depth);
-  assert.ok(deep.length >= 14, "most tools go into depth");
+  assert.ok(deep.length >= 20, "most tools go into depth");
   const videos = new Set<string>();
   for (const tool of deep) {
     const depth = tool.depth!;
     assert.ok(depth.why.length > 80 && depth.why.length < 330, `${tool.id} says why it matters, briefly`);
     assert.ok(depth.how.length >= 3 && depth.how.length <= 5, `${tool.id} explains how it works in a few steps`);
     for (const step of depth.how) assert.ok(step.length > 15 && step.length < 140, `${tool.id}: ${step}`);
+    assert.ok(depth.run.length >= 5 && depth.run.length <= 7, `${tool.id} has a full rundown of how to run it`);
+    for (const step of depth.run) assert.ok(step.length > 15 && step.length < 200, `${tool.id}: ${step}`);
+    assert.equal(new Set(depth.run).size, depth.run.length, `${tool.id} repeats no step`);
     assert.match(depth.video.id, /^[\w-]{11}$/, `${tool.id} video id`);
     assert.match(depth.video.length, /^\d{1,3}:\d{2}$/, `${tool.id} video length`);
     assert.ok(depth.video.title.length > 5 && depth.video.channel.length > 1, `${tool.id} video credit`);
@@ -506,10 +509,12 @@ test("the tools that open a longer look explain why, how, and carry their own vi
     videos.add(depth.video.id);
     assert.equal(tool.watch, undefined, `${tool.id} plays its video in the window, so it needs no second link`);
   }
-  // Every part of the map that watches, records or analyzes goes into depth.
-  for (const zone of ["wire", "endpoint", "soc", "bench"] satisfies ToolZone[]) {
+  // Every part of the map except testing from outside goes into depth, tool by tool.
+  for (const zone of ["web", "wire", "endpoint", "soc", "bench"] satisfies ToolZone[]) {
     for (const tool of TOOLS.filter((candidate) => candidate.zone === zone)) assert.ok(tool.depth, `${tool.id} has a longer look`);
   }
+  // The web app is where most students start, so it offers more than the two proxies.
+  assert.ok(TOOLS.filter((tool) => tool.zone === "web").length >= 5);
 });
 
 test("the tool map places each zone once and wires neighbours together", () => {

@@ -137,8 +137,14 @@ export function ToolMap({ tools, zones, flows }: { tools: readonly Tool[]; zones
                   <h4 className="tool-heading">Why it matters</h4>
                   <p className="tool-text">{tool.depth.why}</p>
                   <h4 className="tool-heading">How it works</h4>
-                  <ol className="careers-numbered">
+                  <ol className="careers-numbered tool-how">
                     {tool.depth.how.map((step) => (
+                      <li key={step}>{withCode(step)}</li>
+                    ))}
+                  </ol>
+                  <h4 className="tool-heading">Run it step by step</h4>
+                  <ol className="careers-numbered tool-run">
+                    {tool.depth.run.map((step) => (
                       <li key={step}>{withCode(step)}</li>
                     ))}
                   </ol>

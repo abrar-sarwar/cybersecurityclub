@@ -9,7 +9,7 @@ export const securityTools: Guide = {
     "The tools that come up again and again in classes, competitions and entry-level roles, laid out across the network they are used on. Open one to see why it matters, how it works and what to pick up next.",
   card: "A map of the tools across a network. Open one to see how it works and what to learn next.",
   facts: [
-    { label: "Tools", value: "22 to explore" },
+    { label: "Tools", value: "26 to explore" },
     { label: "Cost", value: "Free to start" },
     { label: "Where to run them", value: "Your home lab" },
     { label: "Start with", value: "Wireshark" },
