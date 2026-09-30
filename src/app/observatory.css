@@ -1058,8 +1058,9 @@ body:has(.cyber-home) main {
 /* Portrait and small screens ---------------------------------------------- */
 
 @media (max-width: 820px) {
+  /* Six links share the row: the gap takes what the labels leave, down to a phone's width. */
   .cyber-home-nav {
-    gap: clamp(1.5rem, 9vw, 2.75rem);
+    gap: clamp(0.8rem, calc((100vw - 19rem) / 5), 2.75rem);
   }
 
   .cyber-home-nav a {

@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteUrl();
   const now = new Date();
-  const statics = ["/", "/about", "/team", "/events", "/stories", "/careers", "/careers/quiz", "/careers/projects", "/privacy", "/accessibility"].map((p) => ({
+  const statics = ["/", "/about", "/team", "/events", "/stories", "/careers", "/careers/quiz", "/careers/projects", "/resources", "/privacy", "/accessibility"].map((p) => ({
     url: `${base}${p}`,
     lastModified: now,
     changeFrequency: (p === "/" || p === "/events" ? "weekly" : "monthly") as "weekly" | "monthly",
@@ -35,6 +35,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
   const careers = CAREER_PATHS.map((p) => ({ url: `${base}/careers/${p.slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 }));
   const projects = LIBRARY_PROJECTS.map((p) => ({ url: `${base}/careers/projects/${p.slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.6 }));
-  const guides = GUIDES.map((g) => ({ url: `${base}/careers/guides/${g.slug}`, lastModified: new Date(g.checked), changeFrequency: "monthly" as const, priority: 0.6 }));
+  const guides = GUIDES.map((g) => ({ url: `${base}/resources/${g.slug}`, lastModified: new Date(g.checked), changeFrequency: "monthly" as const, priority: 0.6 }));
   return [...statics, ...careers, ...projects, ...guides, ...paths, ...events];
 }

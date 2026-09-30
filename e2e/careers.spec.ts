@@ -364,7 +364,7 @@ test("the write-up template copies and announces success", async ({ browser }) =
 test("career pages fit a phone and keep large touch targets", async ({ browser }) => {
   const context = await browser.newContext({ viewport: { width: 360, height: 800 }, hasTouch: true, isMobile: true });
   const page = await context.newPage();
-  for (const url of ["/careers", "/careers/quiz", "/careers/results", `/careers/${CAREER_PATHS[0].slug}`, ...GUIDES.map((guide) => `/careers/guides/${guide.slug}`)]) {
+  for (const url of ["/careers", "/careers/quiz", "/careers/results", `/careers/${CAREER_PATHS[0].slug}`, "/resources", ...GUIDES.map((guide) => `/resources/${guide.slug}`)]) {
     await page.goto(url);
     await page.evaluate(() => document.fonts.ready);
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth), url).toBeLessThanOrEqual(0);
@@ -398,10 +398,10 @@ test("the old learning addresses redirect into the careers hub", async ({ page }
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 });
 
-test("the careers hub links every study guide, and only interview prep is still coming soon", async ({ page }) => {
+test("the careers hub keeps its sections, and the study guides live under Resources", async ({ page }) => {
   await page.goto("/careers");
-  await expect(page.locator(".careers-jump a")).toHaveCount(3);
-  for (const id of ["paths", "guides", "interview-prep"]) {
+  await expect(page.locator(".careers-jump a")).toHaveCount(2);
+  for (const id of ["paths", "interview-prep"]) {
     await expect(page.locator(`#${id}`)).toHaveCount(1);
   }
 
@@ -411,21 +411,43 @@ test("the careers hub links every study guide, and only interview prep is still 
   await expect(page.locator('a[href*="#learning"]')).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Learn", exact: true })).toHaveCount(0);
 
-  // Each guide is one click from the hub.
-  await expect(page.locator("#guides .guide-card")).toHaveCount(GUIDES.length);
-  for (const guide of GUIDES) {
-    await expect(page.locator("#guides").getByRole("link", { name: guide.title, exact: true })).toHaveAttribute("href", `/careers/guides/${guide.slug}`);
+  // Home lab and certification guides moved out of the hub; the header carries them.
+  for (const id of ["home-lab", "certifications", "guides"]) {
+    await expect(page.locator(`#${id}`)).toHaveCount(0);
   }
+  await expect(page.locator(".guide-card")).toHaveCount(0);
 
   // Interview prep says plainly that it is not written yet.
   await expect(page.locator(".soon")).toHaveCount(1);
   await expect(page.locator("#interview-prep .soon")).toContainText("Coming soon");
 });
 
+test("Resources is a header tab that lists every guide", async ({ page }) => {
+  const errors = watchErrors(page);
+  await page.goto("/about");
+  const nav = page.locator("header.site-header nav[aria-label='Site']");
+  await expect(nav.getByRole("link")).toHaveText(["About", "Events", "Careers", "Projects", "Resources", "Team"]);
+  await nav.getByRole("link", { name: "Resources" }).click();
+  await expect(page).toHaveURL(/\/resources$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Resources" })).toBeVisible();
+  await expect(nav.getByRole("link", { name: "Resources" })).toHaveAttribute("aria-current", "page");
+
+  await expect(page.locator(".guide-card")).toHaveCount(GUIDES.length);
+  for (const guide of GUIDES) {
+    await expect(page.getByRole("link", { name: guide.title, exact: true })).toHaveAttribute("href", `/resources/${guide.slug}`);
+  }
+
+  // A guide keeps the tab marked, and only that tab.
+  await page.getByRole("link", { name: GUIDES[0].title, exact: true }).click();
+  await expect(page).toHaveURL(new RegExp(`/resources/${GUIDES[0].slug}$`));
+  await expect(nav.locator('[aria-current="page"]')).toHaveText(["Resources"]);
+  expect(errors).toEqual([]);
+});
+
 test("each study guide page carries its facts, sections and outbound links", async ({ page, request }) => {
   for (const guide of GUIDES) {
     const errors = watchErrors(page);
-    await page.goto(`/careers/guides/${guide.slug}`);
+    await page.goto(`/resources/${guide.slug}`);
     await expect(page.getByRole("heading", { level: 1, name: guide.title })).toBeVisible();
     await expect(page.locator(".project-facts > div")).toHaveCount(guide.facts.length);
     for (const section of guide.sections) {
@@ -441,13 +463,13 @@ test("each study guide page carries its facts, sections and outbound links", asy
       await expect(anchor, link.label).toHaveAttribute("rel", /noopener/);
     }
     // The other two guides are offered at the end.
-    await expect(page.locator("#next a[href^='/careers/guides/']")).toHaveCount(GUIDES.length - 1);
+    await expect(page.locator("#next a[href^='/resources/']")).toHaveCount(GUIDES.length - 1);
     expect(errors, guide.slug).toEqual([]);
   }
-  expect((await request.get("/careers/guides/not-a-guide")).status()).toBe(404);
+  expect((await request.get("/resources/not-a-guide")).status()).toBe(404);
 
   const sitemap = await (await request.get("/sitemap.xml")).text();
-  for (const guide of GUIDES) expect(sitemap).toContain(`/careers/guides/${guide.slug}<`);
+  for (const path of ["/resources", ...GUIDES.map((guide) => `/resources/${guide.slug}`)]) expect(sitemap).toContain(`${path}<`);
 });
 
 test("a guide video contacts YouTube only after play is pressed", async ({ page }) => {
@@ -458,7 +480,7 @@ test("a guide video contacts YouTube only after play is pressed", async ({ page 
     if (/(youtube|youtube-nocookie|ytimg)\.com$/.test(new URL(request.url()).hostname)) youtubeRequests.push(request.url());
   });
 
-  await page.goto(`/careers/guides/${guide.slug}`);
+  await page.goto(`/resources/${guide.slug}`);
   await expect(page.getByRole("heading", { level: 1, name: guide.title })).toBeVisible();
   await expect(page.locator("iframe")).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Watch on YouTube" })).toHaveAttribute("href", `https://www.youtube.com/watch?v=${video.id}`);
@@ -768,7 +790,7 @@ test("the board and the timeline are usable on a phone", async ({ page }) => {
   await expect(page.locator(".rail-thumb img").first()).toHaveJSProperty("complete", true);
 
   // Nothing may push the page sideways on a phone.
-  for (const path of ["/", "/about", "/team", "/events", "/careers", "/careers/projects"]) {
+  for (const path of ["/", "/about", "/team", "/events", "/careers", "/careers/projects", "/resources"]) {
     await page.goto(path);
     const width = await page.evaluate(() => document.documentElement.scrollWidth);
     expect(width, path).toBeLessThanOrEqual(390);
@@ -792,7 +814,7 @@ test("the mobile menu opens over the page and navigates", async ({ page }) => {
   await expect(overlay).toHaveCSS("background-color", "rgb(2, 7, 20)");
 
   // Every nav link is reachable and the current page is marked.
-  for (const label of ["About", "Events", "Careers", "Projects", "Team"]) {
+  for (const label of ["About", "Events", "Careers", "Projects", "Resources", "Team"]) {
     await expect(dialog.getByRole("link", { name: label, exact: true })).toBeVisible();
   }
   await expect(dialog.getByRole("link", { name: "Careers", exact: true })).toHaveAttribute("aria-current", "page");

@@ -3,6 +3,7 @@ export const PUBLIC_NAV = [
   { href: "/events", label: "Events" },
   { href: "/careers", label: "Careers" },
   { href: "/careers/projects", label: "Projects" },
+  { href: "/resources", label: "Resources" },
   { href: "/team", label: "Team" },
 ] as const;
 

@@ -77,7 +77,7 @@ export function MobileNav({
   }, [open, setOpen]);
 
   return (
-    <div className="lg:hidden">
+    <div className="min-[1100px]:hidden">
       <button
         ref={triggerRef}
         type="button"

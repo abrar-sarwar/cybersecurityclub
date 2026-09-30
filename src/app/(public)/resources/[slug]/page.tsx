@@ -15,14 +15,14 @@ export function generateStaticParams() {
   return GUIDES.map((guide) => ({ slug: guide.slug }));
 }
 
-export async function generateMetadata(props: PageProps<"/careers/guides/[slug]">): Promise<Metadata> {
+export async function generateMetadata(props: PageProps<"/resources/[slug]">): Promise<Metadata> {
   const { slug } = await props.params;
   const guide = getGuide(slug);
   if (!guide) return { title: "Guide not found" };
   return {
     title: guide.title,
     description: guide.summary,
-    alternates: { canonical: `/careers/guides/${guide.slug}` },
+    alternates: { canonical: `/resources/${guide.slug}` },
   };
 }
 
@@ -42,7 +42,7 @@ function Item({ item }: { item: GuideItem }) {
   );
 }
 
-export default async function GuidePage(props: PageProps<"/careers/guides/[slug]">) {
+export default async function GuidePage(props: PageProps<"/resources/[slug]">) {
   const { slug } = await props.params;
   const guide = getGuide(slug);
   if (!guide) notFound();
@@ -53,7 +53,7 @@ export default async function GuidePage(props: PageProps<"/careers/guides/[slug]
     <article>
       <PageHero
         variant="compact"
-        before={<Breadcrumbs items={[{ label: "Careers", href: "/careers" }, { label: "Guides", href: "/careers#guides" }, { label: guide.title }]} />}
+        before={<Breadcrumbs items={[{ label: "Resources", href: "/resources" }, { label: guide.title }]} />}
         eyebrow={guide.eyebrow}
         title={guide.title}
         description={guide.summary}
@@ -179,7 +179,7 @@ export default async function GuidePage(props: PageProps<"/careers/guides/[slug]
             <ul className="project-next">
               {others.map((other) => (
                 <li key={other.slug}>
-                  <Link href={`/careers/guides/${other.slug}`} className="careers-inline-link">
+                  <Link href={`/resources/${other.slug}`} className="careers-inline-link">
                     {other.title}
                   </Link>
                   <p>{other.card}</p>
@@ -190,8 +190,8 @@ export default async function GuidePage(props: PageProps<"/careers/guides/[slug]
               <ButtonLink href="/careers/projects">
                 Browse the projects <ArrowRight className="size-4" aria-hidden />
               </ButtonLink>
-              <ButtonLink href="/careers" variant="outline">
-                Back to careers
+              <ButtonLink href="/resources" variant="outline">
+                All resources
               </ButtonLink>
             </div>
           </section>
