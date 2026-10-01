@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { branding } from "@config/branding";
 import { ButtonLink } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/primitives";
@@ -9,15 +8,6 @@ import { ValueStack } from "@/components/site/value-stack";
 import { AttackFeed } from "@/components/site/attack-feed";
 import { Voices } from "@/components/site/voices";
 
-export const metadata: Metadata = {
-  title: "About",
-  description: `What the ${branding.displayName} does, who it is for, and how meetings work.`,
-  alternates: { canonical: "/about" },
-};
-
-// Reads the page photo from the media records on each request.
-export const dynamic = "force-dynamic";
-
 const values = [
   { title: "Beginners are welcome, and we mean it", body: "Most members arrived without a security background. Sessions explain terms as they come up, and questions are never a bad look." },
   { title: "Learn by doing", body: "Workshops and projects use isolated practice environments, sample data and intentionally vulnerable apps so you can experiment safely and legally." },
@@ -25,10 +15,14 @@ const values = [
   { title: "Community first", body: "The best thing about the club is the people. Study groups, competition teams and project partners usually start as a conversation on Discord." },
 ];
 
-export default function AboutPage() {
+/** What the club is, shown on the homepage directly under the hero. */
+export function AboutClub() {
   return (
     <>
       <PageHero
+        id="about"
+        titleAs="h2"
+        titleId="about-heading"
         eyebrow="About the club"
         title="A student community for learning cybersecurity together"
         description={`${branding.displayName} is a registered student organization at ${branding.universityName}. We meet regularly on the Atlanta campus to learn tools and techniques, work on projects, practice for competitions, and prepare for internships and jobs in the field.`}

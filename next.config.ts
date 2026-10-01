@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/learn", destination: "/careers", permanent: true },
+      // The about page was folded into the homepage, under the hero.
+      { source: "/about", destination: "/#about", permanent: true },
       // The community page was folded into the members page.
       { source: "/community", destination: "/team", permanent: true },
       // The members page was renamed to the team page.

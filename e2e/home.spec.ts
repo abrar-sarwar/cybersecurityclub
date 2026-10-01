@@ -68,7 +68,7 @@ for (const viewport of VIEWPORTS) {
 
     await expect(page.getByRole("heading", { level: 1, name: "Cybersecurity Club at GSU" })).toBeVisible();
     for (const name of ["About", "Events", "Careers", "Explore Career Paths", "Join Discord"]) {
-      await expect(page.getByRole("link", { name, exact: true })).toBeVisible();
+      await expect(page.locator(".cyber-home").getByRole("link", { name, exact: true })).toBeVisible();
     }
 
     const report = await page.evaluate(() => {
@@ -256,7 +256,7 @@ test("signals travel along the feeder lines and traces while idle", async ({ pag
 test("the network is one tab stop with arrow-key movement", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
-  await page.getByRole("link", { name: "Join Discord" }).focus();
+  await page.locator(".cyber-home").getByRole("link", { name: "Join Discord" }).focus();
   await page.keyboard.press("Tab");
   await expect(star(page, "north-west-junction")).toBeFocused();
 
@@ -305,7 +305,7 @@ test("the heading glitches on hover and the internship logos scroll", async ({ p
   await expect(page.getByRole("heading", { level: 1, name: "Cybersecurity Club at GSU", exact: true })).toBeVisible();
   await expect(page.getByText("Georgia State students who learn, build, and compete in security.")).toBeVisible();
 
-  const glitch = page.locator(".glitch-layer-red");
+  const glitch = page.locator(".cyber-home .glitch-layer-red");
   await expect(glitch).toHaveCSS("animation-name", "none");
   await page.locator("#cyber-home-heading").hover();
   await expect(glitch).toHaveCSS("animation-name", "glitch-slice-red");
@@ -350,12 +350,12 @@ test("reduced motion shows the internship logos as a still list", async ({ brows
 
 test("homepage links reach their pages", async ({ page, request }) => {
   await page.goto("/");
-  for (const [name, path] of [["About", "/about"], ["Events", "/events"], ["Careers", "/careers"], ["Explore Career Paths", "/careers"]]) {
-    const href = await page.getByRole("link", { name, exact: true }).getAttribute("href");
+  for (const [name, path] of [["About", "/#about"], ["Events", "/events"], ["Careers", "/careers"], ["Explore Career Paths", "/careers"]]) {
+    const href = await page.locator(".cyber-home").getByRole("link", { name, exact: true }).getAttribute("href");
     expect(href).toBe(path);
     expect((await request.get(path)).status()).toBe(200);
   }
-  const discord = page.getByRole("link", { name: "Join Discord", exact: true });
+  const discord = page.locator(".cyber-home").getByRole("link", { name: "Join Discord", exact: true });
   await expect(discord).toHaveAttribute("href", /^https:\/\/discord\.gg\//);
   await expect(discord).toHaveAttribute("target", "_blank");
   await expect(page.getByRole("link", { name: /log in|sign in|sign up|register/i })).toHaveCount(0);

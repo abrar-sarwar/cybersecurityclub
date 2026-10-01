@@ -34,7 +34,7 @@ const columns = [
   {
     title: "Club",
     links: [
-      { href: "/about", label: "About" },
+      { href: "/#about", label: "About" },
       { href: "/team", label: "Team and exec board" },
       { href: "/events", label: "Events" },
     ],

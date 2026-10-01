@@ -17,6 +17,9 @@ export function PageHero({
   corner,
   backdrop,
   variant = "feature",
+  id,
+  titleAs = "h1",
+  titleId = "page-title",
   className,
 }: {
   eyebrow: string;
@@ -32,10 +35,15 @@ export function PageHero({
   backdrop?: ReactNode;
   /** "feature" is centered with circuit edges; "compact" is left-aligned for detail pages. */
   variant?: "feature" | "compact";
+  /** Anchor for links that jump to this hero when it sits partway down a page. */
+  id?: string;
+  /** "h2" when the hero is a section of a page that already has its own h1. */
+  titleAs?: "h1" | "h2";
+  titleId?: string;
   className?: string;
 }) {
   return (
-    <section className={cn("signal-hero", `signal-hero-${variant}`, className)} aria-labelledby="page-title">
+    <section id={id} className={cn("signal-hero", `signal-hero-${variant}`, className)} aria-labelledby={titleId}>
       {backdrop}
       {variant === "feature" ? <HeroCircuit /> : null}
       {corner ? <div className="signal-hero-corner">{corner}</div> : null}
@@ -45,7 +53,7 @@ export function PageHero({
           <span className="signal-eyebrow-mark" aria-hidden="true" />
           {eyebrow}
         </p>
-        <GlitchHeading id="page-title" className="signal-hero-title">
+        <GlitchHeading as={titleAs} id={titleId} className="signal-hero-title">
           {title}
         </GlitchHeading>
         {description ? <div className="signal-hero-lead">{description}</div> : null}

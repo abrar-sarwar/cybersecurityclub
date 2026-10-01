@@ -1,6 +1,6 @@
 # Cybersecurity Club at GSU
 
-The club website: public pages (about, events, community, learning catalog) and
+The club website: public pages (home, events, team, careers) and
 a career exploration guide with a twenty-question interest questionnaire. Built
 with Next.js (App Router) and Prisma for the existing public content.
 

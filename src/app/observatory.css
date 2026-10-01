@@ -185,13 +185,8 @@ section[id] { scroll-margin-top: 100px; }
 
 /* Homepage signal field --------------------------------------------------- */
 
-body:has(.cyber-home) > .site-header,
-body:has(.cyber-home) > footer {
+body:has(.cyber-home) > .site-header {
   display: none;
-}
-
-body:has(.cyber-home) main {
-  min-height: 100svh;
 }
 
 .cyber-home {

@@ -418,7 +418,7 @@ test("the careers hub keeps its sections, with unwritten guides marked coming so
 });
 
 test("the footer carries the social accounts and keeps the legal pages reachable", async ({ page }) => {
-  await page.goto("/about");
+  await page.goto("/");
   const socials = page.locator(".signal-footer-socials a");
   await expect(socials).toHaveCount(3);
   for (const [label, href] of [
@@ -441,11 +441,16 @@ test("account pages and sign-in prompts are gone, and public pages still work", 
   for (const path of ["/dashboard", "/onboarding", "/settings", "/admin", "/admin/members", "/sign-in", "/auth/confirm", "/verify-student-email", "/unsubscribe", "/join"]) {
     expect((await request.get(path)).status(), path).toBe(404);
   }
-  for (const path of ["/", "/about", "/events", "/privacy", "/careers", "/careers/quiz", "/careers/learning/product-application-security"]) {
+  for (const path of ["/", "/events", "/privacy", "/careers", "/careers/quiz", "/careers/learning/product-application-security"]) {
     expect((await request.get(path)).status(), path).toBe(200);
   }
 
-  for (const path of ["/about", "/events", "/careers"]) {
+  // The about page was folded into the homepage; the old address lands on that section.
+  await page.goto("/about");
+  await expect(page).toHaveURL(/\/#about$/);
+  await expect(page.getByRole("heading", { level: 2, name: "A student community for learning cybersecurity together" })).toBeVisible();
+
+  for (const path of ["/", "/events", "/careers"]) {
     await page.goto(path);
     // Anchored, so project copy such as "Failed-Login Hunt" is not mistaken for an auth link.
     const authLabel = /^(log ?in|sign ?in|sign ?up|register( account)?|create account|my account|dashboard)$/i;
@@ -544,11 +549,11 @@ test("difficulty filters and the résumé sort reorder the library", async ({ pa
   expect(errors).toEqual([]);
 });
 
-test("the board has its own page, linked from the nav and from About", async ({ page }) => {
+test("the board has its own page, linked from the nav and from the homepage", async ({ page }) => {
   const errors = watchErrors(page);
-  await page.goto("/about");
+  await page.goto("/");
 
-  // About hands off to the members page instead of listing officers itself.
+  // The about section hands off to the members page instead of listing officers itself.
   await expect(page.getByRole("heading", { name: "The exec board" })).toBeVisible();
   await page.getByRole("link", { name: "Meet the team" }).click();
   await expect(page).toHaveURL(/\/team$/);
@@ -603,8 +608,8 @@ test("board profiles open LinkedIn from the pyramid", async ({ page }) => {
 test("club photos and member quotes render, and the photos actually load", async ({ page }) => {
   const errors = watchErrors(page);
 
-  await page.goto("/about");
-  // The photographs now sit behind the hero rather than in a section of their own.
+  await page.goto("/");
+  // The photographs now sit behind the about heading rather than in a section of their own.
   const photos = page.locator(".hero-photo");
   await expect(photos).toHaveCount(CLUB_PHOTOS.length);
   await expect(page.getByRole("heading", { name: "What meetings actually look like" })).toHaveCount(0);
@@ -715,7 +720,7 @@ test("the board and the timeline are usable on a phone", async ({ page }) => {
   await expect(page.locator(".rail-thumb img").first()).toHaveJSProperty("complete", true);
 
   // Nothing may push the page sideways on a phone.
-  for (const path of ["/", "/about", "/team", "/events", "/careers", "/careers/projects"]) {
+  for (const path of ["/", "/team", "/events", "/careers", "/careers/projects"]) {
     await page.goto(path);
     const width = await page.evaluate(() => document.documentElement.scrollWidth);
     expect(width, path).toBeLessThanOrEqual(390);

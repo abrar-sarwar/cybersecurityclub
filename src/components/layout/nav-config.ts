@@ -1,5 +1,5 @@
 export const PUBLIC_NAV = [
-  { href: "/about", label: "About" },
+  { href: "/#about", label: "About" },
   { href: "/events", label: "Events" },
   { href: "/careers", label: "Careers" },
   { href: "/careers/projects", label: "Projects" },
