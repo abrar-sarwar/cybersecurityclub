@@ -7,7 +7,7 @@ export const webSecurity: Guide = {
   eyebrow: "Skills guide",
   summary:
     "How web apps break, and how to find the flaws safely, using free labs from the company that makes Burp Suite and a vulnerable app that runs on your own machine.",
-  card: "How web apps break, with free labs and a vulnerable app that runs on your own machine.",
+  card: "How web apps break, with free labs to practice on.",
   facts: [
     { label: "Cost", value: "Free" },
     { label: "Labs", value: "Web Security Academy" },

@@ -7,7 +7,7 @@ export const socPractice: Guide = {
   eyebrow: "Skills guide",
   summary:
     "Many first security roles are in a security operations center. Practice the core of that job: reading logs, judging alerts and writing down what you found.",
-  card: "Practice the core of a first security job: reading logs, judging alerts, writing it up.",
+  card: "Read logs, judge alerts, write it up.",
   facts: [
     { label: "Cost", value: "Free to start" },
     { label: "Core skill", value: "Reading logs" },

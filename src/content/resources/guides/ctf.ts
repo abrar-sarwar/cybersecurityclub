@@ -7,7 +7,7 @@ export const ctf: Guide = {
   eyebrow: "Competition guide",
   summary:
     "A capture the flag (CTF) is a set of security puzzles with a scoreboard. It is a practical way to build skills you can point to, and you do not need experience to start.",
-  card: "Security puzzles with a scoreboard. Where to start, what to bring, and how to compete with the club.",
+  card: "Puzzles with a scoreboard, and the club's NCL team.",
   facts: [
     { label: "Cost", value: "Mostly free" },
     { label: "Experience", value: "None needed" },

@@ -67,7 +67,7 @@ export function ResourceMap({
 
   return (
     <div className="resource-map-frame">
-      <div className="resource-groups" role="group" aria-label="Trace one kind of resource">
+      <div className="resource-groups" role="group" aria-label="Trace one kind of guide">
         {(Object.keys(groups) as GuideGroup[]).map((id) => (
           <button key={id} type="button" className="resource-group" data-group={id} aria-pressed={group === id} onClick={() => setGroup(group === id ? null : id)}>
             <span className="resource-group-mark" aria-hidden="true" />
@@ -91,20 +91,16 @@ export function ResourceMap({
               onFocus={() => setPointed(node.slug)}
               onBlur={() => setPointed(null)}
             >
-              <div className="resource-node-head">
-                <span className="resource-node-icon">
-                  <Icon className="size-5" aria-hidden />
-                </span>
-                <span className="resource-node-group">
-                  <span className="resource-group-mark" aria-hidden="true" />
-                  {groups[node.group]}
-                </span>
-              </div>
+              <span className="resource-node-icon">
+                <Icon className="size-5" aria-hidden />
+              </span>
               <h3 className="resource-node-title">
                 <Link href={`/resources/${node.slug}`} className="resource-node-link">
                   {node.title}
                 </Link>
               </h3>
+              {/* The group is shown as the icon's colour; this says it in words. */}
+              <p className="sr-only">{groups[node.group]}</p>
               <p className="resource-node-card">{node.card}</p>
               {all
                 .filter((wire) => wire.from === node.slug)
@@ -114,7 +110,7 @@ export function ResourceMap({
                     className="resource-link"
                     data-direction={wire.direction}
                     data-lit={tracing ? wireLit(wire) : undefined}
-                    style={{ ["--delay" as string]: `${(nodes.indexOf(node) * 0.55 + position * 1.3) % 4.2}s` }}
+                    style={{ ["--delay" as string]: `${(nodes.indexOf(node) * 1.9 + position * 4.1) % 9}s` }}
                     aria-hidden="true"
                   >
                     <i />

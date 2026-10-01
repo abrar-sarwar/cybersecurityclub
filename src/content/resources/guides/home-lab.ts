@@ -7,7 +7,7 @@ export const homeLab: Guide = {
   eyebrow: "Setup guide",
   summary:
     "Two virtual machines on a private network, on the laptop you already have: Kali Linux for tools, and a second machine to practice against.",
-  card: "Two virtual machines on a private network, on the laptop you already have.",
+  card: "Two virtual machines on a private network, on your own laptop.",
   facts: [
     { label: "Cost", value: "Free" },
     { label: "Memory", value: "8 GB RAM or more" },

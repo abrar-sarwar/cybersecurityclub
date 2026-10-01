@@ -25,11 +25,9 @@ export default function ResourcesPage() {
       <section className="container-x section" aria-labelledby="map-heading">
         <div className="max-w-2xl">
           <h2 id="map-heading" className="signal-section-title">
-            Follow the connections
+            Start anywhere
           </h2>
-          <p className="careers-prose">
-            Every guide is wired to the ones it leads into. Point at a box to see where it goes, or trace one kind of resource with the buttons, then open any box to start.
-          </p>
+          <p className="careers-prose">Each guide is wired to the ones it leads into. Point at one to see where it goes.</p>
         </div>
         <ResourceMap nodes={nodes} links={GUIDE_LINKS} groups={GUIDE_GROUPS} />
       </section>

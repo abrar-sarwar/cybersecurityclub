@@ -7,7 +7,7 @@ export const networkPlus: Guide = {
   eyebrow: "Study guide",
   summary:
     "The same practice-first routine, aimed at N10-009: learn subnetting early, memorize the troubleshooting steps, use the real tools, and test yourself every day.",
-  card: "Learn subnetting early, memorize the troubleshooting steps, and finish with daily practice exams.",
+  card: "Subnetting, troubleshooting steps, then daily practice exams.",
   facts: [
     { label: "Exam", value: "N10-009 (V9)" },
     { label: "Questions", value: "Up to 90" },

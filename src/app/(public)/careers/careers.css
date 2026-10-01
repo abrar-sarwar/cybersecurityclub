@@ -2520,8 +2520,8 @@
 /* The resources map: boxes three to a row, wired through the gaps between them. */
 .resource-map-frame {
   --gap: clamp(2.5rem, 4.4vw, 4rem);
-  --wire: rgba(62, 132, 255, 0.5);
-  margin-top: 2rem;
+  --wire: rgba(62, 132, 255, 0.42);
+  margin-top: 1.5rem;
 }
 
 .resource-groups {
@@ -2535,10 +2535,9 @@
   min-height: 2.75rem;
   align-items: center;
   gap: 0.55rem;
-  padding: 0.4rem 0.95rem;
-  border: 1px solid var(--color-line);
+  padding: 0.4rem 0.85rem;
+  border: 1px solid transparent;
   border-radius: 999px;
-  background: rgba(8, 16, 30, 0.6);
   color: var(--color-muted);
   font-size: 0.9rem;
   font-weight: 500;
@@ -2583,12 +2582,12 @@
   display: grid;
   gap: var(--gap);
   max-width: 36rem;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
 }
 
 .resource-node {
   position: relative;
-  padding: 1.4rem 1.5rem 1.5rem;
+  padding: 1.25rem 1.4rem 1.35rem;
   border: 1px solid rgba(120, 165, 255, 0.18);
   border-radius: var(--radius-lg);
   background: linear-gradient(180deg, rgba(12, 28, 64, 0.62), rgba(3, 10, 28, 0.9));
@@ -2621,24 +2620,16 @@
   width: 2.5rem;
   height: 2.5rem;
   place-items: center;
-  border: 1px solid rgba(120, 165, 255, 0.22);
+  border: 1px solid color-mix(in srgb, var(--mark) 40%, transparent);
   border-radius: 0.6rem;
-  background: var(--color-brand-50);
-  color: var(--color-accent);
-}
-
-.resource-node-group {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--color-faint);
-  font-size: 0.8rem;
+  background: color-mix(in srgb, var(--mark) 10%, transparent);
+  color: var(--mark);
 }
 
 .resource-node-title {
-  margin-top: 1rem;
+  margin-top: 0.9rem;
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 700;
   line-height: 1.25;
   letter-spacing: -0.02em;
@@ -2662,10 +2653,10 @@
 }
 
 .resource-node-card {
-  margin-top: 0.5rem;
+  margin-top: 0.4rem;
   color: var(--color-muted);
-  font-size: 0.92rem;
-  line-height: 1.55;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 /* Wires. Each one belongs to the box it leaves and crosses exactly one gap. */
@@ -2676,17 +2667,18 @@
   transition: opacity 180ms ease-out;
 }
 
+/* One signal per wire, with long quiet stretches, so only a few are moving at once. */
 .resource-link i {
   position: absolute;
-  top: -2.5px;
-  left: -2.5px;
-  width: 6px;
-  height: 6px;
+  top: -2px;
+  left: -2px;
+  width: 5px;
+  height: 5px;
   border-radius: 999px;
   background: #d9ebff;
-  box-shadow: 0 0 10px 2px rgba(140, 192, 255, 0.85);
+  box-shadow: 0 0 8px 1px rgba(140, 192, 255, 0.8);
   opacity: 0;
-  animation: resource-signal 4.2s linear infinite;
+  animation: resource-signal 9s linear infinite;
   animation-delay: var(--delay, 0s);
 }
 
@@ -2741,7 +2733,7 @@
 }
 
 .resource-link[data-lit="true"] i {
-  animation-duration: 1.3s;
+  animation-duration: 3.2s;
   animation-delay: 0s;
 }
 
@@ -2749,15 +2741,17 @@
   opacity: 0.22;
 }
 
+/* The dot crosses the gap in the first quarter of the cycle, then the wire rests. */
 @keyframes resource-signal {
   0% {
     opacity: 0;
     transform: translate(0, 0);
   }
-  12%,
-  82% {
+  4%,
+  22% {
     opacity: 1;
   }
+  26%,
   100% {
     opacity: 0;
     transform: translate(var(--dx), var(--dy));

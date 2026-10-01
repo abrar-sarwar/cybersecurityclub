@@ -7,7 +7,7 @@ export const linuxBasics: Guide = {
   eyebrow: "Skills guide",
   summary:
     "Most security tools and most servers run on Linux. Start in the practice terminal on this page, then keep going with a short daily habit and a free game.",
-  card: "Practice in a terminal right on the page, then keep going with a free game.",
+  card: "A terminal to practice in, right on the page.",
   facts: [
     { label: "Cost", value: "Free" },
     { label: "Start", value: "On this page" },

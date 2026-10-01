@@ -51,7 +51,7 @@ export type Guide = {
   eyebrow: string;
   /** Shown under the title on the guide's own page. */
   summary: string;
-  /** Shorter line for the box on the resources map. */
+  /** One short line for the box on the resources map, under 64 characters. */
   card: string;
   /** Four short facts shown in one row. */
   facts: { label: string; value: string }[];

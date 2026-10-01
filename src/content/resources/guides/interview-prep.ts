@@ -7,7 +7,7 @@ export const interviewPrep: Guide = {
   eyebrow: "Career guide",
   summary:
     "What entry-level security interviews ask, how to structure an answer, and a bank of questions to practice out loud before the real thing.",
-  card: "What security interviews ask, how to structure an answer, and questions to practice out loud.",
+  card: "What they ask, how to answer, and questions to drill.",
   facts: [
     { label: "Cost", value: "Free" },
     { label: "Question types", value: "Four" },

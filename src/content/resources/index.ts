@@ -43,22 +43,21 @@ export const GUIDES: readonly Guide[] = [
 ];
 
 /**
- * What leads to what. Each pair sits side by side on the map, which is what
- * lets the page draw the link through the gap between the two boxes.
+ * What leads to what. Each pair sits side by side on the map, across or down,
+ * which is what lets the page draw the link straight through the gap between
+ * the two boxes. Diagonals were tried and made the map busy.
  */
 export const GUIDE_LINKS: readonly (readonly [string, string])[] = [
   ["network-plus", "security-plus"],
   ["security-plus", "interview-prep"],
   ["network-plus", "home-lab"],
-  ["network-plus", "security-tools"],
   ["security-plus", "security-tools"],
   ["interview-prep", "soc-practice"],
   ["home-lab", "security-tools"],
   ["security-tools", "soc-practice"],
   ["home-lab", "linux-basics"],
-  ["security-tools", "linux-basics"],
   ["security-tools", "ctf"],
-  ["security-tools", "web-security"],
+  ["soc-practice", "web-security"],
   ["linux-basics", "ctf"],
   ["ctf", "web-security"],
 ];

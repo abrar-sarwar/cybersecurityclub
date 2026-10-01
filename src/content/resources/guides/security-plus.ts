@@ -7,7 +7,7 @@ export const securityPlus: Guide = {
   eyebrow: "Study guide",
   summary:
     "A repetition plan for SY0-701: a fresh practice exam every morning, a review of every miss, and steady practice on the performance-based questions.",
-  card: "A daily routine built on fresh practice exams, reviewing every miss, and getting comfortable with PBQs.",
+  card: "A 30-day routine of practice exams and PBQs.",
   facts: [
     { label: "Exam", value: "SY0-701 (V7)" },
     { label: "Questions", value: "Up to 90" },

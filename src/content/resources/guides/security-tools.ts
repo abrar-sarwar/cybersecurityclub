@@ -7,7 +7,7 @@ export const securityTools: Guide = {
   eyebrow: "Tool guide",
   summary:
     "The tools that come up again and again in classes, competitions and entry-level roles, laid out across the network they are used on. Open one to see why it matters, how it works and what to pick up next.",
-  card: "A map of the tools across a network. Open one to see how it works and what to learn next.",
+  card: "A map of 26 tools, each with how to run it.",
   facts: [
     { label: "Tools", value: "26 to explore" },
     { label: "Cost", value: "Free to start" },

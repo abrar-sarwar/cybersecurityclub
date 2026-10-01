@@ -388,6 +388,7 @@ test("every guide is short, sectioned, and free of em dashes", () => {
     assert.equal(new Set(ids).size, ids.length, `${guide.slug} section ids are unique`);
     for (const reserved of ["links", "next"]) assert.ok(!ids.includes(reserved), `${guide.slug} leaves #${reserved} to the page`);
     assert.equal(guide.facts.length, 4, `${guide.slug} facts fill one row`);
+    assert.ok(guide.card.length <= 64, `${guide.slug} keeps its box to one line`);
     assert.ok(guide.sections.length <= 7, `${guide.slug} stays short`);
     for (const section of guide.sections) {
       const hasBody = Boolean(section.intro || section.steps?.length || section.bullets?.length || section.weights?.length || section.video || section.widget);
