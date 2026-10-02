@@ -1,6 +1,6 @@
 import { branding } from "@config/branding";
 
-/** Content for the Challenges & Competitions page: the pathway and the competitions list. */
+/** Content for the Competitions page: the pathway and the competitions list. */
 
 export type RegistrationStatus = "open" | "closed" | "upcoming" | "interest";
 
@@ -85,7 +85,7 @@ export const pathway: PathwayStep[] = [
   {
     title: "Practice",
     body: "Solve challenges at your own pace on CyLabs and Hack The Box.",
-    link: { label: "Practice platforms", href: "#practice" },
+    link: { label: "Practice platforms", href: "/challenges#practice" },
   },
   {
     title: "Participate",
@@ -95,6 +95,6 @@ export const pathway: PathwayStep[] = [
   {
     title: "Compete",
     body: "Enter external competitions with the university team.",
-    link: { label: "Current competitions", href: "#competitions" },
+    link: { label: "Current competitions", href: "/competitions#competitions" },
   },
 ];

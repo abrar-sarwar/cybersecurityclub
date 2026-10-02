@@ -47,7 +47,7 @@ export const GETTING_STARTED: StartStep[] = [
     summary: "Solving small puzzles is the fastest way to find out what you enjoy.",
     resources: [
       { name: "CyLabs", description: "Carnegie Mellon's free, beginner-oriented CTF platform, formerly picoCTF, with year-round practice in every category.", url: "https://cylabacademy.org" },
-      { name: "Club challenges", description: "Where the club practises and which competitions we enter.", url: "/challenges" },
+      { name: "Club challenges", description: "Where the club practises between meetings.", url: "/challenges" },
     ],
   },
   {

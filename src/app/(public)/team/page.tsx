@@ -91,7 +91,7 @@ export default async function TeamPage() {
                     <span aria-hidden="true">↗</span>
                     <span className="sr-only">(opens in a new tab)</span>
                   </ButtonLink>
-                  <ButtonLink href="/challenges" variant="outline">
+                  <ButtonLink href="/competitions" variant="outline">
                     How the team works
                   </ButtonLink>
                 </>

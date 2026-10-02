@@ -1,6 +1,6 @@
 import { branding } from "@config/branding";
 
-/** Practice content for the Challenges & Competitions page. */
+/** Practice content for the Challenges page. */
 
 export type Difficulty = "Easy" | "Medium" | "Hard";
 

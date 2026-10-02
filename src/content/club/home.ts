@@ -27,8 +27,8 @@ export const HOME_PRACTICE: readonly PracticePlatform[] = [
 
 export const HOME_COMPETE = {
   title: "Ready to compete?",
-  body: "The competitive team trains for CTFs and collegiate competitions. See how challenges work and how to apply.",
-  href: "/challenges",
+  body: "The competitive team trains for CTFs and collegiate competitions. See what we enter and how to apply.",
+  href: "/competitions",
 };
 
 export const HOME_JOIN = {
