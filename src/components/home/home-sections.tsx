@@ -3,7 +3,8 @@ import { branding } from "@config/branding";
 import { DiscordMark } from "@/components/brand/discord-mark";
 import { ButtonLink } from "@/components/ui/button";
 import { ExternalLink } from "@/components/ui/external-link";
-import { Badge, Card, EmptyState, SectionHeading } from "@/components/ui/primitives";
+import { EventCategoryBadge } from "@/components/events/event-details";
+import { Card, EmptyState, SectionHeading } from "@/components/ui/primitives";
 import { formatEventDate, formatEventTime, type ClubEvent } from "@/content/club/events";
 import { HOME_BEGINNER, HOME_COMPETE, HOME_EVENTS_EMPTY, HOME_JOIN, HOME_PILLARS, HOME_PRACTICE } from "@/content/club/home";
 import { CLUB_PHOTOS } from "@/content/club/photos";
@@ -45,8 +46,7 @@ export function EventSpotlight({ events }: { events: readonly ClubEvent[] }) {
                   </div>
                   <div className="flex min-w-0 flex-col gap-3">
                     <div className="flex flex-wrap gap-2">
-                      <Badge>{event.category}</Badge>
-                      {event.difficulty ? <Badge tone="cyan">{event.difficulty}</Badge> : null}
+                      <EventCategoryBadge category={event.category} />
                     </div>
                     <h3 className="font-display text-lg font-bold text-navy-900">{event.title}</h3>
                     <dl className="grid gap-1.5 text-sm text-muted">

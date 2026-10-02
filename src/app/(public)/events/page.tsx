@@ -26,7 +26,7 @@ export default function EventsPage() {
           id="page-title"
           eyebrow="Events"
           title="Workshops, meetings and competitions"
-          description="Everything the club has scheduled. Most events need no experience: look for the “Beginner friendly” and “All levels welcome” tags."
+          description="Everything the club has scheduled. Most events need no experience."
         />
       </section>
 

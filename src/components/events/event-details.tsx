@@ -2,8 +2,8 @@ import { CalendarDays, Clock, MapPin } from "lucide-react";
 import { branding } from "@config/branding";
 import { ButtonLink } from "@/components/ui/button";
 import { ExternalLink } from "@/components/ui/external-link";
-import { Badge } from "@/components/ui/primitives";
-import { formatEventDate, formatEventTime, type ClubEvent, type EventDifficulty } from "@/content/club/events";
+import { Badge, type Tone } from "@/components/ui/primitives";
+import { formatEventDate, formatEventTime, type ClubEvent, type EventCategory } from "@/content/club/events";
 
 /**
  * The pieces every event view shares (upcoming list, calendar, archive), so
@@ -11,25 +11,27 @@ import { formatEventDate, formatEventTime, type ClubEvent, type EventDifficulty 
  * and client components alike.
  */
 
-const DIFFICULTY: Record<EventDifficulty, { label: string; tone: "success" | "warning" | "danger" }> = {
-  Beginner: { label: "Beginner friendly", tone: "success" },
-  "All Levels": { label: "All levels welcome", tone: "success" },
-  Intermediate: { label: "Intermediate", tone: "warning" },
-  Advanced: { label: "Advanced", tone: "danger" },
+const CATEGORY_TONE: Record<EventCategory, Tone> = {
+  Workshop: "brand",
+  "General Body Meeting": "cyan",
+  CTF: "danger",
+  Competition: "warning",
+  Social: "success",
+  Speaker: "navy",
+  Career: "success",
+  Training: "muted",
 };
 
+export function EventCategoryBadge({ category }: { category: EventCategory }) {
+  return <Badge tone={CATEGORY_TONE[category]}>{category}</Badge>;
+}
+
 export function EventBadges({ event, className }: { event: ClubEvent; className?: string }) {
-  const level = event.difficulty ? DIFFICULTY[event.difficulty] : null;
   return (
-    <ul className={`flex flex-wrap gap-2 ${className ?? ""}`} aria-label="Event type and level">
+    <ul className={`flex flex-wrap gap-2 ${className ?? ""}`} aria-label="Event type">
       <li>
-        <Badge>{event.category}</Badge>
+        <EventCategoryBadge category={event.category} />
       </li>
-      {level ? (
-        <li>
-          <Badge tone={level.tone}>{level.label}</Badge>
-        </li>
-      ) : null}
     </ul>
   );
 }
