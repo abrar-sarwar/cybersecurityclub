@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { branding } from "@config/branding";
+import { DiscordMark } from "@/components/brand/discord-mark";
 import { ButtonLink } from "@/components/ui/button";
 import { PageHero } from "@/components/site/page-hero";
 import { TeamNetwork } from "@/components/site/team-network";
@@ -34,7 +35,8 @@ export default async function TeamPage() {
         title="The team behind the club"
         description={`The club is run by students who volunteer their time. Here is the board for ${BOARD_TERM}, and how to join.`}
       >
-        <ButtonLink href={branding.links.discordInvite} size="lg" external>
+        <ButtonLink href={branding.links.discordInvite} variant="discord" size="lg" external>
+          <DiscordMark />
           Join Discord
         </ButtonLink>
         <ButtonLink href="/events" variant="outline" size="lg">
@@ -80,7 +82,8 @@ export default async function TeamPage() {
             ))}
           </ol>
           <div className="board-actions">
-            <ButtonLink href={branding.links.discordInvite} external>
+            <ButtonLink href={branding.links.discordInvite} variant="discord" external>
+              <DiscordMark />
               Ask the board on Discord
             </ButtonLink>
             <ButtonLink href={branding.links.pinOrganization} variant="outline" external>

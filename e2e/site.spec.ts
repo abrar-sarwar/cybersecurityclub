@@ -46,7 +46,7 @@ test("the header's only action is Join Discord", async ({ page }) => {
   await expect(actions).toHaveCount(1);
   await expect(actions).toHaveText("Join Discord");
   await expect(actions).toHaveAttribute("href", /^https:\/\/discord\.gg\//);
-  await expect(actions).toHaveClass(/btn-cyber-primary/);
+  await expect(actions).toHaveClass(/btn-cyber-discord/);
   await expect(page.getByRole("link", { name: "Find My Path" })).toHaveCount(0);
 });
 
@@ -58,7 +58,7 @@ test("the phone menu has Discord as its only action", async ({ page }) => {
   const action = dialog.locator("a.btn-cyber");
   await expect(action).toHaveCount(1);
   await expect(action).toHaveText("Join Discord");
-  await expect(action).toHaveClass(/btn-cyber-primary/);
+  await expect(action).toHaveClass(/btn-cyber-discord/);
 });
 
 test("no page links to a removed route", async ({ page }) => {

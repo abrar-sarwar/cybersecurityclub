@@ -1,5 +1,6 @@
 import { ArrowUpRight, CalendarDays, MapPin } from "lucide-react";
 import { branding } from "@config/branding";
+import { DiscordMark } from "@/components/brand/discord-mark";
 import { ButtonLink } from "@/components/ui/button";
 import type { ClubEvent } from "@/content/club/flyers";
 
@@ -91,7 +92,8 @@ export function UpcomingEvents({ events, today }: { events: readonly ClubEvent[]
             <ButtonLink href={branding.links.pinEvents} external>
               Events on PIN
             </ButtonLink>
-            <ButtonLink href={branding.links.discordInvite} variant="outline" external>
+            <ButtonLink href={branding.links.discordInvite} variant="discord" external>
+              <DiscordMark />
               Join Discord
             </ButtonLink>
           </div>

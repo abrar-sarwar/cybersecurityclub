@@ -596,6 +596,7 @@ section[id] { scroll-margin-top: 100px; }
 
 .cyber-home-actions a {
   display: inline-flex;
+  gap: 0.5rem;
   min-width: 8.9rem;
   min-height: 3rem;
   align-items: center;
@@ -608,20 +609,6 @@ section[id] { scroll-margin-top: 100px; }
   letter-spacing: -0.01em;
   pointer-events: auto;
   transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
-}
-
-.cyber-secondary-action {
-  border-color: rgba(151, 190, 255, 0.34) !important;
-  background: rgba(5, 18, 41, 0.58);
-  box-shadow: inset 0 1px rgba(255, 255, 255, 0.035);
-  color: rgba(238, 245, 255, 0.88);
-  backdrop-filter: blur(8px);
-}
-
-.cyber-secondary-action:hover {
-  border-color: rgba(166, 205, 255, 0.7) !important;
-  background: rgba(12, 38, 82, 0.68);
-  color: #fff;
 }
 
 /* Internship logos --------------------------------------------------------- */

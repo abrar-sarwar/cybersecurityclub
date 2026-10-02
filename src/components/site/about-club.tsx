@@ -1,4 +1,5 @@
 import { branding } from "@config/branding";
+import { DiscordMark } from "@/components/brand/discord-mark";
 import { ButtonLink } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/primitives";
 import { PageHero } from "@/components/site/page-hero";
@@ -27,7 +28,8 @@ export function AboutClub() {
         description={`${branding.displayName} is a registered student organization at ${branding.universityName}. We meet regularly on the Atlanta campus to learn tools and techniques, work on projects, practice for competitions, and prepare for internships and jobs in the field.`}
         backdrop={<PhotoBackdrop />}
       >
-        <ButtonLink href={branding.links.discordInvite} size="lg" external>
+        <ButtonLink href={branding.links.discordInvite} variant="discord" size="lg" external>
+          <DiscordMark />
           Join Discord
         </ButtonLink>
         <ButtonLink href={branding.links.pinOrganization} variant="outline" size="lg" external>
@@ -64,7 +66,8 @@ export function AboutClub() {
         />
         <div className="mt-8 flex flex-wrap gap-3">
           <ButtonLink href="/team">Meet the team</ButtonLink>
-          <ButtonLink href={branding.links.discordInvite} variant="outline" external>
+          <ButtonLink href={branding.links.discordInvite} variant="discord" external>
+            <DiscordMark />
             Ask the officers on Discord
           </ButtonLink>
         </div>

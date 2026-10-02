@@ -1,17 +1,10 @@
 import Link from "next/link";
 import { branding } from "@config/branding";
+import { DiscordMark } from "@/components/brand/discord-mark";
 import { Logo } from "@/components/brand/logo";
 import { StarField } from "@/components/marketing/star-field";
 
 /* Brand marks are inlined: lucide dropped its brand icon set. */
-function DiscordMark() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-      <path d="M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.79.037c-.211.375-.445.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.32.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .078-.01c3.927 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .79.009c.12.099.246.198.373.292a.077.077 0 0 1-.6.127 12.3 12.3 0 0 1-1.873.892.077.077 0 0 0-.41.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .84.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03ZM8.02 15.331c-1.182 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418Zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418Z" />
-    </svg>
-  );
-}
-
 function InstagramMark() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true" focusable="false">
@@ -32,31 +25,16 @@ function LinkedinMark() {
 
 const columns = [
   {
-    title: "Club",
-    links: [
-      { href: "/#about", label: "About" },
-      { href: "/team", label: "Team and exec board" },
-      { href: "/events", label: "Events" },
-    ],
-  },
-  {
-    title: "Explore",
-    links: [
-      { href: "/challenges", label: "Challenges" },
-      { href: "/resources", label: "Resources" },
-    ],
-  },
-  {
     title: "Connect",
     links: [{ href: branding.links.pinOrganization, label: "PIN (official org page)", external: true }],
   },
 ];
 
-/** Social accounts, shown as icons rather than another list of links. */
+/** Social accounts, shown as icons rather than another list of links. Each tile wears its brand's colors. */
 const SOCIALS = [
-  { href: branding.links.discordInvite, label: "Discord", icon: DiscordMark },
-  { href: branding.links.instagram, label: "Instagram", icon: InstagramMark },
-  { href: branding.links.linkedin, label: "LinkedIn", icon: LinkedinMark },
+  { href: branding.links.discordInvite, label: "Discord", icon: DiscordMark, className: "is-discord" },
+  { href: branding.links.instagram, label: "Instagram", icon: InstagramMark, className: "is-instagram" },
+  { href: branding.links.linkedin, label: "LinkedIn", icon: LinkedinMark, className: "is-linkedin" },
 ];
 
 /** The footer sits on the same planet horizon that closes the homepage. */
@@ -69,7 +47,6 @@ export function SiteFooter() {
       <div className="container-x signal-footer-inner">
         <div className="signal-footer-brand">
           <Logo size="sm" />
-          <p>{branding.description}</p>
         </div>
         {columns.map((col) => (
           <nav key={col.title} aria-label={col.title} className="signal-footer-column">
@@ -91,7 +68,7 @@ export function SiteFooter() {
               <ul className="signal-footer-socials">
                 {SOCIALS.map((social) => (
                   <li key={social.label}>
-                    <a href={social.href} target="_blank" rel="noopener noreferrer" aria-label={`${social.label} (opens in a new tab)`}>
+                    <a href={social.href} className={social.className} target="_blank" rel="noopener noreferrer" aria-label={`${social.label} (opens in a new tab)`}>
                       <social.icon />
                     </a>
                   </li>

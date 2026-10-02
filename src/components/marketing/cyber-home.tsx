@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { branding } from "@config/branding";
+import { DiscordMark } from "@/components/brand/discord-mark";
 import {
   useEffect,
   useReducer,
@@ -520,7 +521,8 @@ export function CyberHome({ employers }: { employers: Employer[] }) {
               Georgia State students who learn, build, and compete in security.
             </p>
             <div className="cyber-home-actions">
-              <a className="cyber-secondary-action" href={branding.links.discordInvite} target="_blank" rel="noopener noreferrer">
+              <a className="btn-cyber-discord" href={branding.links.discordInvite} target="_blank" rel="noopener noreferrer">
+                <DiscordMark />
                 Join Discord
               </a>
             </div>

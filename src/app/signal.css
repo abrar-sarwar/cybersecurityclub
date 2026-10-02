@@ -98,6 +98,18 @@ body > header {
   box-shadow: 0 10px 32px -12px rgba(38, 119, 255, 1), inset 0 1px rgba(255, 255, 255, 0.2);
 }
 
+/* Every button that leads to Discord wears Discord's own blurple. */
+.btn-cyber-discord {
+  background: #5865f2;
+  box-shadow: 0 8px 28px -12px rgba(88, 101, 242, 0.9), inset 0 1px rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.btn-cyber-discord:hover {
+  background: #4752c4;
+  box-shadow: 0 10px 32px -12px rgba(88, 101, 242, 1), inset 0 1px rgba(255, 255, 255, 0.2);
+}
+
 .btn-cyber-outline {
   border-color: rgba(151, 190, 255, 0.34);
   background: rgba(5, 18, 41, 0.58);
@@ -135,6 +147,7 @@ body > header {
 
 @media (hover: hover) {
   .btn-cyber-primary:hover,
+  .btn-cyber-discord:hover,
   .btn-cyber-outline:hover,
   .btn-cyber-secondary:hover {
     transform: translateY(-1px);
@@ -748,7 +761,7 @@ a.card:hover,
   isolation: isolate;
   margin-top: clamp(4rem, 9vw, 7rem);
   overflow: hidden;
-  padding-top: clamp(6rem, 12vw, 9rem);
+  padding-top: clamp(3.5rem, 7vw, 5rem);
 }
 
 /* A very wide ellipse keeps the arc as gentle as the homepage horizon. */
@@ -783,12 +796,12 @@ a.card:hover,
 .signal-footer-inner {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 2.25rem 1.5rem;
+  gap: 1.75rem 1.5rem;
 }
 
 @media (min-width: 1024px) {
   .signal-footer-inner {
-    grid-template-columns: 1.5fr repeat(4, minmax(0, 1fr));
+    grid-template-columns: 1fr auto;
     gap: 2.5rem;
   }
 }
@@ -802,13 +815,6 @@ a.card:hover,
   .signal-footer-brand {
     grid-column: auto;
   }
-}
-
-.signal-footer-brand p {
-  margin-top: 1rem;
-  color: rgba(180, 199, 230, 0.72);
-  font-size: 0.9rem;
-  line-height: 1.65;
 }
 
 .signal-footer-column h2 {
@@ -841,8 +847,8 @@ a.card:hover,
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  margin-top: 3rem;
-  padding-block: 1.5rem 2rem;
+  margin-top: 2rem;
+  padding-block: 1.1rem 1.4rem;
   border-top: 1px solid rgba(120, 165, 255, 0.14);
   color: rgba(180, 199, 230, 0.66);
   font-size: 0.78rem;
@@ -2155,6 +2161,43 @@ a.voice-name:focus-visible {
   border-color: rgba(96, 165, 250, 0.7);
   color: #fff;
   transform: translateY(-2px);
+}
+
+/* Matches the Discord buttons (.btn-cyber-discord). */
+.signal-footer-socials a.is-discord {
+  border-color: #5865f2;
+  background: #5865f2;
+  color: #fff;
+}
+
+.signal-footer-socials a.is-discord:hover,
+.signal-footer-socials a.is-discord:focus-visible {
+  border-color: #4752c4;
+  background: #4752c4;
+}
+
+.signal-footer-socials a.is-instagram {
+  border-color: transparent;
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%) border-box;
+  color: #fff;
+}
+
+.signal-footer-socials a.is-instagram:hover,
+.signal-footer-socials a.is-instagram:focus-visible {
+  border-color: transparent;
+  filter: brightness(1.12);
+}
+
+.signal-footer-socials a.is-linkedin {
+  border-color: #0a66c2;
+  background: #0a66c2;
+  color: #fff;
+}
+
+.signal-footer-socials a.is-linkedin:hover,
+.signal-footer-socials a.is-linkedin:focus-visible {
+  border-color: #004182;
+  background: #004182;
 }
 
 .signal-footer-socials svg {

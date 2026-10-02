@@ -3,7 +3,7 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 
-type Variant = "primary" | "secondary" | "outline" | "ghost" | "danger" | "link";
+type Variant = "primary" | "secondary" | "outline" | "ghost" | "discord" | "danger" | "link";
 type Size = "sm" | "md" | "lg";
 
 const base =
@@ -15,6 +15,7 @@ const variants: Record<Variant, string> = {
   secondary: "btn-cyber btn-cyber-secondary",
   outline: "btn-cyber btn-cyber-outline",
   ghost: "btn-cyber btn-cyber-ghost",
+  discord: "btn-cyber btn-cyber-discord",
   danger: "bg-red-800 text-white hover:bg-red-900",
   link: "text-accent underline-offset-4 hover:underline px-0 h-auto",
 };

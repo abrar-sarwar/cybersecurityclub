@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -8,7 +8,7 @@ import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 type Item = { href: string; label: string };
-type Action = Item & { external?: boolean };
+type Action = Item & { external?: boolean; icon?: ReactNode; variant?: "discord" };
 
 export function MobileNav({
   items,
@@ -16,7 +16,7 @@ export function MobileNav({
   brandLabel,
 }: {
   items: Item[];
-  /** The first action is styled as the primary button. */
+  /** The first action is styled as the primary button, unless it names its own variant. */
   actions: Action[];
   brandLabel: string;
 }) {
@@ -140,13 +140,15 @@ export function MobileNav({
             </nav>
             <div className="space-y-2 border-t border-line p-4">
               {actions.map((action, index) => {
-                const className = cn("btn-cyber btn-cyber-lg w-full", index === 0 ? "btn-cyber-primary" : "btn-cyber-outline");
+                const className = cn("btn-cyber btn-cyber-lg w-full", action.variant ? `btn-cyber-${action.variant}` : index === 0 ? "btn-cyber-primary" : "btn-cyber-outline");
                 return action.external ? (
                   <a key={action.href} href={action.href} target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)} className={className}>
+                    {action.icon}
                     {action.label}
                   </a>
                 ) : (
                   <Link key={action.href} href={action.href} onClick={() => setOpen(false)} className={className}>
+                    {action.icon}
                     {action.label}
                   </Link>
                 );
