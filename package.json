@@ -4,34 +4,20 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit",
-    "postinstall": "prisma generate",
-    "db:migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy",
-    "db:generate": "prisma generate",
-    "db:studio": "prisma studio",
-    "db:seed": "tsx scripts/seed.ts",
-    "db:reset": "prisma migrate reset --force",
-    "content:check": "tsx scripts/content-check.ts",
-    "media:check": "tsx scripts/media-check.ts",
-    "test:unit": "tsx --test src/components/marketing/network-state.test.ts src/components/marketing/network-layout.test.ts src/lib/careers/careers.test.ts",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test:unit": "tsx --test src/components/marketing/network-state.test.ts src/components/marketing/network-layout.test.ts src/content/club/flyers.test.ts",
     "test:e2e": "playwright test",
-    "verify": "npm run typecheck && npm run lint && npm run content:check && npm run media:check"
+    "verify": "npm run typecheck && npm run lint && npm run test:unit"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.3",
     "clsx": "^2.1.1",
-    "fast-xml-parser": "^5.11.1",
-    "gray-matter": "^4.0.3",
     "lucide-react": "^1.46.0",
     "next": "16.3.5",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "react-markdown": "^10.1.0",
-    "remark-gfm": "^4.0.1",
     "sharp": "^0.35.4",
     "zod": "^4.6.5"
   },
@@ -44,15 +30,11 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
-    "prisma": "^6.19.3",
     "tailwindcss": "^4",
     "tsx": "^4.23.13",
     "typescript": "^5"
   },
   "engines": {
     "node": ">=20.9"
-  },
-  "prisma": {
-    "seed": "tsx scripts/seed.ts"
   }
 }

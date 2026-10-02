@@ -37,7 +37,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# local database and uploaded media (private; never in the public folder)
-/prisma/*.db
-/prisma/*.db-journal
+# uploaded media (private; never in the public folder)
 /storage/

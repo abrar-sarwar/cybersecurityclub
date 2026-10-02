@@ -4,7 +4,7 @@ import { PageHero } from "@/components/site/page-hero";
 
 export const metadata: Metadata = {
   title: "Privacy",
-  description: "What the club website stores, where questionnaire answers stay, and how to contact the officers about your data.",
+  description: "What the club website stores and how to contact the officers about your data.",
   alternates: { canonical: "/privacy" },
 };
 
@@ -17,17 +17,14 @@ export default function PrivacyPage() {
         <h2>Information we collect</h2>
         <ul>
           <li><strong>No accounts:</strong> the website does not ask for your name, email address, student ID or résumé, and there is nothing to register for.</li>
-          <li><strong>Career questionnaire:</strong> your answers are kept in your own browser’s session storage so a refresh does not lose your place. They are never sent to the club or saved on a server. They are cleared when you close the tab or retake the questionnaire.</li>
           <li><strong>Technical records:</strong> standard server logs kept by the hosting provider to run and protect the site.</li>
         </ul>
         <h2>Who can see it</h2>
         <ul>
-          <li>Member stories are published only with the member’s explicit permission.</li>
-          <li>The public member directory lists only members who chose to be listed, and shows a name and short headline, never an email address.</li>
           <li>We do not sell or share personal data with third parties.</li>
         </ul>
         <h2>Cookies and analytics</h2>
-        <p>The site does not set sign-in cookies or run advertising trackers. It uses your browser’s storage only for questionnaire progress and small interface preferences.</p>
+        <p>The site does not set sign-in cookies or run advertising trackers. It uses your browser’s storage only for small interface preferences.</p>
         <h2>Other services</h2>
         <p>Discord, PIN, Instagram and LinkedIn are separate services with their own privacy policies. Event RSVPs happen on PIN, not on this website.</p>
         <h2 id="your-data">Questions about your data</h2>

@@ -1,98 +1,73 @@
 /**
- * Semester event board. Past sessions carry their flyer; the rest are
- * deliberately blank teasers.
+ * The club's events, kept by hand: PIN has no feed we can read, so this list
+ * is the single source for the events page.
  *
- * Only dates and titles that actually happened are stated as fact. The locked
- * slots promise nothing specific: they carry a month-long awareness theme and
- * a "to be announced" line rather than invented events, times or rooms.
+ * To announce an event, add an entry below. Nothing else needs editing: the
+ * page works out from the date which events are still ahead and moves each
+ * one to "past" by itself the day after it happens.
+ *
+ * Only state what is confirmed. Leave `rsvpUrl` and `flyer` off until they exist.
  */
-export type Flyer = {
+export type ClubEvent = {
   title: string;
-  /** Short display date for the timeline. */
-  date: string;
-  /** Machine-readable date, also used to decide what has already happened. */
+  /** The day it happens, as YYYY-MM-DD in the club's timezone. */
   datetime: string;
-  image: string;
-  width: number;
-  height: number;
-  alt: string;
+  /** Room and time, as printed on the flyer. */
   detail: string;
+  /** One or two sentences on what to expect. */
+  summary?: string;
+  /** The event's own page on PIN. Without it the page links to the club's PIN list. */
+  rsvpUrl?: string;
+  flyer?: { image: string; width: number; height: number; alt: string };
 };
 
-export const EVENT_FLYERS: readonly Flyer[] = [
+export const CLUB_EVENTS: readonly ClubEvent[] = [
   {
     title: "General Body Meeting",
-    date: "September 2",
     datetime: "2026-09-02",
-    image: "/assets/events/general-body.webp",
-    width: 1000,
-    height: 988,
-    alt: "Flyer reading: Wednesday, first meeting of the Fall 2026 semester, CMII Building Room 211, September 2, 3:00 to 4:00 pm.",
     detail: "CMII Building Room 211, 3:00 to 4:00 pm",
+    flyer: {
+      image: "/assets/events/general-body.webp",
+      width: 1000,
+      height: 988,
+      alt: "Flyer reading: Wednesday, first meeting of the Fall 2026 semester, CMII Building Room 211, September 2, 3:00 to 4:00 pm.",
+    },
   },
   {
     title: "Mastered Cybersecurity Fundamentals",
-    date: "September 11",
     datetime: "2026-09-11",
-    image: "/assets/events/fundamentals.webp",
-    width: 1000,
-    height: 1003,
-    alt: "Flyer reading: Join us for our Mastering Cybersecurity Fundamentals workshop, over a background of code.",
     detail: "Workshop",
+    flyer: {
+      image: "/assets/events/fundamentals.webp",
+      width: 1000,
+      height: 1003,
+      alt: "Flyer reading: Join us for our Mastering Cybersecurity Fundamentals workshop, over a background of code.",
+    },
   },
   {
     title: "Resume Workshop",
-    date: "September 22",
     datetime: "2026-09-22",
-    image: "/assets/events/resume-workshop.webp",
-    width: 900,
-    height: 1125,
-    alt: "Flyer reading: GSU tech clubs present resume workshop, September 22nd, CLSO 150, 5:30 to 7:30 pm.",
     detail: "CLSO 150, 5:30 to 7:30 pm",
+    flyer: {
+      image: "/assets/events/resume-workshop.webp",
+      width: 900,
+      height: 1125,
+      alt: "Flyer reading: GSU tech clubs present resume workshop, September 22nd, CLSO 150, 5:30 to 7:30 pm.",
+    },
   },
 ];
 
-/** Glyph soup for the locked cards. Terms only, nothing that reads as an instruction. */
-export const TEASER_WORDS = [
-  "0x4E5443",
-  "nmap -sV",
-  "SHA-256",
-  "AES-GCM",
-  "buffer",
-  "0day",
-  "XSS",
-  "SIEM",
-  "payload",
-  "entropy",
-  "subnet",
-  "rainbow",
-  "salt",
-  "TTP",
-  "C2",
-  "pivot",
-  "LFI",
-  "JWT",
-  "ROT13",
-  "base64",
-  "SYN/ACK",
-  "priv-esc",
-  "CVE-2026",
-  "hashcat",
-  "netcat",
-  "reverse",
-  "beacon",
-  "honeypot",
-];
-
-export const TEASER_BANNER = "October is Cybersecurity Awareness Month";
-
-/** Four locked slots. Each states only that something is coming. */
-export const TEASERS: readonly { code: string; label: string }[] = [
-  { code: "ERR_LOCKED_0x01", label: "Decrypting" },
-  { code: "ERR_LOCKED_0x02", label: "Decrypting" },
-  { code: "ERR_LOCKED_0x03", label: "Decrypting" },
-  { code: "ERR_LOCKED_0x04", label: "Decrypting" },
-];
+/**
+ * Splits the list around `today` (YYYY-MM-DD). An event counts as held from
+ * the day after it, so it stays upcoming for the whole of its own day.
+ */
+export function splitEvents(events: readonly ClubEvent[], today: string) {
+  const byDate = [...events].sort((a, b) => a.datetime.localeCompare(b.datetime));
+  return {
+    upcoming: byDate.filter((e) => e.datetime >= today),
+    past: byDate.filter((e) => e.datetime < today).reverse(),
+  };
+}
 
 /**
  * National Cyber League recruitment. A team is being formed this semester and

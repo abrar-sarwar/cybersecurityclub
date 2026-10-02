@@ -1,9 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { branding } from "@config/branding";
-import { PUBLIC_NAV } from "@/components/layout/nav-config";
 import {
   useEffect,
   useReducer,
@@ -500,14 +498,6 @@ export function CyberHome({ employers }: { employers: Employer[] }) {
   return (
     <section className="cyber-home" aria-labelledby="cyber-home-heading">
       <StarField />
-      <nav className="cyber-home-nav" aria-label="Main navigation">
-        {PUBLIC_NAV.map((item) => (
-          <Link key={item.href} href={item.href}>
-            {item.label}
-          </Link>
-        ))}
-      </nav>
-
       <div className="cyber-home-stage">
         <div
           className="network-experience"
@@ -530,9 +520,6 @@ export function CyberHome({ employers }: { employers: Employer[] }) {
               Georgia State students who learn, build, and compete in security.
             </p>
             <div className="cyber-home-actions">
-              <Link className="cyber-primary-action" href="/careers">
-                Explore Career Paths
-              </Link>
               <a className="cyber-secondary-action" href={branding.links.discordInvite} target="_blank" rel="noopener noreferrer">
                 Join Discord
               </a>
@@ -579,7 +566,6 @@ export function CyberHome({ employers }: { employers: Employer[] }) {
       </div>
 
       <InternshipStrip employers={employers} />
-      <div className="cyber-horizon" aria-hidden="true" />
       <p id="network-instructions" className="sr-only">
         Select one star in each of the six branches to charge the shield. Use the arrow keys to move between stars.
       </p>

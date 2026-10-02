@@ -26,8 +26,8 @@ export default function NotFound() {
           <ButtonLink href="/" size="lg">
             Back to home
           </ButtonLink>
-          <ButtonLink href="/careers" variant="outline" size="lg">
-            Explore Career Paths
+          <ButtonLink href="/events" variant="outline" size="lg">
+            See upcoming events
           </ButtonLink>
         </PageHero>
       </main>

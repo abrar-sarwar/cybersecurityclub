@@ -1,104 +1,169 @@
-import { Check } from "lucide-react";
-import { EVENT_FLYERS, TEASERS, TEASER_BANNER, TEASER_WORDS, type Flyer } from "@/content/club/flyers";
+import { ArrowUpRight, CalendarDays, MapPin } from "lucide-react";
+import { branding } from "@config/branding";
+import { ButtonLink } from "@/components/ui/button";
+import type { ClubEvent } from "@/content/club/flyers";
 
 /**
- * The semester as a horizontal timeline: a compact rail with one node per
- * session, so the whole term is visible without scrolling.
- *
- * Sessions already held are ticked and show their flyer as a thumbnail. The
- * next one still to happen pulses, and a ping sweeps the rail and flashes red
- * as it crosses that node. Slots after it are locked placeholders carrying a
- * platform mark and drifting terms, and promise nothing specific.
+ * The events page's two lists. Upcoming events lead: the next one is a large
+ * card with everything needed to turn up, and any after it are compact rows.
+ * Past events are a strip of flyers, shown but never clickable.
  */
-type Stop =
-  | { kind: "event"; flyer: Flyer; past: boolean; next: boolean }
-  | { kind: "locked"; code: string; mark: string };
 
-/** Compared against the date only, so an event counts as held from the next day. */
-function isPast(datetime: string, today: string) {
-  return datetime < today;
+/** Dates are plain YYYY-MM-DD days, so they are formatted in UTC to stay on that day. */
+function dayParts(datetime: string) {
+  const day = new Date(`${datetime}T00:00:00Z`);
+  const part = (options: Intl.DateTimeFormatOptions) => day.toLocaleDateString("en-US", { timeZone: "UTC", ...options });
+  return {
+    weekday: part({ weekday: "long" }),
+    month: part({ month: "long" }),
+    monthShort: part({ month: "short" }),
+    day: part({ day: "numeric" }),
+  };
 }
 
-/**
- * `today` is resolved once on the server in the club's own timezone and passed
- * in, so every visitor sees the same rail and the markup hydrates cleanly.
- */
-export function EventBoard({ today }: { today: string }) {
-  const nextIndex = EVENT_FLYERS.findIndex((flyer) => !isPast(flyer.datetime, today));
-
-  const stops: Stop[] = [
-    ...EVENT_FLYERS.map((flyer, index) => ({
-      kind: "event" as const,
-      flyer,
-      past: isPast(flyer.datetime, today),
-      next: index === nextIndex,
-    })),
-    ...TEASERS.map((teaser, i) => ({
-      kind: "locked" as const,
-      code: teaser.code,
-      mark: i < 3 ? "/assets/events/tryhackme.webp" : "/assets/events/redhat.webp",
-    })),
-  ];
-
+function Rsvp({ event, size }: { event: ClubEvent; size: "sm" | "lg" }) {
   return (
-    <div className="rail">
-      <div className="rail-line" aria-hidden="true">
-        <span className="rail-ping" />
+    <ButtonLink href={event.rsvpUrl ?? branding.links.pinEvents} size={size} external>
+      {event.rsvpUrl ? "RSVP on PIN" : "Find it on PIN"}
+      <ArrowUpRight className="size-4" aria-hidden />
+      <span className="sr-only"> (opens in a new tab)</span>
+    </ButtonLink>
+  );
+}
+
+function NextEvent({ event, today }: { event: ClubEvent; today: string }) {
+  const date = dayParts(event.datetime);
+  return (
+    <article className="ev-next" data-flyer={event.flyer ? "" : undefined}>
+      {event.flyer ? (
+        <div className="ev-next-flyer">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={event.flyer.image} alt={event.flyer.alt} width={event.flyer.width} height={event.flyer.height} decoding="async" />
+        </div>
+      ) : null}
+      <div className="ev-next-body">
+        <p className="ev-flag">
+          <span className="ev-flag-pulse" aria-hidden="true" />
+          {event.datetime === today ? "Happening today" : "Next up"}
+        </p>
+        <h2 className="ev-next-title">{event.title}</h2>
+        <dl className="ev-next-facts">
+          <div>
+            <dt>
+              <CalendarDays className="size-4" aria-hidden />
+              <span className="sr-only">When</span>
+            </dt>
+            <dd>
+              <time dateTime={event.datetime}>
+                {date.weekday}, {date.month} {date.day}
+              </time>
+            </dd>
+          </div>
+          <div>
+            <dt>
+              <MapPin className="size-4" aria-hidden />
+              <span className="sr-only">Where and what time</span>
+            </dt>
+            <dd>{event.detail}</dd>
+          </div>
+        </dl>
+        {event.summary ? <p className="ev-next-summary">{event.summary}</p> : null}
+        <div className="ev-actions">
+          <Rsvp event={event} size="lg" />
+        </div>
       </div>
+    </article>
+  );
+}
 
-      <ol className="rail-stops">
-        {stops.map((stop, index) =>
-          stop.kind === "event" ? (
-            <li
-              key={stop.flyer.title}
-              className="rail-stop"
-              data-state={stop.past ? "done" : stop.next ? "next" : "ahead"}
-              style={{ ["--i" as string]: index }}
-            >
-              <span className="rail-dot" aria-hidden="true">
-                {stop.past ? <Check className="size-3.5" /> : <span className="rail-dot-core" />}
-              </span>
-              <p className="rail-date">
-                <time dateTime={stop.flyer.datetime}>{stop.flyer.date}</time>
-              </p>
-              <p className="rail-title">{stop.flyer.title}</p>
-              <div className="rail-thumb">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={stop.flyer.image} alt={stop.flyer.alt} width={stop.flyer.width} height={stop.flyer.height} loading="lazy" decoding="async" />
+/** `today` is resolved once on the server in the club's own timezone and passed in. */
+export function UpcomingEvents({ events, today }: { events: readonly ClubEvent[]; today: string }) {
+  if (!events.length) {
+    return (
+      <div className="signal-empty">
+        <span className="signal-empty-icon" aria-hidden="true">
+          <CalendarDays className="size-5" />
+        </span>
+        <div>
+          <h2 className="ev-empty-title">Nothing on the calendar right now</h2>
+          <p className="ev-empty-text">New events are announced on PIN and in Discord first, and show up here as soon as they are confirmed.</p>
+          <div className="ev-actions">
+            <ButtonLink href={branding.links.pinEvents} external>
+              Events on PIN
+            </ButtonLink>
+            <ButtonLink href={branding.links.discordInvite} variant="outline" external>
+              Join Discord
+            </ButtonLink>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const [next, ...later] = events;
+  return (
+    <>
+      <NextEvent event={next} today={today} />
+      {later.length ? (
+        <>
+          <h2 className="ev-heading">Also coming up</h2>
+          <ol className="ev-list">
+            {later.map((event) => {
+              const date = dayParts(event.datetime);
+              return (
+                <li key={`${event.datetime}-${event.title}`} className="ev-row">
+                  <time className="ev-row-date" dateTime={event.datetime}>
+                    <span>{date.monthShort}</span>
+                    <b>{date.day}</b>
+                  </time>
+                  <div className="ev-row-body">
+                    <h3 className="ev-row-title">{event.title}</h3>
+                    <p className="ev-row-detail">
+                      {date.weekday}
+                      {event.detail ? ` · ${event.detail}` : ""}
+                    </p>
+                  </div>
+                  <Rsvp event={event} size="sm" />
+                </li>
+              );
+            })}
+          </ol>
+        </>
+      ) : null}
+      <p className="ev-note">All times are Eastern. RSVPs happen on PIN, the official GSU student organization portal.</p>
+    </>
+  );
+}
+
+export function PastEvents({ events }: { events: readonly ClubEvent[] }) {
+  if (!events.length) return null;
+  return (
+    <>
+      <h2 className="ev-heading">Past events</h2>
+      <ol className="ev-past">
+        {events.map((event) => {
+          const date = dayParts(event.datetime);
+          return (
+            <li key={`${event.datetime}-${event.title}`} className="ev-past-item">
+              {event.flyer ? (
+                <div className="ev-past-thumb">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={event.flyer.image} alt={event.flyer.alt} width={event.flyer.width} height={event.flyer.height} loading="lazy" decoding="async" />
+                </div>
+              ) : null}
+              <div>
+                <p className="ev-past-date">
+                  <time dateTime={event.datetime}>
+                    {date.month} {date.day}
+                  </time>
+                </p>
+                <h3 className="ev-past-title">{event.title}</h3>
+                <p className="ev-past-detail">{event.detail}</p>
               </div>
-              <p className="rail-detail">{stop.flyer.detail}</p>
-              {stop.next ? <p className="rail-flag">Next up</p> : null}
             </li>
-          ) : (
-            <li key={stop.code} className="rail-stop rail-stop-locked" style={{ ["--i" as string]: index }}>
-              <span className="rail-dot rail-dot-locked" aria-hidden="true" />
-              <p className="rail-date">TBA</p>
-              <p className="rail-title">Coming soon</p>
-              <div className="rail-thumb rail-thumb-locked" aria-hidden="true">
-                {/* Terms drift behind the platform mark, so a blank slot still reads as a teaser. */}
-                <span className="rail-words">
-                  {Array.from({ length: 10 }, (_, w) => (
-                    <i key={w} style={{ ["--w" as string]: w }}>
-                      {TEASER_WORDS[(index * 5 + w * 3) % TEASER_WORDS.length]}
-                    </i>
-                  ))}
-                </span>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={stop.mark} alt="" width={34} height={34} loading="lazy" decoding="async" />
-              </div>
-              <p className="rail-code" data-text={stop.code}>
-                {stop.code}
-              </p>
-            </li>
-          ),
-        )}
+          );
+        })}
       </ol>
-
-      <p className="rail-banner">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/assets/events/tryhackme.webp" alt="" width={18} height={18} loading="lazy" decoding="async" />
-        {TEASER_BANNER}
-      </p>
-    </div>
+    </>
   );
 }

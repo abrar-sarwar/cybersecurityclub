@@ -67,9 +67,7 @@ for (const viewport of VIEWPORTS) {
     await page.evaluate(() => document.fonts.ready);
 
     await expect(page.getByRole("heading", { level: 1, name: "Cybersecurity Club at GSU" })).toBeVisible();
-    for (const name of ["About", "Events", "Careers", "Explore Career Paths", "Join Discord"]) {
-      await expect(page.locator(".cyber-home").getByRole("link", { name, exact: true })).toBeVisible();
-    }
+    await expect(page.locator(".cyber-home").getByRole("link", { name: "Join Discord", exact: true })).toBeVisible();
 
     const report = await page.evaluate(() => {
       const box = (r: DOMRect) => ({ x: r.x, y: r.y, width: r.width, height: r.height });
@@ -103,9 +101,6 @@ for (const viewport of VIEWPORTS) {
           hitGap = Math.min(hitGap, distance(hit.x + hit.width / 2, hit.y + hit.height / 2, rect) - hit.width / 2);
         }
       }
-      // Earth stays a thin sliver at the bottom of the homepage section (which may scroll on phones).
-      const horizon = document.querySelector(".cyber-horizon")!.getBoundingClientRect();
-      const section = document.querySelector(".cyber-home")!.getBoundingClientRect();
       const logos = document.querySelector(".internship-window")!.getBoundingClientRect();
       const actions = document.querySelector(".cyber-home-actions")!.getBoundingClientRect();
       return {
@@ -113,9 +108,7 @@ for (const viewport of VIEWPORTS) {
         traceGap,
         hitGap,
         offscreen,
-        horizonVisible: section.bottom - horizon.top,
         logosBelowButtons: logos.top - actions.bottom,
-        logosAboveHorizon: horizon.top - logos.bottom,
       };
     });
 
@@ -123,10 +116,7 @@ for (const viewport of VIEWPORTS) {
     expect(report.traceGap).toBeGreaterThan(16);
     expect(report.hitGap).toBeGreaterThan(8);
     expect(report.offscreen).toEqual([]);
-    expect(report.horizonVisible).toBeGreaterThan(20);
-    expect(report.horizonVisible).toBeLessThan(80);
     expect(report.logosBelowButtons).toBeGreaterThan(20);
-    expect(report.logosAboveHorizon).toBeGreaterThan(8);
 
     const unclickable = await page.evaluate(() => {
       const svg = [...document.querySelectorAll<SVGSVGElement>(".network-canvas")].find((el) => getComputedStyle(el).display !== "none")!;
@@ -149,8 +139,6 @@ test("one star per branch charges the shield, locks, and resets", async ({ page 
   await page.addInitScript(recordPhases);
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
-  const horizonStyle = () => page.locator(".cyber-horizon").evaluate((el) => getComputedStyle(el).boxShadow);
-  const blueHorizon = await horizonStyle();
 
   for (const id of ["north-west-junction", "north-west-tip", ...ONE_PER_BRANCH.slice(1, 5)]) await star(page, id).click();
   await expect(phase(page)).toHaveAttribute("data-phase", "idle");
@@ -158,7 +146,6 @@ test("one star per branch charges the shield, locks, and resets", async ({ page 
 
   await star(page, ONE_PER_BRANCH[5]).click();
   await expect(page.getByRole("status")).toHaveText(/All six branches connected|Network reset/);
-  expect(await horizonStyle()).toBe(blueHorizon);
 
   await expect(phase(page)).toHaveAttribute("data-cycle", "1", { timeout: 8_000 });
   await expect(phase(page)).toHaveAttribute("data-phase", "idle");
@@ -170,7 +157,6 @@ test("one star per branch charges the shield, locks, and resets", async ({ page 
   expect(fading.locked).toBe(true);
   await expect(canvas(page).locator('[aria-pressed="true"]')).toHaveCount(0);
   await expect(page.locator(".shield-logo-alert")).toHaveCSS("opacity", "0");
-  expect(await horizonStyle()).toBe(blueHorizon);
 
   for (const id of ONE_PER_BRANCH) await star(page, id).click();
   await expect(phase(page)).toHaveAttribute("data-cycle", "2", { timeout: 8_000 });
@@ -348,13 +334,8 @@ test("reduced motion shows the internship logos as a still list", async ({ brows
   await context.close();
 });
 
-test("homepage links reach their pages", async ({ page, request }) => {
+test("the homepage's Discord link opens the invite", async ({ page }) => {
   await page.goto("/");
-  for (const [name, path] of [["About", "/#about"], ["Events", "/events"], ["Careers", "/careers"], ["Explore Career Paths", "/careers"]]) {
-    const href = await page.locator(".cyber-home").getByRole("link", { name, exact: true }).getAttribute("href");
-    expect(href).toBe(path);
-    expect((await request.get(path)).status()).toBe(200);
-  }
   const discord = page.locator(".cyber-home").getByRole("link", { name: "Join Discord", exact: true });
   await expect(discord).toHaveAttribute("href", /^https:\/\/discord\.gg\//);
   await expect(discord).toHaveAttribute("target", "_blank");

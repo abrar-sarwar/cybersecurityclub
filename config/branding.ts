@@ -2,14 +2,9 @@
  * Central branding configuration.
  *
  * Everything that identifies the club lives here: names, logo settings,
- * favicon and social preview slots, colors, contact routes and external links.
- * Pages read from this file and from the media slot system instead of
- * hard-coding values, so replacing the logo or renaming the club never
- * requires editing individual pages.
- *
- * Photos and social previews are resolved through media slots (see
- * src/content/media-slots.ts): drop the file in public/assets/club/ and
- * reference it from content/media-manifest.json under the slot key.
+ * colors, contact routes and external links. Pages read from this file
+ * instead of hard-coding values, so replacing the logo or renaming the club
+ * never requires editing individual pages.
  */
 export const branding = {
   /** Full display name used in headings and metadata. */
@@ -37,15 +32,6 @@ export const branding = {
     width: 248,
     height: 177,
     alt: "Cybersecurity Club at GSU logo",
-  },
-
-  favicon: {
-    slot: "site.favicon",
-  },
-  socialPreview: {
-    slot: "site.socialPreview",
-    width: 1200,
-    height: 630,
   },
 
   /**

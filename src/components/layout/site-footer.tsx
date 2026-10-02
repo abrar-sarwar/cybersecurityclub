@@ -42,9 +42,8 @@ const columns = [
   {
     title: "Explore",
     links: [
-      { href: "/careers", label: "Career paths" },
-      { href: "/careers/quiz", label: "Find my path" },
-      { href: "/careers/projects", label: "Project library" },
+      { href: "/challenges", label: "Challenges" },
+      { href: "/resources", label: "Resources" },
     ],
   },
   {

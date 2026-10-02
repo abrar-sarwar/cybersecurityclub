@@ -5,8 +5,6 @@ import "./observatory.css";
 import "./signal.css";
 import { branding } from "@config/branding";
 import { siteUrl } from "@/lib/site";
-import { resolveSingle } from "@/server/services/media";
-import { safeDb } from "@/server/safe-db";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -21,38 +19,29 @@ const manrope = Manrope({
   weight: ["500", "600", "700", "800"],
 });
 
-export async function generateMetadata(): Promise<Metadata> {
-  // Metadata must never be the thing that fails a build or a request.
-  const [favicon, social] = await Promise.all([
-    safeDb(() => resolveSingle(branding.favicon.slot), null, "favicon slot"),
-    safeDb(() => resolveSingle(branding.socialPreview.slot), null, "social slot"),
-  ]);
-  const socialImage = social ? [{ url: social.src, width: social.width, height: social.height, alt: social.alt }] : undefined;
-  return {
-    metadataBase: new URL(siteUrl()),
-    title: {
-      default: branding.displayName,
-      template: `%s · ${branding.shortName}`,
-    },
+// Icons and the social preview come from the files beside this one
+// (icon.png, apple-icon.png, favicon.ico, opengraph-image.tsx).
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl()),
+  title: {
+    default: branding.displayName,
+    template: `%s · ${branding.shortName}`,
+  },
+  description: branding.description,
+  applicationName: branding.displayName,
+  openGraph: {
+    type: "website",
+    siteName: branding.displayName,
+    title: branding.displayName,
     description: branding.description,
-    applicationName: branding.displayName,
-    ...(favicon ? { icons: { icon: [{ url: favicon.src }], apple: [{ url: favicon.src }] } } : {}),
-    openGraph: {
-      type: "website",
-      siteName: branding.displayName,
-      title: branding.displayName,
-      description: branding.description,
-      ...(socialImage ? { images: socialImage } : {}),
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: branding.displayName,
-      description: branding.description,
-      ...(socialImage ? { images: socialImage.map((i) => i.url) } : {}),
-    },
-    robots: { index: true, follow: true },
-  };
-}
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: branding.displayName,
+    description: branding.description,
+  },
+  robots: { index: true, follow: true },
+};
 
 export const viewport: Viewport = {
   themeColor: branding.colors.background,

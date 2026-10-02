@@ -1,7 +1,6 @@
 import { branding } from "@config/branding";
 import { ButtonLink } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/primitives";
-import { NodeMark } from "@/components/site/node-mark";
 import { PageHero } from "@/components/site/page-hero";
 import { PhotoBackdrop } from "@/components/site/photo-backdrop";
 import { ValueStack } from "@/components/site/value-stack";
@@ -72,7 +71,7 @@ export function AboutClub() {
       </section>
 
       <section className="section" aria-labelledby="meetings">
-        <div className="container-x grid gap-10 lg:grid-cols-2">
+        <div className="container-x">
           <div>
             <SectionHeading id="meetings" eyebrow="Meetings" title="Where and when" description="Meeting times and rooms change each semester. The Events page and PIN always have the current schedule, and Discord gets the reminders." />
             <dl className="mt-6 space-y-3 text-[0.95rem]">
@@ -89,29 +88,6 @@ export function AboutClub() {
                 <dd className="text-muted">Any GSU student, from any major. Alumni stay involved through Discord.</dd>
               </div>
             </dl>
-          </div>
-          <div className="card p-6 sm:p-8">
-            <h3 className="font-display text-xl font-bold text-navy-900">Explore cybersecurity careers</h3>
-            <ul className="mt-4 space-y-2.5 text-[0.95rem] text-ink">
-              {[
-                "A twenty-question interest questionnaire, with no account or email required",
-                "Twelve career paths explained in plain language",
-                "A beginner project for every path, with guidance on turning it into a portfolio piece",
-              ].map((t, index) => (
-                <li key={t} className="flex gap-2.5">
-                  <NodeMark index={index} className="mt-0.5 size-4" />
-                  <span>{t}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <ButtonLink href="/careers" variant="secondary">
-                Explore Career Paths
-              </ButtonLink>
-              <ButtonLink href="/careers/projects" variant="ghost">
-                Browse the project library
-              </ButtonLink>
-            </div>
           </div>
         </div>
       </section>

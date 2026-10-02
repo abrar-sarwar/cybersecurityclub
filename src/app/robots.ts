@@ -3,14 +3,7 @@ import { siteUrl } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [
-      {
-        userAgent: "*",
-        allow: "/",
-        // Results are built from answers in the visitor's own browser session.
-        disallow: ["/careers/results"],
-      },
-    ],
+    rules: [{ userAgent: "*", allow: "/" }],
     sitemap: `${siteUrl()}/sitemap.xml`,
   };
 }

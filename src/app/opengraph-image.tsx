@@ -5,7 +5,7 @@ export const alt = branding.displayName;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-/** Generated fallback social preview. Replaced by the "site.socialPreview" slot when an officer uploads one. */
+/** Generated social preview. */
 export default function OpenGraphImage() {
   return new ImageResponse(
     (

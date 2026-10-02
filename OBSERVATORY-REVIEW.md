@@ -43,4 +43,4 @@ The following were present before this redesign and remain outside its visual sc
 4. No approved club logo, real community photography, published showcase projects, reviewed news items, or eligible member portraits were supplied. The temporary mark is retained; optional sections stay hidden or use compact, honest invitations. The six employer names are confirmed by the owner's supplied brief.
 5. The media resolver and database models exist, but this checkout has no working upload manager, upload API, or `/media/…` delivery route. The supplied manifest workflow is persistent and usable now. A working officer upload integration remains a separate dependency.
 
-To edit after reviewing the built preview, stop `npm run start` and run `npm run dev`. Rebuild before starting a new production preview. On Windows, stop the server before `prisma generate` so the loaded Prisma DLL can be replaced.
+To edit after reviewing the built preview, stop `npm run start` and run `npm run dev`. Rebuild before starting a new production preview.

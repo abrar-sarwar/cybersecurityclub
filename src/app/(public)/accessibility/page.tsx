@@ -24,7 +24,7 @@ export default function AccessibilityPage() {
           <li>Layouts that work at 360 px wide and with text enlarged to 200%.</li>
         </ul>
         <h2>Known limitations</h2>
-        <p>Some lesson diagrams are described in a caption rather than fully in text. Third-party sites we link to (PIN, Discord, vendors) have their own accessibility practices.</p>
+        <p>Third-party sites we link to (PIN, Discord, vendors) have their own accessibility practices.</p>
         <h2>Report a problem</h2>
         <p>
           If something is hard to use, email <a href={`mailto:${branding.contact.accessibilityEmail}?subject=${encodeURIComponent("Accessibility issue")}`}>{branding.contact.accessibilityEmail}</a> with the page address and what happened. An officer will reply and track the fix.

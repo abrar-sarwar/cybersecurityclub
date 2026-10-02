@@ -1690,111 +1690,180 @@ a.voice-name:focus-visible {
   }
 }
 
-/* Semester timeline ------------------------------------------------------- */
+/* Events page -------------------------------------------------------------- */
 
-.rail {
-  position: relative;
-  margin-top: 2rem;
+/* The page has no hero, so the next event starts close under the header. */
+.ev-page {
+  padding-top: clamp(1.5rem, 4vw, 3rem);
 }
 
-/* The rail itself, with a ping travelling along it. */
-.rail-line {
-  position: absolute;
-  top: 0.62rem;
-  right: 0;
-  left: 0;
-  height: 2px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: linear-gradient(90deg, rgba(62, 132, 255, 0.5), rgba(62, 132, 255, 0.18));
+.ev-archive {
+  padding-block: 3.5rem 5rem;
 }
 
-.rail-ping {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 14%;
-  height: 100%;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, #8cc0ff, transparent);
-  animation: rail-run 9s linear infinite;
-}
-
-@keyframes rail-run {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(760%);
-  }
-}
-
-.rail-stops {
+/* The next event: flyer beside everything needed to turn up. */
+.ev-next {
   display: grid;
-  gap: 1.25rem 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+  gap: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(14, 32, 62, 0.85), rgba(5, 12, 26, 0.92));
+  box-shadow: 0 24px 70px -40px rgba(23, 107, 255, 0.7);
 }
 
-.rail-stop {
-  position: relative;
-  padding-top: 1.75rem;
+@media (min-width: 760px) {
+  .ev-next {
+    gap: 2.25rem;
+    padding: 2rem;
+  }
+
+  .ev-next[data-flyer] {
+    grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+    align-items: center;
+  }
 }
 
-.rail-dot {
-  position: absolute;
-  top: 0;
-  left: 0;
+.ev-next-flyer {
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: 0.6rem;
+  background: rgba(4, 10, 22, 0.9);
+}
+
+/* The whole poster shows: nothing on a flyer may be cropped off. */
+.ev-next-flyer img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 26rem;
+  object-fit: contain;
+}
+
+.ev-flag {
   display: flex;
-  pointer-events: none;
   align-items: center;
-  justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 1px solid rgba(96, 165, 250, 0.55);
+  gap: 0.5rem;
+  color: #f87171;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.ev-flag-pulse {
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 999px;
-  background: rgba(4, 10, 22, 0.96);
-  color: #34d399;
-  transition: border-color 0.16s ease;
-}
-
-.rail-dot-core {
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: rgba(148, 163, 184, 0.7);
-}
-
-/* Held: ticked and green. */
-.rail-stop[data-state="done"] .rail-dot {
-  border-color: rgba(52, 211, 153, 0.7);
-}
-
-/* Next up: red, and it pulses in time with the ping crossing the rail. */
-.rail-stop[data-state="next"] .rail-dot {
-  border-color: rgba(248, 113, 113, 0.85);
-  animation: rail-alert 9s ease-out infinite;
-  animation-delay: calc(var(--i) * 0.55s);
-}
-
-.rail-stop[data-state="next"] .rail-dot-core {
   background: #f87171;
+  animation: ev-pulse 2.4s ease-out infinite;
 }
 
-@keyframes rail-alert {
-  0%,
-  8% {
-    box-shadow: 0 0 0 0 rgba(248, 113, 113, 0);
+@keyframes ev-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.55);
   }
-  14% {
-    box-shadow: 0 0 0 7px rgba(248, 113, 113, 0.28);
-  }
-  26%,
+  70%,
   100% {
-    box-shadow: 0 0 0 0 rgba(248, 113, 113, 0);
+    box-shadow: 0 0 0 9px rgba(248, 113, 113, 0);
   }
 }
 
-.rail-date {
+.ev-next-title {
+  margin-top: 0.6rem;
+  color: #f7faff;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4.2vw, 2.75rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+
+.ev-next-facts {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1.1rem;
+  color: var(--color-ink);
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+
+.ev-next-facts > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.ev-next-facts dt {
+  flex: none;
+  margin-top: 0.28rem;
+  color: var(--color-accent);
+}
+
+.ev-next-summary {
+  max-width: 60ch;
+  margin-top: 1rem;
+  color: var(--color-muted);
+  line-height: 1.65;
+}
+
+.ev-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.4rem;
+}
+
+.ev-heading {
+  margin-top: 2.75rem;
+  color: #8cc0ff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Later events: one compact row each. */
+.ev-list {
+  margin-top: 0.75rem;
+}
+
+.ev-row {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.9rem 1.1rem;
+  padding-block: 1.1rem;
+  border-top: 1px solid var(--color-line);
+}
+
+.ev-row > a {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+@media (min-width: 640px) {
+  .ev-row {
+    grid-template-columns: 3.5rem minmax(0, 1fr) auto;
+  }
+
+  .ev-row > a {
+    grid-column: auto;
+  }
+}
+
+.ev-row-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.4rem 0;
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  border-radius: 0.5rem;
+  background: rgba(23, 107, 255, 0.08);
+  line-height: 1.1;
+}
+
+.ev-row-date span {
   color: var(--color-accent);
   font-family: var(--font-mono);
   font-size: 0.64rem;
@@ -1802,15 +1871,99 @@ a.voice-name:focus-visible {
   text-transform: uppercase;
 }
 
-.rail-stop[data-state="done"] .rail-date {
-  color: rgba(52, 211, 153, 0.85);
+.ev-row-date b {
+  color: var(--color-navy-900);
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
 }
 
-.rail-stop[data-state="next"] .rail-date {
-  color: #f87171;
+.ev-row-title {
+  color: var(--color-navy-900);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
 }
 
-.rail-title {
+.ev-row-detail {
+  margin-top: 0.2rem;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.ev-note {
+  margin-top: 1.25rem;
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.ev-empty-title {
+  color: var(--color-navy-900);
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
+.ev-empty-text {
+  max-width: 56ch;
+  margin-top: 0.4rem;
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+/* Past events: small flyers, shown, never clickable. */
+.ev-archive .ev-heading {
+  margin-top: 0;
+}
+
+.ev-past {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  margin-top: 1rem;
+}
+
+.ev-past-item {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.ev-past-thumb {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: 0.45rem;
+  background: rgba(4, 10, 22, 0.9);
+}
+
+.ev-past-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.ev-past-item > div:only-child {
+  grid-column: 1 / -1;
+}
+
+.ev-past-date {
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ev-past-title {
   margin-top: 0.2rem;
   color: var(--color-navy-900);
   font-family: var(--font-display);
@@ -1820,187 +1973,16 @@ a.voice-name:focus-visible {
   letter-spacing: -0.02em;
 }
 
-.rail-detail {
+.ev-past-detail {
   margin-top: 0.2rem;
   color: var(--color-muted);
   font-size: 0.78rem;
   line-height: 1.45;
 }
 
-.rail-flag {
-  display: inline-block;
-  margin-top: 0.4rem;
-  padding: 0.1rem 0.45rem;
-  border: 1px solid rgba(248, 113, 113, 0.5);
-  border-radius: 999px;
-  color: #f87171;
-  font-family: var(--font-mono);
-  font-size: 0.56rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-/* Small flyer thumbnail: shown, never clickable. */
-.rail-thumb {
-  position: relative;
-  margin-top: 0.5rem;
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-  border: 1px solid var(--color-line);
-  border-radius: 0.45rem;
-  background: rgba(4, 10, 22, 0.9);
-}
-
-/* contain, not cover: these are posters, so nothing may be cropped off. */
-.rail-thumb img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.rail-stop[data-state="done"] .rail-thumb {
-  border-color: rgba(52, 211, 153, 0.3);
-}
-
-.rail-stop[data-state="next"] .rail-thumb {
-  border-color: rgba(248, 113, 113, 0.45);
-  box-shadow: 0 0 18px -8px rgba(248, 113, 113, 0.8);
-}
-
-/* Locked slot: a platform mark centred over drifting terms. */
-.rail-thumb-locked {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-style: dashed;
-  border-color: rgba(248, 113, 113, 0.28);
-  background: radial-gradient(70% 60% at 50% 50%, rgba(28, 10, 18, 0.9), rgba(3, 8, 18, 0.97));
-}
-
-.rail-thumb-locked img {
-  position: relative;
-  z-index: 1;
-  width: 2.1rem;
-  height: 2.1rem;
-  object-fit: contain;
-  filter: drop-shadow(0 0 10px rgba(248, 113, 113, 0.4));
-}
-
-.rail-words {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  opacity: 0.4;
-}
-
-.rail-words i {
-  position: absolute;
-  top: -1rem;
-  left: calc((var(--w) % 3) * 34% + 3%);
-  color: rgba(96, 165, 250, 0.8);
-  font-family: var(--font-mono);
-  font-size: 0.45rem;
-  font-style: normal;
-  white-space: nowrap;
-  animation: rail-words 6.5s linear infinite;
-  animation-delay: calc(var(--w) * -0.65s);
-}
-
-@keyframes rail-words {
-  from {
-    transform: translateY(0);
-    opacity: 0;
-  }
-  15%,
-  80% {
-    opacity: 1;
-  }
-  to {
-    transform: translateY(7rem);
-    opacity: 0;
-  }
-}
-
-/* Locked slots */
-.rail-stop-locked .rail-dot {
-  border-style: dashed;
-  border-color: rgba(248, 113, 113, 0.4);
-  cursor: default;
-}
-
-.rail-stop-locked .rail-date,
-.rail-stop-locked .rail-title {
-  color: rgba(226, 240, 255, 0.4);
-}
-
-.rail-code {
-  position: relative;
-  margin-top: 0.2rem;
-  color: rgba(248, 113, 113, 0.75);
-  font-family: var(--font-mono);
-  font-size: 0.58rem;
-  letter-spacing: 0.06em;
-}
-
-.rail-code::after {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  color: #60a5fa;
-  content: attr(data-text);
-  animation: rail-glitch 3.4s steps(2, end) infinite;
-  animation-delay: calc(var(--i) * 0.4s);
-}
-
-@keyframes rail-glitch {
-  0%,
-  93% {
-    opacity: 0;
-    transform: none;
-  }
-  94%,
-  97% {
-    opacity: 0.8;
-    transform: translate(-1px, 1px);
-  }
-}
-
-.rail-banner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 1.75rem;
-  padding: 0.55rem 0.75rem;
-  border: 1px solid rgba(251, 191, 36, 0.28);
-  border-radius: 0.5rem;
-  background: rgba(3, 8, 18, 0.7);
-  color: #fbbf24;
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.1em;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.rail-banner img {
-  width: 1.1rem;
-  height: 1.1rem;
-  object-fit: contain;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .rail-ping,
-  .rail-stop[data-state="next"] .rail-dot,
-  .rail-code::after,
-  .rail-words i {
+  .ev-flag-pulse {
     animation: none;
-  }
-
-  .rail-code::after {
-    opacity: 0;
   }
 }
 
@@ -2217,81 +2199,4 @@ a.voice-name:focus-visible {
   font-size: 0.58rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-}
-
-/* The timeline on narrow screens ------------------------------------------
- * A horizontal rail has nowhere to go on a phone, so below 760px it becomes a
- * vertical one: the line runs down the left and each stop hangs off it.
- */
-
-@media (max-width: 759px) {
-  .rail-line {
-    top: 0.4rem;
-    right: auto;
-    bottom: 0.4rem;
-    left: 0.72rem;
-    width: 2px;
-    height: auto;
-    background: linear-gradient(180deg, rgba(62, 132, 255, 0.5), rgba(62, 132, 255, 0.18));
-  }
-
-  .rail-ping {
-    width: 100%;
-    height: 12%;
-    background: linear-gradient(180deg, transparent, #8cc0ff, transparent);
-    animation-name: rail-run-y;
-  }
-
-  @keyframes rail-run-y {
-    from {
-      transform: translateY(-100%);
-    }
-    to {
-      transform: translateY(820%);
-    }
-  }
-
-  .rail-stops {
-    display: block;
-  }
-
-  .rail-stop {
-    display: grid;
-    grid-template-columns: 2.4rem minmax(0, 1fr) 4.5rem;
-    align-items: start;
-    column-gap: 0.75rem;
-    padding-top: 0;
-    padding-bottom: 1.1rem;
-  }
-
-  .rail-dot {
-    position: static;
-    grid-row: 1 / span 4;
-    margin-top: 0.1rem;
-  }
-
-  /* The thumbnail sits beside the text instead of under it. */
-  .rail-thumb {
-    grid-row: 1 / span 4;
-    grid-column: 3;
-    margin-top: 0.1rem;
-    aspect-ratio: 1 / 1;
-  }
-
-  .rail-date,
-  .rail-title,
-  .rail-detail,
-  .rail-flag,
-  .rail-code {
-    grid-column: 2;
-  }
-
-  /* A badge, not a bar: it must not stretch to the grid track. */
-  .rail-flag {
-    justify-self: start;
-  }
-
-  .rail-title {
-    margin-top: 0.1rem;
-  }
 }
