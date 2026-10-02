@@ -617,7 +617,7 @@ section[id] { scroll-margin-top: 100px; }
   position: relative;
   z-index: 4;
   margin-bottom: auto;
-  padding: clamp(1.5rem, 4svh, 2.5rem) 0 clamp(1rem, 3svh, 1.75rem);
+  padding: clamp(2rem, 6svh, 3.5rem) 0 clamp(0.5rem, 1svh, 0.75rem);
 }
 
 .internship-strip h2 {
@@ -1002,7 +1002,7 @@ section[id] { scroll-margin-top: 100px; }
   }
 
   .internship-strip {
-    padding-top: 1.25rem;
+    padding-top: 2.25rem;
   }
 
   .internship-window {

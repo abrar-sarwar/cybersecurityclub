@@ -212,7 +212,7 @@ test("the internship logos are fully visible without scrolling", async ({ browse
     expect(logos, size).not.toBeNull();
     expect(logos!.y, size).toBeGreaterThan(0);
     expect(logos!.y + logos!.height, size).toBeLessThanOrEqual(viewport.height);
-    await expect(page.getByRole("heading", { name: "Our members got internships at" }), size).toBeInViewport({ ratio: 1 });
+    await expect(page.getByRole("heading", { name: "Members have landed internships at" }), size).toBeInViewport({ ratio: 1 });
     await context.close();
   }
 });
@@ -298,7 +298,7 @@ test("the heading glitches on hover and the internship logos scroll", async ({ p
   await page.mouse.move(5, 5);
   await expect(glitch).toHaveCSS("animation-name", "none");
 
-  const strip = page.getByRole("region", { name: "Our members got internships at" });
+  const strip = page.getByRole("region", { name: "Members have landed internships at" });
   const names = ["IBM", "Palo Alto Networks", "CrowdStrike", "USPS", "Equifax", "Grady Health", "Steampunk Inc", "State Farm", "GTRI"];
   for (const name of names) {
     const logo = strip.getByRole("img", { name, exact: true });
@@ -323,7 +323,7 @@ test("reduced motion shows the internship logos as a still list", async ({ brows
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: "reduce" });
   const page = await context.newPage();
   await page.goto("/");
-  const strip = page.getByRole("region", { name: "Our members got internships at" });
+  const strip = page.getByRole("region", { name: "Members have landed internships at" });
   await expect(strip.locator(".internship-track")).toHaveCSS("animation-name", "none");
   await expect(strip.locator(".internship-list-copy")).toBeHidden();
   for (const img of await strip.locator(".internship-list:not(.internship-list-copy) img").all()) {

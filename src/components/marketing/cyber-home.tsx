@@ -144,7 +144,7 @@ function InternshipStrip({ employers }: { employers: Employer[] }) {
 
   return (
     <section className="internship-strip" aria-labelledby="internships-heading">
-      <h2 id="internships-heading">Our members got internships at</h2>
+      <h2 id="internships-heading">Members have landed internships at</h2>
       <div className="internship-window">
         <div className="internship-track">
           <ul className="internship-list">{items(false)}</ul>
