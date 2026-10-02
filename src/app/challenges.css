@@ -1,0 +1,236 @@
+/*
+  Challenge board on the Challenges page. Tiles share one neutral shape; the
+  platform shows through --platform-accent, set by data-platform. A new platform
+  needs one accent line here. Loaded after cylab.css.
+*/
+
+[data-platform="htb"] {
+  --platform-accent: #9fef00;
+}
+
+[data-platform="cylab"] {
+  --platform-accent: #f58a4b;
+}
+
+[data-platform="club"] {
+  --platform-accent: #8cc0ff;
+}
+
+/* Platform cards ------------------------------------------------------------- */
+
+.platform-card {
+  display: block;
+  height: 100%;
+  padding: 1.25rem;
+  transition: border-color 150ms ease-out;
+}
+
+.platform-card:hover,
+.platform-card:focus-visible {
+  border-color: var(--platform-accent);
+}
+
+.platform-card-plain {
+  border: 1px solid var(--color-line);
+  border-radius: 0.5rem;
+  background: rgba(16, 26, 46, 0.72);
+  color: var(--color-muted);
+}
+
+.platform-card-level {
+  display: block;
+  color: var(--platform-accent);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.platform-card-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.platform-card-accent {
+  color: var(--platform-accent);
+}
+
+@media (min-width: 640px) {
+  .platform-card {
+    padding: 1.5rem;
+  }
+}
+
+/* Platform filter ------------------------------------------------------------ */
+
+.challenge-filter-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  flex: none;
+  border-radius: 999px;
+  background: var(--platform-accent, var(--color-muted));
+}
+
+.challenge-filter[aria-pressed="true"] {
+  border-color: var(--platform-accent, var(--color-line-strong));
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Category groups and tiles -------------------------------------------------- */
+
+.challenge-group h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--color-line);
+  color: var(--color-navy-900);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.challenge-group-count {
+  color: var(--color-muted);
+  font-weight: 500;
+}
+
+.challenge-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+}
+
+@media (min-width: 640px) {
+  .challenge-tiles {
+    grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr));
+  }
+}
+
+.challenge-tile {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0.9rem 1rem 1rem;
+  border: 1px solid var(--color-line);
+  border-radius: 0.5rem;
+  background: rgba(16, 26, 46, 0.72);
+  box-shadow: inset 0 2px 0 var(--platform-accent);
+  color: var(--color-muted);
+  transition: background-color 150ms ease-out, border-color 150ms ease-out, transform 150ms ease-out;
+}
+
+.challenge-tile:hover,
+.challenge-tile:focus-visible {
+  border-color: var(--platform-accent);
+  background: rgba(24, 38, 66, 0.9);
+  transform: translateY(-2px);
+}
+
+.challenge-tile:focus-visible {
+  outline-color: var(--platform-accent);
+}
+
+.challenge-tile-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.challenge-platform {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--platform-accent);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.challenge-diff {
+  padding: 0.1rem 0.45rem;
+  border: 1px solid currentColor;
+  border-radius: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.challenge-diff[data-difficulty="Easy"] {
+  color: #7ee08a;
+}
+
+.challenge-diff[data-difficulty="Medium"] {
+  color: #ffbe3d;
+}
+
+.challenge-diff[data-difficulty="Hard"] {
+  color: #ff7b7b;
+}
+
+.challenge-tile-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.8rem;
+  color: var(--color-navy-900);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.challenge-tile-arrow {
+  color: var(--platform-accent);
+  opacity: 0;
+  transition: opacity 150ms ease-out;
+}
+
+.challenge-tile:hover .challenge-tile-arrow,
+.challenge-tile:focus-visible .challenge-tile-arrow {
+  opacity: 1;
+}
+
+.challenge-tile-summary {
+  flex: 1;
+  margin-top: 0.2rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.challenge-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+}
+
+.challenge-tags > span {
+  padding: 0.1rem 0.4rem;
+  border: 1px solid var(--color-line);
+  border-radius: 0.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .challenge-tile:hover,
+  .challenge-tile:focus-visible {
+    transform: none;
+  }
+}
