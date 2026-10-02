@@ -2,12 +2,13 @@ import { branding } from "@config/branding";
 
 /** Homepage copy. The club can edit this file without touching components. */
 
-export type HomePillar = { id: "learn" | "practice" | "compete" | "community"; title: string; body: string };
+export type HomePillar = { id: "learn" | "practice" | "compete" | "network" | "community"; title: string; body: string };
 
 export const HOME_PILLARS: readonly HomePillar[] = [
   { id: "learn", title: "Learn", body: "Workshops and talks that start from the basics and explain terms as they come up." },
   { id: "practice", title: "Practice", body: "Hands-on labs and intentionally vulnerable targets, so you can experiment safely and legally." },
   { id: "compete", title: "Compete", body: "Capture-the-flag events and team competitions for members who want a challenge." },
+  { id: "network", title: "Network", body: "Speaker panels and industry talks where you can meet people working in security and ask how they got there." },
   { id: "community", title: "Community", body: "A Discord full of students who share resources, answer questions and study together." },
 ];
 

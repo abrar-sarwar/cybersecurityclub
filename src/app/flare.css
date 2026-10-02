@@ -131,9 +131,6 @@
     grid-column: auto;
     grid-row: span 2;
   }
-  .bento-wide {
-    grid-column: span 2;
-  }
 }
 
 /* Ledger: ruled rows instead of cards ------------------------------------------------ */

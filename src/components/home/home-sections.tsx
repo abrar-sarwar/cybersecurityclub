@@ -88,8 +88,8 @@ export function EventSpotlight({ events }: { events: readonly ClubEvent[] }) {
   );
 }
 
-/* The first pillar leads; the last takes the wide slot. */
-const pillarTile = ["bento-lead", "", "", "bento-wide"];
+/* The first pillar leads; the other four fill a two-by-two grid beside it. */
+const pillarTile = ["bento-lead"];
 const LEARN_TOPICS = TOOL_CATEGORIES.filter((category) => category !== "General");
 
 export function WhatWeDo() {
