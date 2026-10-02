@@ -1,11 +1,20 @@
-import { BookOpen, CalendarDays, Clock, FlaskConical, MapPin, Trophy, Users } from "lucide-react";
+import { CalendarDays, Clock, MapPin } from "lucide-react";
 import { branding } from "@config/branding";
 import { DiscordMark } from "@/components/brand/discord-mark";
 import { ButtonLink } from "@/components/ui/button";
 import { ExternalLink } from "@/components/ui/external-link";
 import { Badge, Card, EmptyState, SectionHeading } from "@/components/ui/primitives";
 import { formatEventDate, formatEventTime, type ClubEvent } from "@/content/club/events";
-import { HOME_BEGINNER, HOME_COMPETE, HOME_EVENTS_EMPTY, HOME_JOIN, HOME_PILLARS, HOME_PRACTICE, type HomePillar } from "@/content/club/home";
+import { HOME_BEGINNER, HOME_COMPETE, HOME_EVENTS_EMPTY, HOME_JOIN, HOME_PILLARS, HOME_PRACTICE } from "@/content/club/home";
+import { CLUB_PHOTOS } from "@/content/club/photos";
+import { TOOL_CATEGORIES } from "@/content/club/resources";
+import { MatrixRain } from "@/components/site/matrix-rain";
+import { PhotoBackdrop } from "@/components/site/photo-backdrop";
+import { Reveal } from "@/components/site/reveal";
+
+/* Each photo band cycles its own half of the club photographs. */
+const MEETING_PHOTOS = CLUB_PHOTOS.filter((_, index) => index % 2 === 0);
+const EVENT_PHOTOS = CLUB_PHOTOS.filter((_, index) => index % 2 === 1);
 
 function DiscordButton({ label = "Join Discord", size }: { label?: string; size?: "md" | "lg" }) {
   return (
@@ -29,35 +38,41 @@ export function EventSpotlight({ events }: { events: readonly ClubEvent[] }) {
             {events.map((event) => {
               const time = formatEventTime(event);
               return (
-                <Card as="li" key={event.id} className="flex flex-col gap-3 p-5">
-                  <div className="flex flex-wrap gap-2">
-                    <Badge>{event.category}</Badge>
-                    {event.difficulty ? <Badge tone="cyan">{event.difficulty}</Badge> : null}
+                <Card as="li" key={event.id} className="flex gap-4 p-5">
+                  <div className="date-stamp self-start" aria-hidden="true">
+                    <span className="date-stamp-month">{formatEventDate(event.date, { month: "short" })}</span>
+                    <span className="date-stamp-day">{formatEventDate(event.date, { day: "numeric" })}</span>
                   </div>
-                  <h3 className="font-display text-lg font-bold text-navy-900">{event.title}</h3>
-                  <dl className="grid gap-1.5 text-sm text-muted">
-                    <div className="flex items-center gap-2">
-                      <dt className="sr-only">Date</dt>
-                      <CalendarDays className="size-4 shrink-0" aria-hidden />
-                      <dd>
-                        <time dateTime={event.date}>{formatEventDate(event.date)}</time>
-                      </dd>
+                  <div className="flex min-w-0 flex-col gap-3">
+                    <div className="flex flex-wrap gap-2">
+                      <Badge>{event.category}</Badge>
+                      {event.difficulty ? <Badge tone="cyan">{event.difficulty}</Badge> : null}
                     </div>
-                    {time ? (
+                    <h3 className="font-display text-lg font-bold text-navy-900">{event.title}</h3>
+                    <dl className="grid gap-1.5 text-sm text-muted">
                       <div className="flex items-center gap-2">
-                        <dt className="sr-only">Time</dt>
-                        <Clock className="size-4 shrink-0" aria-hidden />
-                        <dd>{time}</dd>
+                        <dt className="sr-only">Date</dt>
+                        <CalendarDays className="size-4 shrink-0" aria-hidden />
+                        <dd>
+                          <time dateTime={event.date}>{formatEventDate(event.date)}</time>
+                        </dd>
                       </div>
-                    ) : null}
-                    {event.location ? (
-                      <div className="flex items-center gap-2">
-                        <dt className="sr-only">Location</dt>
-                        <MapPin className="size-4 shrink-0" aria-hidden />
-                        <dd>{event.location}</dd>
-                      </div>
-                    ) : null}
-                  </dl>
+                      {time ? (
+                        <div className="flex items-center gap-2">
+                          <dt className="sr-only">Time</dt>
+                          <Clock className="size-4 shrink-0" aria-hidden />
+                          <dd>{time}</dd>
+                        </div>
+                      ) : null}
+                      {event.location ? (
+                        <div className="flex items-center gap-2">
+                          <dt className="sr-only">Location</dt>
+                          <MapPin className="size-4 shrink-0" aria-hidden />
+                          <dd>{event.location}</dd>
+                        </div>
+                      ) : null}
+                    </dl>
+                  </div>
                 </Card>
               );
             })}
@@ -73,24 +88,32 @@ export function EventSpotlight({ events }: { events: readonly ClubEvent[] }) {
   );
 }
 
-const pillarIcons: Record<HomePillar["id"], typeof BookOpen> = { learn: BookOpen, practice: FlaskConical, compete: Trophy, community: Users };
+/* The first pillar leads; the last takes the wide slot. */
+const pillarTile = ["bento-lead", "", "", "bento-wide"];
+const LEARN_TOPICS = TOOL_CATEGORIES.filter((category) => category !== "General");
 
 export function WhatWeDo() {
   return (
-    <section className="surface-pale border-y border-line section" aria-labelledby="home-what">
+    <section className="section" aria-labelledby="home-what">
       <div className="container-x">
         <SectionHeading id="home-what" eyebrow="What we do" title="Learn security by doing it" />
-        <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {HOME_PILLARS.map((pillar) => {
-            const Icon = pillarIcons[pillar.id];
-            return (
-              <Card as="li" key={pillar.id} className="p-5">
-                <Icon className="size-6 text-brand-700" aria-hidden />
-                <h3 className="mt-3 font-display text-lg font-bold text-navy-900">{pillar.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-muted">{pillar.body}</p>
-              </Card>
-            );
-          })}
+        <ul className="bento mt-8">
+          {HOME_PILLARS.map((pillar, index) => (
+            <Reveal as="li" key={pillar.id} delay={index * 80} className={`bento-tile ${pillarTile[index] ?? ""}`}>
+              <span className="bento-index" aria-hidden="true">
+                0{index + 1}
+              </span>
+              <h3 className="font-display text-navy-900">{pillar.title}</h3>
+              <p className={index === 0 ? "mt-3 max-w-md leading-7 text-[#dbe7ff]" : "mt-2 text-sm leading-6 text-muted"}>{pillar.body}</p>
+              {index === 0 ? (
+                <ul className="bento-chips" aria-label="Topics">
+                  {LEARN_TOPICS.map((topic) => (
+                    <li key={topic}>{topic}</li>
+                  ))}
+                </ul>
+              ) : null}
+            </Reveal>
+          ))}
         </ul>
       </div>
     </section>
@@ -99,33 +122,46 @@ export function WhatWeDo() {
 
 export function BeginnerCallout() {
   return (
-    <section className="container-x section" aria-labelledby="home-beginner">
-      <Card className="p-6 sm:p-10">
-        <SectionHeading id="home-beginner" eyebrow="Beginners welcome" title={HOME_BEGINNER.title} description={HOME_BEGINNER.body} />
-        <div className="mt-6 flex flex-wrap gap-3">
-          <ButtonLink href={HOME_BEGINNER.learnHref}>Start Learning</ButtonLink>
-          <DiscordButton />
+    <section className="photo-band section" aria-labelledby="home-beginner">
+      <PhotoBackdrop photos={MEETING_PHOTOS} />
+      <div className="container-x">
+        <p className="signal-eyebrow mb-4">
+          <span className="signal-eyebrow-mark" aria-hidden="true" />
+          Beginners welcome
+        </p>
+        <h2 id="home-beginner" className="max-w-4xl font-display text-[clamp(2.2rem,6vw,4.5rem)] font-extrabold leading-[1.02] tracking-[-0.05em]">
+          {HOME_BEGINNER.title}
+        </h2>
+        <p className="mt-6 max-w-2xl text-lg leading-8 text-ink">{HOME_BEGINNER.body}</p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <ButtonLink href={HOME_BEGINNER.learnHref} size="lg">
+            Start Learning
+          </ButtonLink>
+          <DiscordButton size="lg" />
         </div>
-      </Card>
+      </div>
     </section>
   );
 }
 
 export function PracticeSection() {
   return (
-    <section className="surface-pale border-y border-line section" aria-labelledby="home-practice">
+    <section className="section" aria-labelledby="home-practice">
       <div className="container-x">
         <SectionHeading id="home-practice" eyebrow="Practice" title="Places to practice" description="Legal, purpose-built platforms where you can build skills between meetings." />
-        <ul className="mt-8 grid gap-5 md:grid-cols-3">
-          {HOME_PRACTICE.map((platform) => (
-            <Card as="li" key={platform.name} className="p-5">
-              <h3 className="font-display text-lg font-bold text-navy-900">
+        <ol className="ledger mt-8">
+          {HOME_PRACTICE.map((platform, index) => (
+            <Reveal as="li" key={platform.name} delay={index * 80}>
+              <span className="ledger-index" aria-hidden="true">
+                0{index + 1}
+              </span>
+              <h3 className="ledger-name text-navy-900">
                 <ExternalLink href={platform.href}>{platform.name}</ExternalLink>
               </h3>
-              <p className="mt-2 text-sm leading-6 text-muted">{platform.body}</p>
-            </Card>
+              <p className="ledger-body">{platform.body}</p>
+            </Reveal>
           ))}
-        </ul>
+        </ol>
         <div className="mt-8">
           <ButtonLink href="/challenges" variant="outline">
             Explore challenges
@@ -139,15 +175,26 @@ export function PracticeSection() {
 export function CompeteAndJoin() {
   return (
     <>
-      <section className="container-x section" aria-labelledby="home-compete">
-        <SectionHeading id="home-compete" eyebrow="Competitive team" title={HOME_COMPETE.title} description={HOME_COMPETE.body} />
-        <div className="mt-6">
-          <ButtonLink href={HOME_COMPETE.href} variant="secondary">
-            About the competitive team
-          </ButtonLink>
+      <section className="photo-band photo-band-flip section" aria-labelledby="home-compete">
+        <PhotoBackdrop photos={EVENT_PHOTOS} interval={6500} />
+        <div className="container-x">
+          <p className="signal-eyebrow mb-4">
+            <span className="signal-eyebrow-mark" aria-hidden="true" />
+            Competitive team
+          </p>
+          <h2 id="home-compete" className="statement-title">
+            {HOME_COMPETE.title}
+          </h2>
+          <p className="mt-6 max-w-2xl text-[1.0625rem] leading-7 text-muted">{HOME_COMPETE.body}</p>
+          <div className="mt-6">
+            <ButtonLink href={HOME_COMPETE.href} variant="secondary" size="lg">
+              About the competitive team
+            </ButtonLink>
+          </div>
         </div>
       </section>
-      <section className="surface-pale border-t border-line section" aria-labelledby="home-join">
+      <section className="rain-band section" aria-labelledby="home-join">
+        <MatrixRain className="band-rain" />
         <div className="container-x">
           <SectionHeading id="home-join" align="center" title={HOME_JOIN.title} description={HOME_JOIN.body} />
           <div className="mt-6 flex justify-center">

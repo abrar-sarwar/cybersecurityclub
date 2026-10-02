@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { branding } from "@config/branding";
 import { DiscordMark } from "@/components/brand/discord-mark";
+import { MatrixRain } from "@/components/site/matrix-rain";
 import { PageHero } from "@/components/site/page-hero";
 import { ButtonLink } from "@/components/ui/button";
 import { Badge, SectionHeading } from "@/components/ui/primitives";
@@ -29,6 +30,8 @@ const SECTIONS = [
   { id: "workshops", label: "Workshops" },
 ];
 
+const MAX_WEIGHT = Math.max(...SECURITY_PLUS_DOMAINS.map((domain) => domain.weight));
+
 const slug = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
 export default function ResourcesPage() {
@@ -41,7 +44,7 @@ export default function ResourcesPage() {
       />
       <JumpNav items={SECTIONS} />
 
-      <section id="getting-started" className="section" aria-labelledby="getting-started-heading">
+      <section id="getting-started" className="surface-pale section" aria-labelledby="getting-started-heading">
         <div className="container-x">
           <SectionHeading
             id="getting-started-heading"
@@ -49,14 +52,14 @@ export default function ResourcesPage() {
             title="New to cybersecurity? Start here."
             description="Six steps, in order. Each one has a free resource or two to work through."
           />
-          <ol className="mt-8 grid gap-4 md:grid-cols-2">
+          <ol className="mt-10 grid gap-x-12 md:grid-cols-2">
             {GETTING_STARTED.map((step, index) => (
-              <li key={step.title} className="card flex gap-4 p-5">
-                <span aria-hidden="true" className="font-mono text-sm font-bold text-brand-700">
+              <li key={step.title} className="flex gap-5 border-t border-line-strong py-6">
+                <span aria-hidden="true" className="text-accent font-display text-4xl font-extrabold leading-none tracking-tight">
                   0{index + 1}
                 </span>
                 <div className="min-w-0">
-                  <h3 className="font-display text-lg font-bold text-navy-900">{step.title}</h3>
+                  <h3 className="font-display text-xl font-bold text-navy-900">{step.title}</h3>
                   <p className="mt-1 text-sm leading-6 text-muted">{step.summary}</p>
                   <ul className="mt-3 space-y-2 text-sm leading-6">
                     {step.resources.map((resource) => (
@@ -73,7 +76,7 @@ export default function ResourcesPage() {
         </div>
       </section>
 
-      <section id="security-plus" className="section surface-pale" aria-labelledby="security-plus-heading">
+      <section id="security-plus" className="section" aria-labelledby="security-plus-heading">
         <div className="container-x">
           <SectionHeading
             id="security-plus-heading"
@@ -86,10 +89,13 @@ export default function ResourcesPage() {
               <li key={domain.number} className="card p-5">
                 <div className="flex items-center justify-between gap-3">
                   <span className="font-mono text-xs uppercase tracking-wider text-muted">Domain {domain.number}</span>
-                  <Badge tone="brand">{domain.weight}% of exam</Badge>
+                  <span className="text-accent font-mono text-sm font-bold">{domain.weight}% of exam</span>
                 </div>
                 <h3 className="mt-2 font-display text-lg font-bold text-navy-900">{domain.title}</h3>
-                <ul className="mt-3 list-disc space-y-1 pl-5 text-sm leading-6 text-muted">
+                <div className="weight-bar" aria-hidden="true">
+                  <span style={{ width: `${(domain.weight / MAX_WEIGHT) * 100}%` }} />
+                </div>
+                <ul className="mt-4 list-disc space-y-1 pl-5 text-sm leading-6 text-muted">
                   {domain.topics.map((topic) => (
                     <li key={topic}>{topic}</li>
                   ))}
@@ -119,7 +125,7 @@ export default function ResourcesPage() {
         </div>
       </section>
 
-      <section id="ctf-toolkit" className="section" aria-labelledby="ctf-toolkit-heading">
+      <section id="ctf-toolkit" className="section surface-pale" aria-labelledby="ctf-toolkit-heading">
         <div className="container-x">
           <SectionHeading
             id="ctf-toolkit-heading"
@@ -151,7 +157,7 @@ export default function ResourcesPage() {
         </div>
       </section>
 
-      <section id="workshops" className="section surface-pale" aria-labelledby="workshops-heading">
+      <section id="workshops" className="section" aria-labelledby="workshops-heading">
         <div className="container-x">
           <SectionHeading
             id="workshops-heading"
@@ -188,7 +194,8 @@ export default function ResourcesPage() {
         </div>
       </section>
 
-      <section className="section" aria-labelledby="resources-cta-heading">
+      <section className="rain-band section" aria-labelledby="resources-cta-heading">
+        <MatrixRain className="band-rain" />
         <div className="container-x flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 id="resources-cta-heading" className="signal-section-title">

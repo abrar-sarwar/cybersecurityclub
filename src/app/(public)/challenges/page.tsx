@@ -3,7 +3,9 @@ import Link from "next/link";
 import { CalendarDays, Trophy, Users } from "lucide-react";
 import { branding } from "@config/branding";
 import { DiscordMark } from "@/components/brand/discord-mark";
+import { MatrixRain } from "@/components/site/matrix-rain";
 import { PageHero } from "@/components/site/page-hero";
+import { Reveal } from "@/components/site/reveal";
 import { ButtonLink } from "@/components/ui/button";
 import { ExternalLink } from "@/components/ui/external-link";
 import { Badge, Card, EmptyState, SectionHeading } from "@/components/ui/primitives";
@@ -54,7 +56,7 @@ export default function ChallengesPage() {
       {featured ? (
         <section id="featured" className="section scroll-mt-24" aria-labelledby="featured-heading">
           <div className="container-x">
-            <Card className="flex flex-col gap-5 p-6 sm:p-8 md:flex-row md:items-center md:justify-between">
+            <Card className="card-feature flex flex-col gap-5 p-6 sm:p-8 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="signal-eyebrow mb-3">
                   <span className="signal-eyebrow-mark" aria-hidden="true" />
@@ -67,10 +69,18 @@ export default function ChallengesPage() {
                   <Badge tone="navy">{featured.platform}</Badge>
                   <Badge tone={difficultyTone[featured.difficulty]}>{featured.difficulty}</Badge>
                 </div>
-                <p className="mt-4 font-mono text-sm leading-6 text-muted">
-                  <span className="sr-only">Focus: </span>
-                  {featured.focus.join(" → ")}
-                </p>
+                <ol className="focus-chain mt-4" aria-label="Focus">
+                  {featured.focus.map((step, index) => (
+                    <li key={step}>
+                      <span>{step}</span>
+                      {index < featured.focus.length - 1 ? (
+                        <span className="focus-chain-arrow" aria-hidden="true">
+                          →
+                        </span>
+                      ) : null}
+                    </li>
+                  ))}
+                </ol>
               </div>
               <ButtonLink href={featured.href} variant="primary" size="lg" external className="shrink-0">
                 {featured.cta}
@@ -82,7 +92,7 @@ export default function ChallengesPage() {
         </section>
       ) : null}
 
-      <section id="pathway" className="section surface-pale scroll-mt-24" aria-labelledby="pathway-heading">
+      <section id="pathway" className="surface-pale section scroll-mt-24" aria-labelledby="pathway-heading">
         <div className="container-x">
           <SectionHeading
             id="pathway-heading"
@@ -90,20 +100,21 @@ export default function ChallengesPage() {
             title="From first workshop to competing"
             description="Nobody starts on the team. Most members begin with no experience and move through these steps at their own pace."
           />
-          <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <ol className="trace mt-12">
             {pathway.map((step, index) => (
-              <Card as="li" key={step.title} className="flex flex-col p-5">
-                <span className="font-mono text-xs tracking-[0.12em] text-accent" aria-hidden="true">
-                  0{index + 1}
+              <Reveal as="li" key={step.title} delay={index * 100}>
+                <span className="trace-node" aria-hidden="true" />
+                <span className="trace-step" aria-hidden="true">
+                  STEP 0{index + 1}
                 </span>
-                <h3 className="mt-2 font-display text-lg font-bold text-navy-900">{step.title}</h3>
+                <h3 className="font-display text-navy-900">{step.title}</h3>
                 <p className="mt-2 flex-1 text-[0.95rem] leading-6 text-muted">{step.body}</p>
                 {step.link ? (
                   <Link href={step.link.href} className={`${linkClass} mt-4`}>
                     {step.link.label} <span aria-hidden="true">→</span>
                   </Link>
                 ) : null}
-              </Card>
+              </Reveal>
             ))}
           </ol>
         </div>
@@ -213,41 +224,39 @@ export default function ChallengesPage() {
             title="Recommended machines"
             description="Retired machines grouped by what they teach. Start at the top and work down."
           />
-          <div className="mt-8 grid gap-4 md:grid-cols-2">
+          <div className="scoreboard mt-8">
             {htbGroups.map((group) => {
               const groupId = `htb-${group.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
               return (
-                <Card as="section" key={group.title} className="p-5">
-                  <h3 id={groupId} className="font-display text-lg font-bold text-navy-900">
-                    {group.title}
-                  </h3>
-                  <ul aria-labelledby={groupId} className="mt-3 divide-y divide-line">
+                <section key={group.title} className="scoreboard-group">
+                  <h3 id={groupId}>{group.title}</h3>
+                  <ul aria-labelledby={groupId}>
                     {group.machines.map((m) => (
-                      <li key={m.name} className="flex items-start justify-between gap-3 py-3">
-                        <div>
-                          <ExternalLink href={m.href} className="font-semibold text-accent underline-offset-4 hover:underline">
-                            {m.name}
-                          </ExternalLink>
-                          <p className="mt-0.5 text-sm leading-6 text-muted">{m.focus}</p>
-                        </div>
-                        <Badge tone={difficultyTone[m.difficulty]} className="shrink-0">
+                      <li key={m.name}>
+                        <ExternalLink href={m.href} className="font-bold text-navy-900 underline-offset-4 hover:underline">
+                          {m.name}
+                        </ExternalLink>
+                        <span className="scoreboard-focus">{m.focus}</span>
+                        <span className="scoreboard-diff" data-difficulty={m.difficulty}>
                           {m.difficulty}
-                        </Badge>
+                        </span>
                       </li>
                     ))}
                   </ul>
-                </Card>
+                </section>
               );
             })}
           </div>
         </div>
       </section>
 
-      <section id="apply" className="section surface-pale scroll-mt-24" aria-labelledby="apply-heading">
+      <section id="apply" className="rain-band section scroll-mt-24" aria-labelledby="apply-heading">
+        <MatrixRain className="band-rain" />
         <div className="container-x">
           <SectionHeading
             id="apply-heading"
             align="center"
+           
             eyebrow="Join the team"
             title="Ready to compete?"
             description="Apply to the competitive team, or join the Discord to practice with other members first."

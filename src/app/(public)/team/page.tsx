@@ -3,6 +3,7 @@ import { branding } from "@config/branding";
 import { DiscordMark } from "@/components/brand/discord-mark";
 import { ButtonLink } from "@/components/ui/button";
 import { PageHero } from "@/components/site/page-hero";
+import { PhotoBackdrop } from "@/components/site/photo-backdrop";
 import { TeamNetwork } from "@/components/site/team-network";
 import { TeamCards } from "@/components/site/team-cards";
 import { boardPortraits } from "@/server/services/portraits";
@@ -36,6 +37,7 @@ export default async function TeamPage() {
       <PageHero
         eyebrow="The club"
         title="The team behind the club"
+        backdrop={<PhotoBackdrop />}
         description={`The club is run by students who volunteer their time. Here is the board for ${BOARD_TERM}, the competitive team, and how to join.`}
       >
         <ButtonLink href={branding.links.discordInvite} variant="discord" size="lg" external>

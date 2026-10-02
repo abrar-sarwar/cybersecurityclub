@@ -1,0 +1,495 @@
+/*
+  Section layouts that are not cards, to break up the midnight card grids.
+  Loaded after signal.css.
+*/
+
+/* A card lit along its leading edge, for the one thing to do now. */
+.card-feature {
+  border-color: rgba(111, 168, 255, 0.32);
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(111, 168, 255, 0.13), transparent 55%),
+    linear-gradient(180deg, rgba(12, 28, 64, 0.5), rgba(3, 10, 28, 0.72));
+  box-shadow: inset 3px 0 0 var(--color-accent), 0 24px 60px -34px rgba(111, 168, 255, 0.5);
+}
+
+.focus-chain {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+.focus-chain li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.focus-chain li > span:first-child {
+  padding: 0.25rem 0.6rem;
+  border: 1px solid rgba(111, 168, 255, 0.3);
+  border-radius: 0.3rem;
+  background: rgba(111, 168, 255, 0.07);
+  color: #cfe2ff;
+}
+
+.focus-chain-arrow {
+  color: var(--color-accent);
+}
+
+/* Bento ------------------------------------------------------------------------ */
+
+.bento {
+  display: grid;
+  gap: 1rem;
+}
+
+.bento-tile {
+  position: relative;
+  overflow: hidden;
+  padding: 1.5rem;
+  border: 1px solid rgba(120, 165, 255, 0.15);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(180deg, rgba(12, 28, 64, 0.5), rgba(3, 10, 28, 0.72));
+}
+
+.bento-tile h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+/* The oversized index number sits behind the copy as texture. */
+.bento-index {
+  position: absolute;
+  top: -0.9rem;
+  right: 0.6rem;
+  color: transparent;
+  font-family: var(--font-display);
+  font-size: 6rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  -webkit-text-stroke: 1px rgba(140, 192, 255, 0.2);
+  pointer-events: none;
+}
+
+.bento-lead {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 17rem;
+  border-color: rgba(111, 168, 255, 0.4);
+  background:
+    radial-gradient(90% 80% at 100% 0%, rgba(47, 122, 255, 0.5), transparent 60%),
+    linear-gradient(160deg, #0f3fb0 0%, #0a1f5c 55%, #050e2c 100%);
+}
+
+.bento-lead h3 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1;
+}
+
+.bento-lead .bento-index {
+  top: -1.5rem;
+  font-size: 11rem;
+  -webkit-text-stroke-color: rgba(255, 255, 255, 0.22);
+}
+
+.bento-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 1.1rem;
+}
+
+.bento-chips li {
+  padding: 0.2rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 0.3rem;
+  background: rgba(1, 3, 10, 0.3);
+  color: #e6efff;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+@media (min-width: 640px) {
+  .bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .bento-lead {
+    grid-column: span 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .bento {
+    grid-template-columns: 1.5fr 1fr 1fr;
+  }
+  .bento-lead {
+    grid-column: auto;
+    grid-row: span 2;
+  }
+  .bento-wide {
+    grid-column: span 2;
+  }
+}
+
+/* Ledger: ruled rows instead of cards ------------------------------------------------ */
+
+.ledger {
+  border-top: 1px solid var(--color-line-strong);
+}
+
+.ledger > li {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: 0.25rem 1rem;
+  align-items: baseline;
+  padding: 1.25rem 0.25rem;
+  border-bottom: 1px solid var(--color-line);
+  transition: background-color 180ms ease;
+}
+
+.ledger > li:has(a:hover) {
+  background: rgba(23, 107, 255, 0.07);
+}
+
+.ledger-index {
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+}
+
+.ledger-name {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.6vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+}
+
+.ledger-body {
+  grid-column: 2;
+  color: var(--color-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+  .ledger > li {
+    grid-template-columns: 3rem minmax(12rem, 20rem) minmax(0, 1fr);
+    padding-block: 1.6rem;
+  }
+  .ledger-body {
+    grid-column: auto;
+  }
+}
+
+/* Large plain headline for a band that asks one question. */
+
+.statement-title {
+  max-width: 56rem;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.05em;
+}
+
+/* Trace: steps as nodes on one line ---------------------------------------------------- */
+
+.trace {
+  --trace-line: var(--color-line-strong);
+  display: grid;
+  gap: 0;
+}
+
+.trace > li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 2rem 2.5rem;
+}
+
+.trace > li:last-child {
+  padding-bottom: 0;
+}
+
+/* The line, drawn per step so it joins into one. */
+.trace > li::before {
+  position: absolute;
+  top: 0.5rem;
+  bottom: -0.5rem;
+  left: 0.5rem;
+  width: 2px;
+  background: var(--trace-line);
+  content: "";
+}
+
+.trace > li:last-child::before {
+  display: none;
+}
+
+.trace-node {
+  position: absolute;
+  top: 0.15rem;
+  left: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 2px solid var(--color-navy-900);
+  background: var(--color-ground);
+  transform: rotate(45deg);
+}
+
+.trace > li:last-child .trace-node {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+}
+
+.trace-step {
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.trace h3 {
+  margin-top: 0.35rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+@media (min-width: 1024px) {
+  .trace {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .trace > li {
+    padding: 2.5rem 1.5rem 0 0;
+  }
+  .trace > li::before {
+    top: 0.5rem;
+    right: 0;
+    bottom: auto;
+    left: 0.5rem;
+    width: auto;
+    height: 2px;
+  }
+  .trace-node {
+    top: 0;
+  }
+}
+
+/* Scoreboard: dense monospace rows -------------------------------------------------- */
+
+.scoreboard {
+  overflow: hidden;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  background: rgba(1, 4, 14, 0.75);
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+}
+
+.scoreboard-group h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1rem;
+  border-block: 1px solid var(--color-line);
+  background: rgba(23, 107, 255, 0.1);
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.scoreboard-group:first-child h3 {
+  border-top: 0;
+}
+
+.scoreboard-group h3::before {
+  content: "//";
+  opacity: 0.6;
+}
+
+.scoreboard-group li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.15rem 1rem;
+  align-items: center;
+  padding: 0.7rem 1rem;
+}
+
+.scoreboard-group li + li {
+  border-top: 1px dashed var(--color-line);
+}
+
+.scoreboard-group li:has(a:hover) {
+  background: rgba(23, 107, 255, 0.08);
+}
+
+.scoreboard-focus {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  color: var(--color-muted);
+}
+
+.scoreboard-diff {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.scoreboard-diff[data-difficulty="Easy"] {
+  color: var(--color-success-600);
+}
+
+.scoreboard-diff[data-difficulty="Medium"] {
+  color: var(--color-accent);
+}
+
+.scoreboard-diff[data-difficulty="Hard"] {
+  color: var(--color-danger-600);
+}
+
+@media (min-width: 768px) {
+  .scoreboard-group li {
+    grid-template-columns: 12rem minmax(0, 1fr) 5rem;
+  }
+  .scoreboard-focus {
+    grid-column: auto;
+    grid-row: auto;
+  }
+  .scoreboard-diff {
+    text-align: right;
+  }
+}
+
+/* Exam-weight bar ------------------------------------------------------------------- */
+
+.weight-bar {
+  height: 0.3rem;
+  margin-top: 0.9rem;
+  border-radius: 999px;
+  background: rgba(120, 165, 255, 0.14);
+}
+
+.weight-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-accent);
+  box-shadow: 0 0 12px rgba(111, 168, 255, 0.6);
+}
+
+/* Date stamp on event cards ---------------------------------------------------------- */
+
+.date-stamp {
+  display: grid;
+  width: 3.5rem;
+  flex: none;
+  place-items: center;
+  padding: 0.4rem 0;
+  border: 1px solid rgba(111, 168, 255, 0.35);
+  border-radius: 0.4rem;
+  background: rgba(111, 168, 255, 0.08);
+  line-height: 1;
+}
+
+.date-stamp-month {
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.date-stamp-day {
+  margin-top: 0.2rem;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+/* Photo band: club photographs behind a section ------------------------------------ */
+
+.photo-band {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.photo-band > .container-x {
+  position: relative;
+  z-index: 1;
+}
+
+/* Dark where the copy sits, clear on the far side so the people stay visible. */
+.photo-band .hero-photo-veil {
+  background:
+    linear-gradient(180deg, var(--color-ground), transparent 22%, transparent 78%, var(--color-ground)),
+    linear-gradient(90deg, rgba(1, 3, 10, 0.94) 0%, rgba(2, 8, 26, 0.78) 42%, rgba(8, 30, 90, 0.34) 100%);
+}
+
+.photo-band-flip .hero-photo-veil {
+  background:
+    linear-gradient(180deg, var(--color-ground), transparent 22%, transparent 78%, var(--color-ground)),
+    linear-gradient(270deg, rgba(1, 3, 10, 0.94) 0%, rgba(2, 8, 26, 0.78) 42%, rgba(8, 30, 90, 0.34) 100%);
+}
+
+@media (max-width: 767px) {
+  .photo-band .hero-photo-veil {
+    background:
+      linear-gradient(180deg, var(--color-ground), transparent 22%, transparent 78%, var(--color-ground)),
+      rgba(1, 5, 18, 0.8);
+  }
+}
+
+@media (min-width: 768px) {
+  .photo-band {
+    padding-block: 8rem;
+  }
+  .photo-band-flip > .container-x {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+  }
+}
+
+/* Rain band: matrix rain behind a closing section ------------------------------------ */
+
+.rain-band {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.rain-band > .container-x {
+  position: relative;
+  z-index: 1;
+}
+
+.band-rain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.45;
+  pointer-events: none;
+  /* Clear behind the copy in the middle, fading out at the top and bottom edges. */
+  mask-image:
+    linear-gradient(180deg, transparent, #000 25%, #000 75%, transparent),
+    radial-gradient(60% 70% at 50% 50%, rgba(0, 0, 0, 0.15), #000 100%);
+  mask-composite: intersect;
+}
