@@ -4,6 +4,8 @@ import "./globals.css";
 import "./observatory.css";
 import "./signal.css";
 import "./flare.css";
+import "./htb.css";
+import "./cylab.css";
 import { branding } from "@config/branding";
 import { siteUrl } from "@/lib/site";
 

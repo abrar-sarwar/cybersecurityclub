@@ -124,7 +124,7 @@ export const CLUB_EVENTS: readonly ClubEvent[] = [
     start: "18:30",
     end: "20:30",
     location: "Room TBA",
-    description: "Work through picoCTF challenges in small groups, with competitive team members on hand to help.",
+    description: "Work through CyLabs challenges in small groups, with competitive team members on hand to help.",
     category: "CTF",
     difficulty: "All Levels",
   },

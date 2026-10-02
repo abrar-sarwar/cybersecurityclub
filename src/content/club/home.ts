@@ -21,8 +21,7 @@ export const HOME_BEGINNER = {
 export type PracticePlatform = { name: string; href: string; body: string };
 
 export const HOME_PRACTICE: readonly PracticePlatform[] = [
-  { name: "CyLabs", href: branding.links.cylabs, body: "The club's own lab environment for guided, hands-on exercises." },
-  { name: "picoCTF", href: branding.links.picoCtf, body: "Free, beginner-friendly CTF challenges you can work through any time." },
+  { name: "CyLabs", href: branding.links.cylabs, body: "Free, beginner-friendly CTF challenges from Carnegie Mellon, formerly picoCTF, that you can work through any time." },
   { name: "Hack The Box", href: branding.links.hackTheBox, body: "Realistic machines and challenges for when you want to go deeper." },
 ];
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CalendarDays, Trophy, Users } from "lucide-react";
+import { Box, CalendarDays, Grid2x2, Sun, Terminal, Trophy, Users, type LucideIcon } from "lucide-react";
 import { branding } from "@config/branding";
 import { DiscordMark } from "@/components/brand/discord-mark";
 import { MatrixRain } from "@/components/site/matrix-rain";
@@ -10,11 +10,11 @@ import { ButtonLink } from "@/components/ui/button";
 import { ExternalLink } from "@/components/ui/external-link";
 import { Badge, Card, EmptyState, SectionHeading } from "@/components/ui/primitives";
 import { competitions, pathway, REGISTRATION_LABELS, type RegistrationStatus } from "@/content/club/competitions";
-import { cylabs, featuredChallenge, htbGroups, platforms, type Difficulty } from "@/content/club/practice";
+import { cylabs, featuredChallenge, hackTheBox, htbGroups, type Difficulty, type MachineOs } from "@/content/club/practice";
 
 export const metadata: Metadata = {
   title: "Challenges & Competitions",
-  description: `How to practice hacking and compete for ${branding.universityShortName}: the competitive team, upcoming competitions, CyLabs, picoCTF and recommended Hack The Box machines.`,
+  description: `How to practice hacking and compete for ${branding.universityShortName}: the competitive team, upcoming competitions, CyLabs and recommended Hack The Box machines.`,
   alternates: { canonical: "/challenges" },
 };
 
@@ -31,10 +31,18 @@ const difficultyTone: Record<Difficulty, "success" | "warning" | "danger"> = {
   Hard: "danger",
 };
 
+/* Generic glyphs for the machine avatars; lucide ships no OS logos. */
+const osIcon: Record<MachineOs, LucideIcon> = {
+  Linux: Terminal,
+  Windows: Grid2x2,
+  Solaris: Sun,
+};
+
 const linkClass = "text-sm font-semibold text-accent underline-offset-4 hover:underline";
 
 export default function ChallengesPage() {
   const featured = featuredChallenge;
+  const featuredOnHtb = featured?.platform === hackTheBox.name;
 
   return (
     <>
@@ -56,38 +64,74 @@ export default function ChallengesPage() {
       {featured ? (
         <section id="featured" className="section scroll-mt-24" aria-labelledby="featured-heading">
           <div className="container-x">
-            <Card className="card-feature flex flex-col gap-5 p-6 sm:p-8 md:flex-row md:items-center md:justify-between">
-              <div>
-                <p className="signal-eyebrow mb-3">
-                  <span className="signal-eyebrow-mark" aria-hidden="true" />
-                  Challenge of the week
-                </p>
-                <h2 id="featured-heading" className="signal-section-title">
-                  {featured.title}
-                </h2>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <Badge tone="navy">{featured.platform}</Badge>
-                  <Badge tone={difficultyTone[featured.difficulty]}>{featured.difficulty}</Badge>
+            {featuredOnHtb ? (
+              <div className="htb htb-panel htb-feature">
+                <div>
+                  <p className="htb-label">
+                    <Box className="size-4" aria-hidden="true" />
+                    Challenge of the week · {featured.platform}
+                  </p>
+                  <h2 id="featured-heading" className="htb-title">
+                    {featured.title}
+                  </h2>
+                  <div className="mt-3">
+                    <span className="htb-diff" data-difficulty={featured.difficulty}>
+                      {featured.difficulty}
+                    </span>
+                  </div>
+                  <ol className="htb-chain mt-4" aria-label="Focus">
+                    {featured.focus.map((step, index) => (
+                      <li key={step}>
+                        <span>{step}</span>
+                        {index < featured.focus.length - 1 ? (
+                          <span className="htb-chain-arrow" aria-hidden="true">
+                            →
+                          </span>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ol>
                 </div>
-                <ol className="focus-chain mt-4" aria-label="Focus">
-                  {featured.focus.map((step, index) => (
-                    <li key={step}>
-                      <span>{step}</span>
-                      {index < featured.focus.length - 1 ? (
-                        <span className="focus-chain-arrow" aria-hidden="true">
-                          →
-                        </span>
-                      ) : null}
-                    </li>
-                  ))}
-                </ol>
+                <a href={featured.href} target="_blank" rel="noopener noreferrer" className="htb-btn shrink-0">
+                  {featured.cta}
+                  <span aria-hidden="true">↗</span>
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
               </div>
-              <ButtonLink href={featured.href} variant="primary" size="lg" external className="shrink-0">
-                {featured.cta}
-                <span aria-hidden="true">↗</span>
-                <span className="sr-only"> (opens in a new tab)</span>
-              </ButtonLink>
-            </Card>
+            ) : (
+              <Card className="card-feature flex flex-col gap-5 p-6 sm:p-8 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="signal-eyebrow mb-3">
+                    <span className="signal-eyebrow-mark" aria-hidden="true" />
+                    Challenge of the week
+                  </p>
+                  <h2 id="featured-heading" className="signal-section-title">
+                    {featured.title}
+                  </h2>
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <Badge tone="navy">{featured.platform}</Badge>
+                    <Badge tone={difficultyTone[featured.difficulty]}>{featured.difficulty}</Badge>
+                  </div>
+                  <ol className="focus-chain mt-4" aria-label="Focus">
+                    {featured.focus.map((step, index) => (
+                      <li key={step}>
+                        <span>{step}</span>
+                        {index < featured.focus.length - 1 ? (
+                          <span className="focus-chain-arrow" aria-hidden="true">
+                            →
+                          </span>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+                <ButtonLink href={featured.href} variant="primary" size="lg" external className="shrink-0">
+                  {featured.cta}
+                  <span aria-hidden="true">↗</span>
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </ButtonLink>
+              </Card>
+            )}
           </div>
         </section>
       ) : null}
@@ -185,33 +229,38 @@ export default function ChallengesPage() {
             id="practice-heading"
             eyebrow="Practice"
             title="Where to practice"
-            description="Three places to build skills between meetings. Pick one and start with the easiest challenge you can find."
+            description="Two places to build skills between meetings. Pick one and start with the easiest challenge you can find."
           />
-          <Card as="article" className="mt-8 flex flex-col gap-5 p-6 sm:p-8 md:flex-row md:items-center md:justify-between">
-            <div className="max-w-2xl">
-              <Badge tone="brand">{cylabs.level}</Badge>
-              <h3 className="mt-3 font-display text-2xl font-bold text-navy-900">{cylabs.cta}</h3>
-              <p className="mt-2 leading-7 text-muted">{cylabs.description}</p>
-            </div>
-            <ButtonLink href={cylabs.href} variant="primary" size="lg" external className="shrink-0">
-              Open {cylabs.name}
-              <span aria-hidden="true">↗</span>
-              <span className="sr-only"> (opens in a new tab)</span>
-            </ButtonLink>
-          </Card>
-          <ul className="mt-4 grid gap-4 md:grid-cols-2">
-            {platforms.map((p) => (
-              <Card as="li" key={p.name} className="flex flex-col p-5">
-                <div>
-                  <Badge tone="muted">{p.level}</Badge>
-                </div>
-                <h3 className="mt-3 font-display text-lg font-bold text-navy-900">{p.name}</h3>
-                <p className="mt-2 flex-1 text-[0.95rem] leading-6 text-muted">{p.description}</p>
-                <ExternalLink href={p.href} className={`${linkClass} mt-4`}>
-                  {p.cta}
-                </ExternalLink>
-              </Card>
-            ))}
+          <ul className="mt-8 grid gap-4 md:grid-cols-2">
+            <li className="cylab flex flex-col p-6">
+              <p className="cylab-label">{cylabs.level}</p>
+              <h3 className="cylab-title mt-3">{cylabs.name}</h3>
+              <p className="mt-2 flex-1 text-[0.95rem] leading-6">{cylabs.description}</p>
+              <div className="mt-5">
+                <a href={cylabs.href} target="_blank" rel="noopener noreferrer" className="cylab-btn">
+                  {cylabs.cta}
+                  <span aria-hidden="true">↗</span>
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              </div>
+            </li>
+            <li className="htb htb-panel flex flex-col p-6">
+              <div>
+                <span className="htb-tag">{hackTheBox.level}</span>
+              </div>
+              <h3 className="htb-title mt-3 flex items-center gap-2 text-2xl">
+                <Box className="size-6 text-[var(--htb-green)]" aria-hidden="true" />
+                {hackTheBox.name}
+              </h3>
+              <p className="mt-2 flex-1 text-[0.95rem] leading-6">{hackTheBox.description}</p>
+              <div className="mt-5">
+                <a href={hackTheBox.href} target="_blank" rel="noopener noreferrer" className="htb-btn">
+                  {hackTheBox.cta}
+                  <span aria-hidden="true">↗</span>
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              </div>
+            </li>
           </ul>
         </div>
       </section>
@@ -224,24 +273,35 @@ export default function ChallengesPage() {
             title="Recommended machines"
             description="Retired machines grouped by what they teach. Start at the top and work down."
           />
-          <div className="scoreboard mt-8">
+          <div className="htb htb-panel htb-machines mt-8">
             {htbGroups.map((group) => {
               const groupId = `htb-${group.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
               return (
-                <section key={group.title} className="scoreboard-group">
+                <section key={group.title} className="htb-group">
                   <h3 id={groupId}>{group.title}</h3>
                   <ul aria-labelledby={groupId}>
-                    {group.machines.map((m) => (
-                      <li key={m.name}>
-                        <ExternalLink href={m.href} className="font-bold text-navy-900 underline-offset-4 hover:underline">
-                          {m.name}
-                        </ExternalLink>
-                        <span className="scoreboard-focus">{m.focus}</span>
-                        <span className="scoreboard-diff" data-difficulty={m.difficulty}>
-                          {m.difficulty}
-                        </span>
-                      </li>
-                    ))}
+                    {group.machines.map((m) => {
+                      const OsIcon = osIcon[m.os];
+                      return (
+                        <li key={m.name}>
+                          <a href={m.href} target="_blank" rel="noopener noreferrer" className="htb-row">
+                            <span className="htb-avatar" title={m.os}>
+                              <OsIcon className="size-5" aria-hidden="true" />
+                              <span className="sr-only">{m.os}</span>
+                            </span>
+                            <span className="htb-row-name">{m.name}</span>
+                            <span className="htb-row-focus">{m.focus}</span>
+                            <span className="htb-diff" data-difficulty={m.difficulty}>
+                              {m.difficulty}
+                            </span>
+                            <span className="htb-row-arrow" aria-hidden="true">
+                              ↗
+                            </span>
+                            <span className="sr-only"> (opens in a new tab)</span>
+                          </a>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </section>
               );

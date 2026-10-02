@@ -81,9 +81,8 @@ export const branding = {
     /** Competitive team application. For now this is the NCL interest form. */
     competitiveTeamApplication:
       "https://docs.google.com/forms/d/e/1FAIpQLSeiTdYxhaLUd1khSRXTAYv-uinm7elH9W_BjOD8nW17QcJVIA/viewform?usp=sharing&ouid=117590049843765622395",
-    /** PLACEHOLDER: replace with the club's CyLabs URL. */
-    cylabs: "https://cylabs.example.com",
-    picoCtf: "https://picoctf.org",
+    /** CyLab Security Academy, the platform that replaced picoCTF. */
+    cylabs: "https://cylabacademy.org",
     hackTheBox: "https://www.hackthebox.com",
   },
 } as const;

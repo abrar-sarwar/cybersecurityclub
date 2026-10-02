@@ -84,7 +84,7 @@ export const pathway: PathwayStep[] = [
   },
   {
     title: "Practice",
-    body: "Solve challenges at your own pace on CyLabs, picoCTF and Hack The Box.",
+    body: "Solve challenges at your own pace on CyLabs and Hack The Box.",
     link: { label: "Practice platforms", href: "#practice" },
   },
   {
