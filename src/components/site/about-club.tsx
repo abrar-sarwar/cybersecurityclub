@@ -72,28 +72,6 @@ export function AboutClub() {
           </ButtonLink>
         </div>
       </section>
-
-      <section className="section" aria-labelledby="meetings">
-        <div className="container-x">
-          <div>
-            <SectionHeading id="meetings" eyebrow="Meetings" title="Where and when" description="Meeting times and rooms change each semester. The Events page and PIN always have the current schedule, and Discord gets the reminders." />
-            <dl className="mt-6 space-y-3 text-[0.95rem]">
-              <div className="flex gap-3">
-                <dt className="w-28 shrink-0 font-semibold text-navy-900">Campus</dt>
-                <dd className="text-muted">{branding.contact.meetingLocation}</dd>
-              </div>
-              <div className="flex gap-3">
-                <dt className="w-28 shrink-0 font-semibold text-navy-900">Cost</dt>
-                <dd className="text-muted">Free. No dues.</dd>
-              </div>
-              <div className="flex gap-3">
-                <dt className="w-28 shrink-0 font-semibold text-navy-900">Who</dt>
-                <dd className="text-muted">Any GSU student, from any major. Alumni stay involved through Discord.</dd>
-              </div>
-            </dl>
-          </div>
-        </div>
-      </section>
     </>
   );
 }
