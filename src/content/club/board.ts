@@ -17,6 +17,12 @@ export type BoardMember = {
   group: BoardGroup;
   /** Public profile, when the officer has shared one. */
   linkedin?: string;
+  github?: string;
+  /** Optional profile details. Left off until the officer supplies them. */
+  bio?: string;
+  major?: string;
+  year?: string;
+  interests?: string[];
 };
 
 export const BOARD_TERM = "Fall 2026";

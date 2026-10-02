@@ -7,12 +7,15 @@ import { TeamNetwork } from "@/components/site/team-network";
 import { TeamCards } from "@/components/site/team-cards";
 import { boardPortraits } from "@/server/services/portraits";
 import { BOARD_HEADING, BOARD_TERM } from "@/content/club/board";
+import { COMPETITIVE_TEAM, COMPETITIVE_TEAM_INTRO, COMPETITIVE_TEAM_TERM } from "@/content/club/competitive-team";
+import { CompetitiveMemberCard } from "@/components/team/competitive-member-card";
+import { EmptyState } from "@/components/ui/primitives";
 
 import "./team.css";
 
 export const metadata: Metadata = {
   title: "Team",
-  description: `The executive board of the ${branding.displayName}, and how to become a member.`,
+  description: `The executive board and competitive team of the ${branding.displayName}, and how to become a member.`,
   alternates: { canonical: "/team" },
 };
 
@@ -33,7 +36,7 @@ export default async function TeamPage() {
       <PageHero
         eyebrow="The club"
         title="The team behind the club"
-        description={`The club is run by students who volunteer their time. Here is the board for ${BOARD_TERM}, and how to join.`}
+        description={`The club is run by students who volunteer their time. Here is the board for ${BOARD_TERM}, the competitive team, and how to join.`}
       >
         <ButtonLink href={branding.links.discordInvite} variant="discord" size="lg" external>
           <DiscordMark />
@@ -57,6 +60,44 @@ export default async function TeamPage() {
       </section>
 
       <div className="container-x board-page">
+        <section id="competitive-team" className="board-section" aria-labelledby="competitive-team-heading">
+          <div className="board-section-head">
+            <p className="signal-eyebrow">
+              <span className="signal-eyebrow-mark" aria-hidden="true" />
+              Who competes
+            </p>
+            <h2 id="competitive-team-heading" className="signal-section-title">
+              Competitive Team
+            </h2>
+            <p className="board-note">{COMPETITIVE_TEAM_INTRO}</p>
+          </div>
+          {COMPETITIVE_TEAM.length > 0 ? (
+            <ul className="comp-cards">
+              {COMPETITIVE_TEAM.map((member) => (
+                <CompetitiveMemberCard key={member.name} member={member} />
+              ))}
+            </ul>
+          ) : (
+            <EmptyState
+              className="comp-empty"
+              title={`The ${COMPETITIVE_TEAM_TERM} roster is being formed`}
+              description="Members will be listed here once the team is confirmed. Applications are open to any GSU student."
+              action={
+                <>
+                  <ButtonLink href={branding.links.competitiveTeamApplication} variant="primary" external>
+                    Apply to the Competitive Team
+                    <span aria-hidden="true">↗</span>
+                    <span className="sr-only">(opens in a new tab)</span>
+                  </ButtonLink>
+                  <ButtonLink href="/challenges" variant="outline">
+                    How the team works
+                  </ButtonLink>
+                </>
+              }
+            />
+          )}
+        </section>
+
         <section className="board-section" aria-labelledby="reach">
           <div className="board-section-head">
             <p className="signal-eyebrow">

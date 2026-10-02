@@ -1,76 +1,40 @@
-import { ArrowUpRight, CalendarDays, MapPin } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import { branding } from "@config/branding";
 import { DiscordMark } from "@/components/brand/discord-mark";
+import { EventBadges, EventFacts, EventMaterials, EventRegistration } from "@/components/events/event-details";
 import { ButtonLink } from "@/components/ui/button";
-import type { ClubEvent } from "@/content/club/flyers";
+import { EmptyState } from "@/components/ui/primitives";
+import { formatEventDate, formatEventTime, type ClubEvent } from "@/content/club/events";
 
 /**
  * The events page's two lists. Upcoming events lead: the next one is a large
  * card with everything needed to turn up, and any after it are compact rows.
- * Past events are a strip of flyers, shown but never clickable.
+ * Past events are an archive with whatever materials were shared afterwards.
  */
 
-/** Dates are plain YYYY-MM-DD days, so they are formatted in UTC to stay on that day. */
-function dayParts(datetime: string) {
-  const day = new Date(`${datetime}T00:00:00Z`);
-  const part = (options: Intl.DateTimeFormatOptions) => day.toLocaleDateString("en-US", { timeZone: "UTC", ...options });
-  return {
-    weekday: part({ weekday: "long" }),
-    month: part({ month: "long" }),
-    monthShort: part({ month: "short" }),
-    day: part({ day: "numeric" }),
-  };
-}
-
-function Rsvp({ event, size }: { event: ClubEvent; size: "sm" | "lg" }) {
-  return (
-    <ButtonLink href={event.rsvpUrl ?? branding.links.pinEvents} size={size} external>
-      {event.rsvpUrl ? "RSVP on PIN" : "Find it on PIN"}
-      <ArrowUpRight className="size-4" aria-hidden />
-      <span className="sr-only"> (opens in a new tab)</span>
-    </ButtonLink>
-  );
-}
-
 function NextEvent({ event, today }: { event: ClubEvent; today: string }) {
-  const date = dayParts(event.datetime);
   return (
-    <article className="ev-next" data-flyer={event.flyer ? "" : undefined}>
+    <article className="ev-next" data-flyer={event.flyer ? "" : undefined} aria-labelledby={`next-${event.id}`}>
       {event.flyer ? (
         <div className="ev-next-flyer">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={event.flyer.image} alt={event.flyer.alt} width={event.flyer.width} height={event.flyer.height} decoding="async" />
         </div>
       ) : null}
-      <div className="ev-next-body">
+      <div>
         <p className="ev-flag">
           <span className="ev-flag-pulse" aria-hidden="true" />
-          {event.datetime === today ? "Happening today" : "Next up"}
+          {event.date === today ? "Happening today" : "Next up"}
         </p>
-        <h2 className="ev-next-title">{event.title}</h2>
-        <dl className="ev-next-facts">
-          <div>
-            <dt>
-              <CalendarDays className="size-4" aria-hidden />
-              <span className="sr-only">When</span>
-            </dt>
-            <dd>
-              <time dateTime={event.datetime}>
-                {date.weekday}, {date.month} {date.day}
-              </time>
-            </dd>
-          </div>
-          <div>
-            <dt>
-              <MapPin className="size-4" aria-hidden />
-              <span className="sr-only">Where and what time</span>
-            </dt>
-            <dd>{event.detail}</dd>
-          </div>
-        </dl>
-        {event.summary ? <p className="ev-next-summary">{event.summary}</p> : null}
+        <h3 id={`next-${event.id}`} className="ev-next-title">
+          {event.title}
+        </h3>
+        <EventBadges event={event} className="mt-3" />
+        <EventFacts event={event} />
+        {event.description ? <p className="ev-next-summary">{event.description}</p> : null}
+        <EventMaterials event={event} className="mt-3" />
         <div className="ev-actions">
-          <Rsvp event={event} size="lg" />
+          <EventRegistration event={event} size="lg" />
         </div>
       </div>
     </article>
@@ -81,24 +45,22 @@ function NextEvent({ event, today }: { event: ClubEvent; today: string }) {
 export function UpcomingEvents({ events, today }: { events: readonly ClubEvent[]; today: string }) {
   if (!events.length) {
     return (
-      <div className="signal-empty">
-        <span className="signal-empty-icon" aria-hidden="true">
-          <CalendarDays className="size-5" />
-        </span>
-        <div>
-          <h2 className="ev-empty-title">Nothing on the calendar right now</h2>
-          <p className="ev-empty-text">New events are announced on PIN and in Discord first, and show up here as soon as they are confirmed.</p>
-          <div className="ev-actions">
-            <ButtonLink href={branding.links.pinEvents} external>
-              Events on PIN
-            </ButtonLink>
+      <EmptyState
+        icon={<CalendarDays className="size-5" />}
+        title="Nothing on the calendar right now"
+        description="New events are announced in Discord first and show up here as soon as they are confirmed. Join the server so you do not miss the next one."
+        action={
+          <>
             <ButtonLink href={branding.links.discordInvite} variant="discord" external>
               <DiscordMark />
               Join Discord
             </ButtonLink>
-          </div>
-        </div>
-      </div>
+            <ButtonLink href={branding.links.pinEvents} variant="outline" external>
+              Events on PIN
+            </ButtonLink>
+          </>
+        }
+      />
     );
   }
 
@@ -108,64 +70,63 @@ export function UpcomingEvents({ events, today }: { events: readonly ClubEvent[]
       <NextEvent event={next} today={today} />
       {later.length ? (
         <>
-          <h2 className="ev-heading">Also coming up</h2>
+          <h3 className="ev-heading">Also coming up</h3>
           <ol className="ev-list">
             {later.map((event) => {
-              const date = dayParts(event.datetime);
+              const time = formatEventTime(event);
               return (
-                <li key={`${event.datetime}-${event.title}`} className="ev-row">
-                  <time className="ev-row-date" dateTime={event.datetime}>
-                    <span>{date.monthShort}</span>
-                    <b>{date.day}</b>
+                <li key={event.id} className="ev-row !items-start">
+                  <time className="ev-row-date" dateTime={event.date}>
+                    <span>{formatEventDate(event.date, { month: "short" })}</span>
+                    <b>{formatEventDate(event.date, { day: "numeric" })}</b>
                   </time>
-                  <div className="ev-row-body">
-                    <h3 className="ev-row-title">{event.title}</h3>
+                  <div>
+                    <h4 className="ev-row-title">{event.title}</h4>
                     <p className="ev-row-detail">
-                      {date.weekday}
-                      {event.detail ? ` · ${event.detail}` : ""}
+                      {[formatEventDate(event.date, { weekday: "long" }), time ?? "Time TBA", event.location ?? "Location TBA"].join(" · ")}
                     </p>
+                    <EventBadges event={event} className="mt-2" />
+                    {event.description ? <p className="ev-row-detail">{event.description}</p> : null}
+                    <EventMaterials event={event} className="mt-2" />
                   </div>
-                  <Rsvp event={event} size="sm" />
+                  <EventRegistration event={event} size="sm" />
                 </li>
               );
             })}
           </ol>
         </>
       ) : null}
-      <p className="ev-note">All times are Eastern. RSVPs happen on PIN, the official GSU student organization portal.</p>
+      <p className="ev-note">All times are Eastern. Registration happens on PIN, the official GSU student organization portal.</p>
     </>
   );
 }
 
 export function PastEvents({ events }: { events: readonly ClubEvent[] }) {
-  if (!events.length) return null;
+  if (!events.length) {
+    return <p className="mt-4 text-muted">No past events yet. Once an event has happened it moves here, along with any slides or recordings.</p>;
+  }
   return (
-    <>
-      <h2 className="ev-heading">Past events</h2>
-      <ol className="ev-past">
-        {events.map((event) => {
-          const date = dayParts(event.datetime);
-          return (
-            <li key={`${event.datetime}-${event.title}`} className="ev-past-item">
-              {event.flyer ? (
-                <div className="ev-past-thumb">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={event.flyer.image} alt={event.flyer.alt} width={event.flyer.width} height={event.flyer.height} loading="lazy" decoding="async" />
-                </div>
-              ) : null}
-              <div>
-                <p className="ev-past-date">
-                  <time dateTime={event.datetime}>
-                    {date.month} {date.day}
-                  </time>
-                </p>
-                <h3 className="ev-past-title">{event.title}</h3>
-                <p className="ev-past-detail">{event.detail}</p>
-              </div>
-            </li>
-          );
-        })}
-      </ol>
-    </>
+    <ol className="mt-6 grid gap-4 md:grid-cols-2">
+      {events.map((event) => (
+        <li key={event.id} className="card flex gap-4 p-4">
+          {event.flyer ? (
+            <div className="ev-past-thumb w-[4.5rem] flex-none self-start">
+              {/* The flyer repeats the title and date beside it, so it is decorative here. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={event.flyer.image} alt="" width={event.flyer.width} height={event.flyer.height} loading="lazy" decoding="async" />
+            </div>
+          ) : null}
+          <div className="min-w-0">
+            <p className="font-mono text-xs uppercase tracking-widest text-muted">
+              <time dateTime={event.date}>{formatEventDate(event.date, { month: "long", day: "numeric", year: "numeric" })}</time>
+            </p>
+            <h3 className="ev-row-title mt-1">{event.title}</h3>
+            <EventBadges event={event} className="mt-2" />
+            {event.description ? <p className="ev-row-detail mt-2">{event.description}</p> : null}
+            {event.links?.length ? <EventMaterials event={event} className="mt-3" /> : <p className="mt-3 text-sm text-muted">No materials posted.</p>}
+          </div>
+        </li>
+      ))}
+    </ol>
   );
 }

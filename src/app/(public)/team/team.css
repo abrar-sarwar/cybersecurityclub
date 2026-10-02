@@ -14,12 +14,6 @@
   border-top: 1px solid var(--color-line);
 }
 
-.board-section:first-child {
-  margin-top: 3.5rem;
-  padding-top: 0;
-  border-top: 0;
-}
-
 .board-section-head {
   max-width: 44rem;
 }
@@ -550,23 +544,11 @@ a.board-line:hover .board-line-name {
  */
 
 .board-cards {
-  display: none;
-}
-
-@media (max-width: 899px) {
-  .board-cards {
-    display: grid;
-    gap: 0.75rem;
-    margin-top: 1.75rem;
-    padding-inline: 1.25rem;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr));
-  }
-}
-
-@media (max-width: 420px) {
-  .board-cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  display: grid;
+  gap: 0.75rem;
+  max-width: 78rem;
+  margin: 1.75rem auto 0;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
 }
 
 .board-card-m {
@@ -581,9 +563,6 @@ a.board-line:hover .board-line-name {
   text-align: center;
 }
 
-a.board-card-m:active {
-  border-color: rgba(96, 165, 250, 0.6);
-}
 
 .board-card-face {
   position: relative;
@@ -631,8 +610,78 @@ a.board-card-m:active {
   margin-top: 0.15rem;
   color: rgba(140, 184, 255, 0.85);
   font-family: var(--font-mono);
-  font-size: 0.56rem;
+  font-size: 0.62rem;
   letter-spacing: 0.1em;
   line-height: 1.4;
   text-transform: uppercase;
+}
+
+.board-card-meta,
+.board-card-remit,
+.board-card-bio {
+  margin-top: 0.5rem;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.board-card-meta {
+  font-size: 0.78rem;
+}
+
+.profile-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem 0.9rem;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.profile-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  color: #8cc0ff;
+}
+
+.profile-links a:hover {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Competitive team ---------------------------------------------------------
+ * A separate band from the board: its own section rule and card grid.
+ */
+
+.comp-cards {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+}
+
+.comp-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0.85rem 0.9rem;
+  border: 1px solid rgba(143, 202, 214, 0.25);
+  border-radius: 0.8rem;
+  background: rgba(8, 16, 30, 0.62);
+  text-align: center;
+}
+
+.comp-card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 0.7rem;
+}
+
+.comp-empty {
+  margin-top: 2rem;
 }

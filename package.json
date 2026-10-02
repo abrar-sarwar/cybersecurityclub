@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
-    "test:unit": "tsx --test src/components/marketing/network-state.test.ts src/components/marketing/network-layout.test.ts src/content/club/flyers.test.ts",
+    "test:unit": "tsx --test src/components/marketing/network-state.test.ts src/components/marketing/network-layout.test.ts src/content/club/events.test.ts",
     "test:e2e": "playwright test",
     "verify": "npm run typecheck && npm run lint && npm run test:unit"
   },

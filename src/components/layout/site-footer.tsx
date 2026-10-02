@@ -3,6 +3,7 @@ import { branding } from "@config/branding";
 import { DiscordMark } from "@/components/brand/discord-mark";
 import { Logo } from "@/components/brand/logo";
 import { StarField } from "@/components/marketing/star-field";
+import { PUBLIC_NAV } from "@/components/layout/nav-config";
 
 /* Brand marks are inlined: lucide dropped its brand icon set. */
 function InstagramMark() {
@@ -24,6 +25,10 @@ function LinkedinMark() {
 }
 
 const columns = [
+  {
+    title: "Explore",
+    links: PUBLIC_NAV.map((item) => ({ href: item.href, label: item.label, external: false })),
+  },
   {
     title: "Connect",
     links: [{ href: branding.links.pinOrganization, label: "PIN (official org page)", external: true }],
@@ -57,6 +62,7 @@ export function SiteFooter() {
                   {"external" in l && l.external ? (
                     <a href={l.href} target={l.href.startsWith("http") ? "_blank" : undefined} rel={l.href.startsWith("http") ? "noopener noreferrer" : undefined}>
                       {l.label}
+                      <span aria-hidden="true"> ↗</span>
                     </a>
                   ) : (
                     <Link href={l.href}>{l.label}</Link>

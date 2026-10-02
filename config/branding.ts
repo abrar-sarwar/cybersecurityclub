@@ -78,6 +78,13 @@ export const branding = {
       process.env.NEXT_PUBLIC_DISCORD_INVITE_URL || "https://discord.gg/Mpb6FRj8s6",
     instagram: "https://www.instagram.com/cybersecurityclubgsu/",
     linkedin: "https://www.linkedin.com/company/cybersecurity-club-gsu/posts/?feedView=all",
+    /** Competitive team application. For now this is the NCL interest form. */
+    competitiveTeamApplication:
+      "https://docs.google.com/forms/d/e/1FAIpQLSeiTdYxhaLUd1khSRXTAYv-uinm7elH9W_BjOD8nW17QcJVIA/viewform?usp=sharing&ouid=117590049843765622395",
+    /** PLACEHOLDER: replace with the club's CyLabs URL. */
+    cylabs: "https://cylabs.example.com",
+    picoCtf: "https://picoctf.org",
+    hackTheBox: "https://www.hackthebox.com",
   },
 } as const;
 

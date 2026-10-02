@@ -518,12 +518,15 @@ export function CyberHome({ employers }: { employers: Employer[] }) {
               <span className="glitch-layer glitch-layer-cyan" aria-hidden="true">{CLUB_NAME}</span>
             </h1>
             <p className="cyber-home-description">
-              Georgia State students who learn, build, and compete in security.
+              Learn cybersecurity by doing it: workshops, hands-on labs, CTFs, and competitions with students learning security together. Beginners welcome.
             </p>
             <div className="cyber-home-actions">
               <a className="btn-cyber-discord" href={branding.links.discordInvite} target="_blank" rel="noopener noreferrer">
                 <DiscordMark />
                 Join Discord
+              </a>
+              <a className="btn-cyber-outline !border-[rgba(151,190,255,0.34)]" href="/events">
+                See upcoming events
               </a>
             </div>
           </div>

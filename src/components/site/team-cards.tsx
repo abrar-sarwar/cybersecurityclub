@@ -1,41 +1,45 @@
-import { ArrowUpRight } from "lucide-react";
+import { Badge } from "@/components/ui/primitives";
+import { ProfileLinks } from "@/components/team/profile-links";
 import { EXEC_BOARD } from "@/content/club/board";
 
 /**
- * The board for narrow screens, where the pyramid diagram has no room.
- *
- * Same people, same order, same links; a portrait grid instead of a network.
- * Deliberately still: the matrix rain and the boot sequence stay on desktop.
+ * The board as cards: who each person is and which part of the club their seat
+ * covers. Shown at every width; on narrow screens it also stands in for the
+ * network diagram, which is hidden there.
  */
 export function TeamCards({ portraits }: { portraits: Record<string, string> }) {
   return (
-    <ul className="board-cards">
-      {EXEC_BOARD.map((member, index) => {
+    <ul className="board-cards" aria-label="Executive board members">
+      {EXEC_BOARD.map((member) => {
         const photo = portraits[member.slug];
-        const Card = member.linkedin ? "a" : "div";
+        const details = [member.major, member.year].filter(Boolean).join(" · ");
         return (
-          <li key={member.slug} style={{ ["--i" as string]: index }}>
-            <Card
-              className="board-card-m"
-              {...(member.linkedin ? { href: member.linkedin, target: "_blank", rel: "noopener noreferrer" } : {})}
-            >
-              <span className="board-card-face">
-                {photo ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={photo} alt="" width={96} height={96} loading="lazy" decoding="async" />
-                ) : (
-                  <span className="board-card-initials" aria-hidden="true">
-                    {member.name.slice(0, 2).toUpperCase()}
-                  </span>
-                )}
-              </span>
-              <span className="board-card-name">
-                {member.name}
-                {member.linkedin ? <ArrowUpRight className="size-3.5" aria-hidden /> : null}
-              </span>
-              <span className="board-card-role">{member.role}</span>
-              {member.linkedin ? <span className="sr-only">LinkedIn profile, opens in a new tab</span> : null}
-            </Card>
+          <li key={member.slug} className="board-card-m">
+            <span className="board-card-face">
+              {photo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={photo} alt="" width={96} height={96} loading="lazy" decoding="async" />
+              ) : (
+                <span className="board-card-initials" aria-hidden="true">
+                  {member.name.slice(0, 2).toUpperCase()}
+                </span>
+              )}
+            </span>
+            <h3 className="board-card-name">{member.name}</h3>
+            <p className="board-card-role">{member.role}</p>
+            {details ? <p className="board-card-meta">{details}</p> : null}
+            <p className="board-card-remit">{member.remit}</p>
+            {member.bio ? <p className="board-card-bio">{member.bio}</p> : null}
+            {member.interests?.length ? (
+              <ul className="comp-card-badges" aria-label="Interests">
+                {member.interests.map((interest) => (
+                  <li key={interest}>
+                    <Badge tone="muted">{interest}</Badge>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            <ProfileLinks name={member.name} linkedin={member.linkedin} github={member.github} />
           </li>
         );
       })}
