@@ -4,8 +4,8 @@ import { EXEC_BOARD } from "@/content/club/board";
 
 /**
  * The board as cards: who each person is and which part of the club their seat
- * covers. Shown at every width; on narrow screens it also stands in for the
- * network diagram, which is hidden there.
+ * covers. Shown only on narrow screens, where it stands in for the network
+ * diagram, which is hidden there.
  */
 export function TeamCards({ portraits }: { portraits: Record<string, string> }) {
   return (

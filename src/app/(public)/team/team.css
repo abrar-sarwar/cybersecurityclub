@@ -376,9 +376,15 @@ a.board-line:hover .board-line-name {
   text-transform: uppercase;
 }
 
-/* Narrow screens read the roster instead of the diagram. */
+/* Narrow screens read the roster instead of the diagram; wide screens show only the diagram. */
 @media (max-width: 899px) {
   .team-network {
+    display: none;
+  }
+}
+
+@media (min-width: 900px) {
+  .board-headline .board-cards {
     display: none;
   }
 }
