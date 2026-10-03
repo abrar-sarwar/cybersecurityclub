@@ -64,11 +64,6 @@ export const CLUB_EVENTS: readonly ClubEvent[] = [
     category: "Workshop",
     difficulty: "Beginner",
     description: "The core ideas behind attacking and defending systems, for people with no security background.",
-    // PLACEHOLDER materials: sample links so the archive shows how they look.
-    links: [
-      { label: "Slides", href: "https://example.com/slides/cybersecurity-fundamentals", kind: "slides" },
-      { label: "Lab files", href: "https://example.com/labs/cybersecurity-fundamentals", kind: "lab" },
-    ],
     flyer: {
       image: "/assets/events/fundamentals.webp",
       width: 1000,
@@ -93,51 +88,24 @@ export const CLUB_EVENTS: readonly ClubEvent[] = [
     },
   },
 
-  // PLACEHOLDER events below: sample data so the MVP has upcoming events to
-  // show. Replace with confirmed events before launch.
   {
-    id: "2026-10-07-intro-web-exploitation",
-    title: "Intro to Web Exploitation",
+    id: "2026-10-07-jerry-perullo-talk",
+    title: "From CISO to CEO: A Talk with Jerry Perullo",
     date: "2026-10-07",
-    start: "18:30",
-    end: "20:00",
-    location: "Room TBA",
-    description: "How HTTP requests, cookies and authentication work, and how common web vulnerabilities break them. Bring a laptop.",
-    category: "Workshop",
-    difficulty: "Beginner",
-  },
-  {
-    id: "2026-10-14-general-body-meeting",
-    title: "General Body Meeting",
-    date: "2026-10-14",
     start: "15:00",
     end: "16:00",
-    location: "Room TBA",
-    description: "Club updates, what is coming up, and time to meet other members.",
-    category: "General Body Meeting",
+    location: "CMII Building Room 211",
+    description:
+      "An exclusive conversation with Jerry Perullo, founding CISO of ICE/New York Stock Exchange, CEO of Adversarial Risk Management and proud GSU MBA alum, on lessons from more than 20 years leading cybersecurity at the highest levels. After two decades at ICE/NYSE he stepped in as Interim CISO at Silicon Valley Bank, then founded Adversarial Risk Management, a SaaS cyber risk management platform. He is also a Professor of the Practice at Georgia Tech, teaching Enterprise Cybersecurity Management to more than 400 students each semester.",
+    category: "Speaker",
     difficulty: "All Levels",
-  },
-  {
-    id: "2026-10-21-ctf-practice-night",
-    title: "CTF Practice Night",
-    date: "2026-10-21",
-    start: "18:30",
-    end: "20:30",
-    location: "Room TBA",
-    description: "Work through CyLabs challenges in small groups, with competitive team members on hand to help.",
-    category: "CTF",
-    difficulty: "All Levels",
-  },
-  {
-    id: "2026-11-04-linux-privilege-escalation",
-    title: "Linux Privilege Escalation",
-    date: "2026-11-04",
-    start: "18:30",
-    end: "20:00",
-    location: "Room TBA",
-    description: "From a low-privilege shell to root: enumeration, SUID binaries, sudo misconfigurations and cron jobs.",
-    category: "Workshop",
-    difficulty: "Intermediate",
+    registrationUrl: "https://pin.gsu.edu/event/12843457",
+    flyer: {
+      image: "/assets/events/jerry-perullo.webp",
+      width: 1000,
+      height: 1000,
+      alt: "Flyer reading: From CISO to CEO, a talk with Jerry Perullo, founding CISO of ICE/NYSE, CEO of Adversarial Risk Management and GSU MBA alum. Wednesday, October 7th, 3:00 to 4:00 pm, CMII Building Room 211. Includes a photo of Jerry Perullo.",
+    },
   },
 ];
 

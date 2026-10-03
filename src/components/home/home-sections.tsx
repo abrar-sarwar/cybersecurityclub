@@ -3,7 +3,7 @@ import { branding } from "@config/branding";
 import { DiscordMark } from "@/components/brand/discord-mark";
 import { ButtonLink } from "@/components/ui/button";
 import { ExternalLink } from "@/components/ui/external-link";
-import { EventCategoryBadge } from "@/components/events/event-details";
+import { EventCategoryBadge, TbdSlots } from "@/components/events/event-details";
 import { Card, EmptyState, SectionHeading } from "@/components/ui/primitives";
 import { formatEventDate, formatEventTime, type ClubEvent } from "@/content/club/events";
 import { HOME_BEGINNER, HOME_COMPETE, HOME_EVENTS_EMPTY, HOME_JOIN, HOME_PILLARS, HOME_PRACTICE } from "@/content/club/home";
@@ -38,43 +38,50 @@ export function EventSpotlight({ events }: { events: readonly ClubEvent[] }) {
             {events.map((event) => {
               const time = formatEventTime(event);
               return (
-                <Card as="li" key={event.id} className="flex gap-4 p-5">
-                  <div className="date-stamp self-start" aria-hidden="true">
-                    <span className="date-stamp-month">{formatEventDate(event.date, { month: "short" })}</span>
-                    <span className="date-stamp-day">{formatEventDate(event.date, { day: "numeric" })}</span>
-                  </div>
-                  <div className="flex min-w-0 flex-col gap-3">
-                    <div className="flex flex-wrap gap-2">
-                      <EventCategoryBadge category={event.category} />
+                <Card as="li" key={event.id} className="flex flex-col gap-4 p-5">
+                  {event.flyer ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={event.flyer.image} alt={event.flyer.alt} width={event.flyer.width} height={event.flyer.height} loading="lazy" decoding="async" className="h-auto w-full rounded-lg" />
+                  ) : null}
+                  <div className="flex gap-4">
+                    <div className="date-stamp self-start" aria-hidden="true">
+                      <span className="date-stamp-month">{formatEventDate(event.date, { month: "short" })}</span>
+                      <span className="date-stamp-day">{formatEventDate(event.date, { day: "numeric" })}</span>
                     </div>
-                    <h3 className="font-display text-lg font-bold text-navy-900">{event.title}</h3>
-                    <dl className="grid gap-1.5 text-sm text-muted">
-                      <div className="flex items-center gap-2">
-                        <dt className="sr-only">Date</dt>
-                        <CalendarDays className="size-4 shrink-0" aria-hidden />
-                        <dd>
-                          <time dateTime={event.date}>{formatEventDate(event.date)}</time>
-                        </dd>
+                    <div className="flex min-w-0 flex-col gap-3">
+                      <div className="flex flex-wrap gap-2">
+                        <EventCategoryBadge category={event.category} />
                       </div>
-                      {time ? (
+                      <h3 className="font-display text-lg font-bold text-navy-900">{event.title}</h3>
+                      <dl className="grid gap-1.5 text-sm text-muted">
                         <div className="flex items-center gap-2">
-                          <dt className="sr-only">Time</dt>
-                          <Clock className="size-4 shrink-0" aria-hidden />
-                          <dd>{time}</dd>
+                          <dt className="sr-only">Date</dt>
+                          <CalendarDays className="size-4 shrink-0" aria-hidden />
+                          <dd>
+                            <time dateTime={event.date}>{formatEventDate(event.date)}</time>
+                          </dd>
                         </div>
-                      ) : null}
-                      {event.location ? (
-                        <div className="flex items-center gap-2">
-                          <dt className="sr-only">Location</dt>
-                          <MapPin className="size-4 shrink-0" aria-hidden />
-                          <dd>{event.location}</dd>
-                        </div>
-                      ) : null}
-                    </dl>
+                        {time ? (
+                          <div className="flex items-center gap-2">
+                            <dt className="sr-only">Time</dt>
+                            <Clock className="size-4 shrink-0" aria-hidden />
+                            <dd>{time}</dd>
+                          </div>
+                        ) : null}
+                        {event.location ? (
+                          <div className="flex items-center gap-2">
+                            <dt className="sr-only">Location</dt>
+                            <MapPin className="size-4 shrink-0" aria-hidden />
+                            <dd>{event.location}</dd>
+                          </div>
+                        ) : null}
+                      </dl>
+                    </div>
                   </div>
                 </Card>
               );
             })}
+            <TbdSlots count={3 - events.length} />
           </ul>
           <div className="mt-8">
             <ButtonLink href="/events" variant="outline">
