@@ -8,7 +8,6 @@ import { Card, EmptyState, SectionHeading } from "@/components/ui/primitives";
 import { formatEventDate, formatEventTime, type ClubEvent } from "@/content/club/events";
 import { HOME_BEGINNER, HOME_COMPETE, HOME_EVENTS_EMPTY, HOME_JOIN, HOME_PILLARS, HOME_PRACTICE } from "@/content/club/home";
 import { CLUB_PHOTOS } from "@/content/club/photos";
-import { TOOL_CATEGORIES } from "@/content/club/resources";
 import { MatrixRain } from "@/components/site/matrix-rain";
 import { PhotoBackdrop } from "@/components/site/photo-backdrop";
 import { Reveal } from "@/components/site/reveal";
@@ -90,7 +89,7 @@ export function EventSpotlight({ events }: { events: readonly ClubEvent[] }) {
 
 /* The first pillar leads; the other four fill a two-by-two grid beside it. */
 const pillarTile = ["bento-lead"];
-const LEARN_TOPICS = TOOL_CATEGORIES.filter((category) => category !== "General");
+const LEARN_TOPICS = ["Web", "Cryptography", "Reverse Engineering", "Forensics", "Binary Exploitation", "OSINT"];
 
 export function WhatWeDo() {
   return (
