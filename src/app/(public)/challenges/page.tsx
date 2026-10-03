@@ -7,7 +7,7 @@ import { categories, challenges, platforms, type PlatformId } from "@/content/cl
 
 export const metadata: Metadata = {
   title: "Challenges",
-  description: `Where ${branding.universityShortName} students practice hacking: recommended challenges from CyLabs, Hack The Box and the club, grouped by topic.`,
+  description: `Where ${branding.universityShortName} students practice hacking: recommended challenges from CyLabs, TryHackMe, Hack The Box and the club, grouped by topic.`,
   alternates: { canonical: "/challenges" },
 };
 
@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 const platformSkin: Partial<Record<PlatformId, string>> = {
   htb: "htb htb-panel",
   cylab: "cylab",
+  thm: "thm",
 };
 
 const linkClass = "text-sm font-semibold text-accent underline-offset-4 hover:underline";

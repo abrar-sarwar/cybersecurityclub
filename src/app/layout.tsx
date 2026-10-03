@@ -6,6 +6,7 @@ import "./signal.css";
 import "./flare.css";
 import "./htb.css";
 import "./cylab.css";
+import "./thm.css";
 import "./challenges.css";
 import { branding } from "@config/branding";
 import { siteUrl } from "@/lib/site";

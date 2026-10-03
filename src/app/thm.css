@@ -1,0 +1,109 @@
+/*
+  TryHackMe skin for the TryHackMe platform card on the Challenges page.
+  Follows the site's dark dashboard: slate-navy panels, white text, red accent.
+  Everything is scoped under .thm. Loaded after cylab.css.
+*/
+
+.thm {
+  --thm-bg: #212c42;
+  --thm-border: #2d3a55;
+  --thm-red: #ff5f5f;
+  border: 1px solid var(--thm-border);
+  border-radius: 0.5rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 40%),
+    radial-gradient(90% 110% at 0% 100%, rgba(193, 17, 17, 0.16), transparent 60%),
+    var(--thm-bg);
+  box-shadow: 0 24px 48px -32px rgba(0, 0, 0, 0.9);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.thm:focus-visible,
+.thm :focus-visible {
+  outline-color: var(--thm-red);
+}
+
+/*
+  The club has a TryHackMe ambassador, so this card gets extra treatment: a red
+  light that sweeps around the border, and the logo as a watermark. Both sit in
+  pseudo-elements so the card's content is untouched.
+*/
+
+@property --thm-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.thm {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* Sweeping border: a conic gradient masked down to a 1px ring. */
+.thm::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: 1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--thm-angle),
+    transparent 0deg,
+    transparent 250deg,
+    rgba(255, 95, 95, 0.25) 300deg,
+    var(--thm-red) 345deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: thm-sweep 6s linear infinite;
+  pointer-events: none;
+}
+
+/* Logo watermark in the corner. */
+.thm::after {
+  content: "";
+  position: absolute;
+  right: -1.5rem;
+  bottom: -2rem;
+  z-index: -1;
+  width: 9rem;
+  height: 9rem;
+  background: var(--thm-red);
+  -webkit-mask: url("/assets/brand/tryhackme.svg") center / contain no-repeat;
+  mask: url("/assets/brand/tryhackme.svg") center / contain no-repeat;
+  opacity: 0.08;
+  transition: opacity 200ms ease-out, transform 300ms ease-out;
+  pointer-events: none;
+}
+
+.thm:hover::before,
+.thm:focus-visible::before {
+  animation-duration: 2s;
+}
+
+.thm:hover::after,
+.thm:focus-visible::after {
+  opacity: 0.16;
+  transform: scale(1.06);
+}
+
+
+@keyframes thm-sweep {
+  to {
+    --thm-angle: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thm::before {
+    animation: none;
+    --thm-angle: 200deg;
+  }
+}

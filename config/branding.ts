@@ -84,6 +84,7 @@ export const branding = {
     /** CyLab Security Academy, the platform that replaced picoCTF. */
     cylabs: "https://cylabacademy.org",
     hackTheBox: "https://www.hackthebox.com",
+    tryHackMe: "https://tryhackme.com",
   },
 } as const;
 
