@@ -18,6 +18,13 @@ export const HOME_BEGINNER = {
   learnHref: "/resources#getting-started",
 };
 
+/** TryHackMe is listed first, with its own skin. */
+export const HOME_TRYHACKME = {
+  name: "TryHackMe",
+  href: branding.links.tryHackMe,
+  body: "Guided rooms that explain each concept, then give you a machine in the browser to try it on. The best place to start.",
+};
+
 export type PracticePlatform = { name: string; href: string; body: string };
 
 export const HOME_PRACTICE: readonly PracticePlatform[] = [

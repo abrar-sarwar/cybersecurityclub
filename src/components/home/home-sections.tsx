@@ -6,7 +6,8 @@ import { ExternalLink } from "@/components/ui/external-link";
 import { EventCategoryBadge, TbdSlots } from "@/components/events/event-details";
 import { Card, EmptyState, SectionHeading } from "@/components/ui/primitives";
 import { formatEventDate, formatEventTime, type ClubEvent } from "@/content/club/events";
-import { HOME_BEGINNER, HOME_COMPETE, HOME_EVENTS_EMPTY, HOME_JOIN, HOME_PILLARS, HOME_PRACTICE } from "@/content/club/home";
+import { HOME_BEGINNER, HOME_COMPETE, HOME_EVENTS_EMPTY, HOME_JOIN, HOME_PILLARS, HOME_PRACTICE, HOME_TRYHACKME } from "@/content/club/home";
+import { TryHackMeIcon } from "@/components/challenges/platform-icon";
 import { CLUB_PHOTOS } from "@/content/club/photos";
 import { MatrixRain } from "@/components/site/matrix-rain";
 import { PhotoBackdrop } from "@/components/site/photo-backdrop";
@@ -155,19 +156,23 @@ export function PracticeSection() {
     <section className="section" aria-labelledby="home-practice">
       <div className="container-x">
         <SectionHeading id="home-practice" eyebrow="Practice" title="Places to practice" description="Legal, purpose-built platforms where you can build skills between meetings." />
-        <ol className="ledger mt-8">
+        <ul className="ledger ledger-plain mt-8">
+          <Reveal as="li" className="thm-ledger">
+            <h3 className="ledger-name">
+              <TryHackMeIcon className="thm-ledger-logo" aria-hidden="true" />
+              <ExternalLink href={HOME_TRYHACKME.href}>{HOME_TRYHACKME.name}</ExternalLink>
+            </h3>
+            <p className="ledger-body">{HOME_TRYHACKME.body}</p>
+          </Reveal>
           {HOME_PRACTICE.map((platform, index) => (
-            <Reveal as="li" key={platform.name} delay={index * 80}>
-              <span className="ledger-index" aria-hidden="true">
-                0{index + 1}
-              </span>
+            <Reveal as="li" key={platform.name} delay={(index + 1) * 80}>
               <h3 className="ledger-name text-navy-900">
                 <ExternalLink href={platform.href}>{platform.name}</ExternalLink>
               </h3>
               <p className="ledger-body">{platform.body}</p>
             </Reveal>
           ))}
-        </ol>
+        </ul>
         <div className="mt-8">
           <ButtonLink href="/challenges" variant="outline">
             Explore challenges

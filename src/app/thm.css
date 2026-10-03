@@ -107,3 +107,55 @@
     --thm-angle: 200deg;
   }
 }
+
+/*
+  Home page TryHackMe row. Same footprint as the other "Places to practice"
+  rows, reskinned in the TryHackMe navy and red with the logo beside the name.
+*/
+
+.thm-ledger {
+  --thm-red: #ff5f5f;
+  position: relative;
+  background:
+    radial-gradient(80% 140% at 100% 50%, rgba(193, 17, 17, 0.16), transparent 60%),
+    #1a2336;
+}
+
+.ledger > li.thm-ledger {
+  padding-inline: 0.75rem;
+}
+
+.ledger > li.thm-ledger:has(a:hover) {
+  background:
+    radial-gradient(80% 140% at 100% 50%, rgba(193, 17, 17, 0.26), transparent 60%),
+    #1d2740;
+}
+
+.thm-ledger .thm-ledger-logo {
+  color: var(--thm-red);
+}
+
+.thm-ledger .ledger-name {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #fff;
+}
+
+.thm-ledger .ledger-name a:hover {
+  color: var(--thm-red);
+}
+
+.thm-ledger-logo {
+  flex: none;
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.thm-ledger .ledger-body {
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.thm-ledger :focus-visible {
+  outline-color: var(--thm-red);
+}

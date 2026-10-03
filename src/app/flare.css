@@ -185,6 +185,32 @@
   }
 }
 
+/* Ledger without the index column. */
+.ledger-plain > li {
+  position: relative;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* The name's link covers the whole row, so hovering or clicking anywhere on it counts. */
+.ledger-plain .ledger-name a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.ledger-plain .ledger-body {
+  grid-column: 1;
+}
+
+@media (min-width: 768px) {
+  .ledger-plain > li {
+    grid-template-columns: minmax(12rem, 20rem) minmax(0, 1fr);
+  }
+  .ledger-plain .ledger-body {
+    grid-column: auto;
+  }
+}
+
 /* Large plain headline for a band that asks one question. */
 
 .statement-title {
