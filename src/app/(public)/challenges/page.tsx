@@ -37,6 +37,19 @@ export default function ChallengesPage() {
             {challenges.length} challenges · {activeStages.length} stages · {activePlatforms.length} platforms
           </p>
         </div>
+        <ul className="mt-4 space-y-1.5 text-[0.92rem] leading-6 text-muted">
+          <li>
+            <strong className="font-semibold text-navy-900">Heads up:</strong> you may need to be logged in to each
+            platform for challenge links to open the right page.
+          </li>
+          <li>
+            TryHackMe changes which rooms are free all the time. If a room needs a subscription, look out for an{" "}
+            <Link href="/events" className={linkClass}>
+              upcoming event
+            </Link>
+            !
+          </li>
+        </ul>
       </header>
 
       <ChallengeBoard challenges={challenges} stages={activeStages} platforms={activePlatforms}>

@@ -176,7 +176,10 @@ export const challenges: Challenge[] = [
   cylab("Web", 132, "GET aHEAD", "HTTP request methods"),
   cylab("Web", 173, "Cookies", "Tampering with session cookies"),
   thm("Web", "burpsuitebasics", "Burp Suite: The Basics", "Intercepting web traffic"),
-  thm("Web", "owasptop102021", "OWASP Top 10", "The most common web vulnerabilities"),
+  {
+    ...thm("Web", "", "OWASP Top 10", "The most common web vulnerabilities"),
+    href: "https://tryhackme.com/module/owasp-top-10-2025",
+  },
 
   cylab("Cryptography", 144, "Mod 26", "ROT13 and Caesar ciphers"),
   cylab("Cryptography", 68, "The Numbers", "Substitution ciphers"),
