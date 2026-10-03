@@ -1,7 +1,7 @@
 import { CalendarDays } from "lucide-react";
 import { branding } from "@config/branding";
 import { DiscordMark } from "@/components/brand/discord-mark";
-import { EventBadges, EventFacts, EventMaterials, EventRegistration, TbdSlots } from "@/components/events/event-details";
+import { EventBadges, EventFacts, EventMaterials, EventRegistration } from "@/components/events/event-details";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/primitives";
 import { formatEventDate, formatEventTime, type ClubEvent } from "@/content/club/events";
@@ -68,7 +68,8 @@ export function UpcomingEvents({ events, today }: { events: readonly ClubEvent[]
   return (
     <>
       <NextEvent event={next} today={today} />
-      <>
+      {later.length ? (
+        <>
           <h3 className="ev-heading">Also coming up</h3>
           <ol className="ev-list">
             {later.map((event) => {
@@ -92,9 +93,9 @@ export function UpcomingEvents({ events, today }: { events: readonly ClubEvent[]
                 </li>
               );
             })}
-            <TbdSlots count={2 - later.length} />
           </ol>
         </>
+      ) : null}
       <p className="ev-note">All times are Eastern. Registration happens on PIN, the official GSU student organization portal.</p>
     </>
   );
@@ -126,7 +127,6 @@ export function PastEvents({ events }: { events: readonly ClubEvent[] }) {
           </div>
         </li>
       ))}
-      <TbdSlots count={events.length % 2} className="max-md:hidden" />
     </ol>
   );
 }
