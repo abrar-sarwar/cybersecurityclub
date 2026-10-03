@@ -54,18 +54,51 @@ export const platforms: Record<PlatformId, Platform> = {
   },
 };
 
-/** Topics in the order they appear on the page. */
-export const categories = [
-  "Getting Started",
-  "Web",
-  "Cryptography",
-  "Forensics",
-  "Active Directory",
-  "Linux Privilege Escalation",
-  "Windows",
+/**
+ * The learning path, in order. Each stage builds on the ones before it: the basics and
+ * tooling first, then web, crypto and forensics, then full boot2root machines, which need
+ * all of that plus privilege escalation, then Windows and Active Directory.
+ */
+export const stages = [
+  {
+    title: "Fundamentals",
+    summary: "Get comfortable on the Linux command line and solve your first flags. Everything after this assumes you can move around a terminal.",
+  },
+  {
+    title: "Web",
+    summary: "Learn how HTTP, cookies and web apps work, and how to intercept traffic with Burp Suite. Most machines are broken into through a website.",
+  },
+  {
+    title: "Cryptography",
+    summary: "Classic ciphers and hash cracking. You will crack recovered password hashes on almost every machine later on.",
+  },
+  {
+    title: "Forensics",
+    summary: "Files, metadata and packet captures. Teaches you to look closely at what a system leaves behind.",
+  },
+  {
+    title: "Network Tooling",
+    summary: "Scanning and enumerating services with Nmap, the first step of every boot2root machine.",
+  },
+  {
+    title: "First Linux Machines",
+    summary: "Your first boot2root boxes: scan, find the weak service or web app, get a shell. Ordered from most guided to least.",
+  },
+  {
+    title: "Linux Privilege Escalation",
+    summary: "From a low-privileged shell to root: sudo rules, SUID binaries, scheduled jobs and leaked secrets.",
+  },
+  {
+    title: "Windows Machines",
+    summary: "The same workflow on Windows: SMB, IIS and file servers, then escalating to SYSTEM.",
+  },
+  {
+    title: "Active Directory",
+    summary: "The most advanced stage. Attacking Windows domains with Kerberos, AD permissions and password attacks.",
+  },
 ] as const;
 
-export type Category = (typeof categories)[number];
+export type Category = (typeof stages)[number]["title"];
 
 export type Challenge = {
   title: string;
@@ -131,23 +164,19 @@ const thm = (
 // challenges' old picoCTF numbers and still need checking against the CyLabs library.
 // PLACEHOLDER curation: a starting list of retired Hack The Box machines and classic
 // picoCTF challenges and TryHackMe rooms. Officers should confirm the picks, focus notes and difficulties.
+// Within each stage, challenges are listed in the order to attempt them.
 export const challenges: Challenge[] = [
-  cylab("Getting Started", 147, "Obedient Cat", "Reading a flag from a file"),
-  cylab("Getting Started", 170, "Wave a flag", "Running a program and reading its help"),
-  thm("Getting Started", "linuxfundamentalspart1", "Linux Fundamentals 1", "Navigating the Linux command line"),
-  htb("Getting Started", "Lame", "Linux", "Linux, vulnerable network service"),
-  htb("Getting Started", "Blue", "Windows", "Windows, SMB exploit"),
-  htb("Getting Started", "Jerry", "Windows", "Windows, Tomcat default credentials"),
-  htb("Getting Started", "Legacy", "Windows", "Windows, SMB exploit"),
+  thm("Fundamentals", "linuxfundamentalspart1", "Linux Fundamentals 1", "Navigating the Linux command line"),
+  thm("Fundamentals", "linuxfundamentalspart2", "Linux Fundamentals 2", "SSH, file permissions and system files"),
+  thm("Fundamentals", "linuxfundamentalspart3", "Linux Fundamentals 3", "Text editors, downloading files, processes and cron"),
+  cylab("Fundamentals", 147, "Obedient Cat", "Reading a flag from a file"),
+  cylab("Fundamentals", 170, "Wave a flag", "Running a program and reading its help"),
 
+  thm("Web", "httpindetail", "HTTP in Detail", "Requests, responses, headers and cookies"),
   cylab("Web", 132, "GET aHEAD", "HTTP request methods"),
   cylab("Web", 173, "Cookies", "Tampering with session cookies"),
-  thm("Web", "owasptop102021", "OWASP Top 10", "The most common web vulnerabilities"),
   thm("Web", "burpsuitebasics", "Burp Suite: The Basics", "Intercepting web traffic"),
-  htb("Web", "Nibbles", "Linux", "Web enumeration, CMS file upload"),
-  htb("Web", "Shocker", "Linux", "CGI scripts, Shellshock"),
-  htb("Web", "Bashed", "Linux", "Web enumeration, exposed web shell"),
-  htb("Web", "Popcorn", "Linux", "File upload bypass", "Medium"),
+  thm("Web", "owasptop102021", "OWASP Top 10", "The most common web vulnerabilities"),
 
   cylab("Cryptography", 144, "Mod 26", "ROT13 and Caesar ciphers"),
   cylab("Cryptography", 68, "The Numbers", "Substitution ciphers"),
@@ -157,21 +186,40 @@ export const challenges: Challenge[] = [
   cylab("Forensics", 44, "Glory of the Garden", "Data hidden inside an image file"),
   thm("Forensics", "wiresharkthebasics", "Wireshark: The Basics", "Reading packet captures"),
 
-  htb("Active Directory", "Forest", "Windows", "AS-REP roasting, AD permissions"),
-  htb("Active Directory", "Active", "Windows", "Group Policy passwords, Kerberoasting"),
-  htb("Active Directory", "Sauna", "Windows", "User enumeration, AS-REP roasting"),
-  htb("Active Directory", "Resolute", "Windows", "Password spraying, group privileges", "Medium"),
-  thm("Active Directory", "attacktivedirectory", "Attacktive Directory", "Enumerating and attacking a domain", "Medium"),
+  thm("Network Tooling", "furthernmap", "Nmap", "Port scanning and service enumeration"),
+  thm("Network Tooling", "vulnversity", "Vulnversity", "Recon, directory brute forcing and a first shell"),
 
-  htb("Linux Privilege Escalation", "Bashed", "Linux", "sudo misconfiguration, scheduled jobs"),
+  thm("First Linux Machines", "picklerick", "Pickle Rick", "Web enumeration and command injection"),
+  thm("First Linux Machines", "rrootme", "RootMe", "File upload to shell, SUID root"),
+  thm("First Linux Machines", "basicpentestingjt", "Basic Pentesting", "SMB enumeration, brute forcing, SSH keys"),
+  thm("First Linux Machines", "simplectf", "Simple CTF", "Public exploit for a CMS, sudo escalation"),
+  htb("First Linux Machines", "Lame", "Linux", "Vulnerable network service, straight to root"),
+  htb("First Linux Machines", "Bashed", "Linux", "Web enumeration, exposed web shell, sudo"),
+  htb("First Linux Machines", "Shocker", "Linux", "CGI scripts, Shellshock"),
+  htb("First Linux Machines", "Nibbles", "Linux", "Web enumeration, CMS file upload"),
+
+  thm("Linux Privilege Escalation", "kenobi", "Kenobi", "Samba and ProFTPD, PATH variable abuse"),
+  thm("Linux Privilege Escalation", "linprivesc", "Linux PrivEsc", "Common privilege escalation paths", "Medium"),
   htb("Linux Privilege Escalation", "Irked", "Linux", "SUID binaries"),
   htb("Linux Privilege Escalation", "Valentine", "Linux", "Heartbleed, exposed sessions"),
   htb("Linux Privilege Escalation", "Sunday", "Solaris", "Weak credentials, sudo rules"),
-  thm("Linux Privilege Escalation", "linprivesc", "Linux PrivEsc", "Common privilege escalation paths", "Medium"),
+  htb("Linux Privilege Escalation", "Popcorn", "Linux", "File upload bypass, kernel exploit", "Medium"),
 
-  htb("Windows", "Optimum", "Windows", "Vulnerable file server, kernel exploit"),
-  htb("Windows", "Devel", "Windows", "FTP upload to web root, kernel exploit"),
-  htb("Windows", "Grandpa", "Windows", "Old IIS, WebDAV"),
-  htb("Windows", "Bastion", "Windows", "SMB shares, backup images"),
-  thm("Windows", "windowsprivesc20", "Windows Privilege Escalation", "Common Windows misconfigurations", "Medium"),
+  thm("Windows Machines", "blue", "Blue", "EternalBlue with Metasploit, guided"),
+  thm("Windows Machines", "steelmountain", "Steel Mountain", "Vulnerable file server, PowerUp escalation"),
+  thm("Windows Machines", "alfred", "Alfred", "Jenkins to shell, token impersonation"),
+  htb("Windows Machines", "Legacy", "Windows", "SMB exploit"),
+  htb("Windows Machines", "Blue", "Windows", "SMB exploit, EternalBlue"),
+  htb("Windows Machines", "Jerry", "Windows", "Tomcat default credentials"),
+  htb("Windows Machines", "Devel", "Windows", "FTP upload to web root, kernel exploit"),
+  htb("Windows Machines", "Optimum", "Windows", "Vulnerable file server, kernel exploit"),
+  htb("Windows Machines", "Grandpa", "Windows", "Old IIS, WebDAV"),
+  htb("Windows Machines", "Bastion", "Windows", "SMB shares, backup images"),
+  thm("Windows Machines", "windowsprivesc20", "Windows Privilege Escalation", "Common Windows misconfigurations", "Medium"),
+
+  thm("Active Directory", "attacktivedirectory", "Attacktive Directory", "Enumerating and attacking a domain", "Medium"),
+  htb("Active Directory", "Active", "Windows", "Group Policy passwords, Kerberoasting"),
+  htb("Active Directory", "Sauna", "Windows", "User enumeration, AS-REP roasting"),
+  htb("Active Directory", "Forest", "Windows", "AS-REP roasting, AD permissions"),
+  htb("Active Directory", "Resolute", "Windows", "Password spraying, group privileges", "Medium"),
 ];

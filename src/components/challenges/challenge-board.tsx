@@ -14,17 +14,18 @@ const railListClass =
 const slug = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
 /**
- * The challenge board: a rail of category links and a platform filter beside
- * the challenges, grouped by category. `children` sits above the groups.
+ * The challenge board: a rail of numbered learning-path stages and a platform filter beside
+ * the challenges, grouped by stage. `children` sits above the groups.
  */
 export function ChallengeBoard({
   challenges,
-  categories,
+  stages,
   platforms,
   children,
 }: {
   challenges: Challenge[];
-  categories: readonly string[];
+  /** Learning-path stages, in the order to work through them. */
+  stages: readonly { title: string; summary: string }[];
   /** Platforms that have at least one challenge, in display order. */
   platforms: Platform[];
   children?: ReactNode;
@@ -33,8 +34,14 @@ export function ChallengeBoard({
 
   const platformById = new Map(platforms.map((platform) => [platform.id, platform]));
   const visible = filter === "all" ? challenges : challenges.filter((c) => c.platform === filter);
-  const groups = categories
-    .map((title) => ({ title, id: slug(title), items: visible.filter((c) => c.category === title) }))
+  const groups = stages
+    .map(({ title, summary }, index) => ({
+      title,
+      summary,
+      step: index + 1,
+      id: slug(title),
+      items: visible.filter((c) => c.category === title),
+    }))
     .filter((group) => group.items.length > 0);
 
   const filters: { id: PlatformId | "all"; name: string; count: number }[] = [
@@ -51,13 +58,16 @@ export function ChallengeBoard({
       <aside className="flex flex-col gap-6 lg:sticky lg:top-6 lg:gap-8">
         <nav aria-labelledby="categories-heading">
           <h2 id="categories-heading" className={railHeadingClass}>
-            Categories
+            Learning path
           </h2>
           <ul className={railListClass}>
             {groups.map((group) => (
               <li key={group.id} className="shrink-0">
                 <a href={`#${group.id}`} className={railItemClass}>
-                  {group.title}
+                  <span>
+                    <span className="mr-2 font-mono text-xs text-muted">{String(group.step).padStart(2, "0")}</span>
+                    {group.title}
+                  </span>
                   <span className="font-mono text-xs text-muted">{group.items.length}</span>
                 </a>
               </li>
@@ -99,12 +109,17 @@ export function ChallengeBoard({
         {groups.map((group) => (
           <section key={group.id} id={group.id} className="challenge-group scroll-mt-6" aria-labelledby={`${group.id}-heading`}>
             <h2 id={`${group.id}-heading`}>
+              <span className="challenge-group-step">
+                <span className="sr-only">Stage </span>
+                {String(group.step).padStart(2, "0")}
+              </span>
               {group.title}
               <span className="challenge-group-count">
                 {group.items.length}
                 <span className="sr-only"> challenges</span>
               </span>
             </h2>
+            <p className="challenge-group-summary">{group.summary}</p>
             <ul className="challenge-tiles">
               {group.items.map((challenge) => {
                 const Icon = platformIcon[challenge.platform];

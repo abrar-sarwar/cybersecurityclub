@@ -3,11 +3,11 @@ import Link from "next/link";
 import { branding } from "@config/branding";
 import { ChallengeBoard } from "@/components/challenges/challenge-board";
 import { platformIcon } from "@/components/challenges/platform-icon";
-import { categories, challenges, platforms, type PlatformId } from "@/content/club/practice";
+import { stages, challenges, platforms, type PlatformId } from "@/content/club/practice";
 
 export const metadata: Metadata = {
   title: "Challenges",
-  description: `Where ${branding.universityShortName} students practice hacking: recommended challenges from CyLabs, TryHackMe, Hack The Box and the club, grouped by topic.`,
+  description: `Where ${branding.universityShortName} students practice hacking: recommended challenges from CyLabs, TryHackMe, Hack The Box and the club, ordered as a learning path from fundamentals to boot2root machines.`,
   alternates: { canonical: "/challenges" },
 };
 
@@ -23,7 +23,7 @@ const linkClass = "text-sm font-semibold text-accent underline-offset-4 hover:un
 const activePlatforms = Object.values(platforms).filter((platform) =>
   challenges.some((challenge) => challenge.platform === platform.id),
 );
-const activeCategories = categories.filter((category) => challenges.some((challenge) => challenge.category === category));
+const activeStages = stages.filter((stage) => challenges.some((challenge) => challenge.category === stage.title));
 
 export default function ChallengesPage() {
   return (
@@ -34,12 +34,12 @@ export default function ChallengesPage() {
             Challenges
           </h1>
           <p className="font-mono text-[0.8rem] uppercase tracking-[0.12em] text-muted">
-            {challenges.length} challenges · {activeCategories.length} categories · {activePlatforms.length} platforms
+            {challenges.length} challenges · {activeStages.length} stages · {activePlatforms.length} platforms
           </p>
         </div>
       </header>
 
-      <ChallengeBoard challenges={challenges} categories={activeCategories} platforms={activePlatforms}>
+      <ChallengeBoard challenges={challenges} stages={activeStages} platforms={activePlatforms}>
         <section id="platforms" className="scroll-mt-6" aria-labelledby="platforms-heading">
           <h2
             id="platforms-heading"
