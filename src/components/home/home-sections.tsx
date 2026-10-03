@@ -6,7 +6,7 @@ import { ExternalLink } from "@/components/ui/external-link";
 import { EventCategoryBadge, TbdSlots } from "@/components/events/event-details";
 import { Card, EmptyState, SectionHeading } from "@/components/ui/primitives";
 import { formatEventDate, formatEventTime, type ClubEvent } from "@/content/club/events";
-import { HOME_BEGINNER, HOME_COMPETE, HOME_EVENTS_EMPTY, HOME_JOIN, HOME_PILLARS, HOME_PRACTICE, HOME_TRYHACKME } from "@/content/club/home";
+import { HOME_BEGINNER, HOME_COMPETE, HOME_EVENTS_EMPTY, HOME_JOIN,HOME_PRACTICE, HOME_TRYHACKME } from "@/content/club/home";
 import { TryHackMeIcon } from "@/components/challenges/platform-icon";
 import { CLUB_PHOTOS } from "@/content/club/photos";
 import { MatrixRain } from "@/components/site/matrix-rain";
@@ -91,38 +91,6 @@ export function EventSpotlight({ events }: { events: readonly ClubEvent[] }) {
           </div>
         </>
       )}
-    </section>
-  );
-}
-
-/* The first pillar leads; the other four fill a two-by-two grid beside it. */
-const pillarTile = ["bento-lead"];
-const LEARN_TOPICS = ["Web", "Cryptography", "Reverse Engineering", "Forensics", "Binary Exploitation", "OSINT"];
-
-export function WhatWeDo() {
-  return (
-    <section className="section" aria-labelledby="home-what">
-      <div className="container-x">
-        <SectionHeading id="home-what" eyebrow="What we do" title="Learn security by doing it" />
-        <ul className="bento mt-8">
-          {HOME_PILLARS.map((pillar, index) => (
-            <Reveal as="li" key={pillar.id} delay={index * 80} className={`bento-tile ${pillarTile[index] ?? ""}`}>
-              <span className="bento-index" aria-hidden="true">
-                0{index + 1}
-              </span>
-              <h3 className="font-display text-navy-900">{pillar.title}</h3>
-              <p className={index === 0 ? "mt-3 max-w-md leading-7 text-[#dbe7ff]" : "mt-2 text-sm leading-6 text-muted"}>{pillar.body}</p>
-              {index === 0 ? (
-                <ul className="bento-chips" aria-label="Topics">
-                  {LEARN_TOPICS.map((topic) => (
-                    <li key={topic}>{topic}</li>
-                  ))}
-                </ul>
-              ) : null}
-            </Reveal>
-          ))}
-        </ul>
-      </div>
     </section>
   );
 }

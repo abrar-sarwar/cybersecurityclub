@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { branding } from "@config/branding";
 import { CyberHome } from "@/components/marketing/cyber-home";
-import { BeginnerCallout, CompeteAndJoin, EventSpotlight, PracticeSection, WhatWeDo } from "@/components/home/home-sections";
+import { BeginnerCallout, CompeteAndJoin, EventSpotlight, PracticeSection } from "@/components/home/home-sections";
 import { CLUB_EVENTS, splitEvents } from "@/content/club/events";
 import { loadObservatory } from "@/content/observatory";
 import { safeLoad } from "@/content/safe";
@@ -24,7 +24,6 @@ export default function HomePage() {
     <>
       <CyberHome employers={employers} />
       <EventSpotlight events={upcoming} />
-      <WhatWeDo />
       <BeginnerCallout />
       <PracticeSection />
       <CompeteAndJoin />
