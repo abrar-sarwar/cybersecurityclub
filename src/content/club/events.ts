@@ -107,6 +107,24 @@ export const CLUB_EVENTS: readonly ClubEvent[] = [
       alt: "Flyer reading: From CISO to CEO, a talk with Jerry Perullo, founding CISO of ICE/NYSE, CEO of Adversarial Risk Management and GSU MBA alum. Wednesday, October 7th, 3:00 to 4:00 pm, CMII Building Room 211. Includes a photo of Jerry Perullo.",
     },
   },
+  {
+    id: "2026-10-14-alumni-panel",
+    title: "Familiar Faces: A Cybersecurity Alumni Panel",
+    date: "2026-10-14",
+    start: "18:00",
+    location: "55 Park Place, Room 1108",
+    description:
+      "An exclusive panel with two GSU alumni making moves in the industry. Jhante Charles (@Cloudtechexec) is a Cloud Engineer at Nokia and a cybersecurity and cloud technology content creator with more than 200K followers across social media. Juwan Rogers is an Incident Response Consultant at Palo Alto Networks Unit 42 with a Master's in Digital Forensics from UCF. Hear how both went from GSU to careers in tech and cybersecurity, get real-world insight into cloud engineering, incident response and digital forensics, learn about internships, networking and breaking into the field, and ask your own questions during the live Q&A.",
+    category: "Speaker",
+    difficulty: "All Levels",
+    registrationUrl: "https://pin.gsu.edu/event/12868591",
+    flyer: {
+      image: "/assets/events/alumni-panel.webp",
+      width: 600,
+      height: 592,
+      alt: "Flyer reading: Familiar Faces, Cybersecurity Alumni Panel, October 14th at 6:00 PM, 55 Park Place, Room 1108. Includes photos of the panelists: Jhante Charles, aka @Cloudtechexec, Cloud Engineer at Nokia, and Juwan Rogers, Incident Response Consultant at Palo Alto Networks Unit 42.",
+    },
+  },
 ];
 
 /**
