@@ -1,0 +1,3 @@
+-- Local development seed. Intentionally empty: use `npm run dev:seed` to create
+-- a local owner and sample events (scripts/dev-seed.ts). Production data comes
+-- from the dashboard and scripts/migrate-legacy-events.ts.
