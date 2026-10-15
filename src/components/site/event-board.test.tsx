@@ -20,7 +20,6 @@ const event: ClubEvent = {
   registrationUrl: null,
   status: "upcoming",
   published: true,
-  row: 2,
 };
 
 test("sheet text is rendered as text, never as markup", () => {

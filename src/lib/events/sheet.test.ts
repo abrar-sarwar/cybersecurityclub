@@ -213,19 +213,19 @@ test("at most SHEET_LIMITS.rows data rows are read", () => {
   assert.match(problems[0].message, /rows/);
 });
 
-test("includeUnpublished keeps hidden rows and marks each event with published and its sheet row", () => {
+test("includeUnpublished keeps hidden rows and marks each event with published", () => {
   const values = sheet({ ...base, published: "FALSE" }, { ...base, event_id: "b" });
   const { events } = parseSheet(values, { timeZone: NY, includeUnpublished: true });
   assert.deepEqual(
-    events.map((e) => [e.id, e.published, e.row]),
+    events.map((e) => [e.id, e.published]),
     [
-      ["gbm-1", false, 2],
-      ["b", true, 3],
+      ["gbm-1", false],
+      ["b", true],
     ],
   );
   const onlyPublished = parseSheet(values, { timeZone: NY });
   assert.deepEqual(
-    onlyPublished.events.map((e) => [e.id, e.published, e.row]),
-    [["b", true, 3]],
+    onlyPublished.events.map((e) => [e.id, e.published]),
+    [["b", true]],
   );
 });

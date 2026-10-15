@@ -236,7 +236,6 @@ export function parseSheet(values: readonly (readonly Cell[])[], options: { time
       registrationUrl,
       status: status ?? "upcoming",
       published,
-      row,
     });
   });
 

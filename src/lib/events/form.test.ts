@@ -109,7 +109,6 @@ test("formValuesFrom round-trips an event through the form", () => {
     registrationUrl: null,
     status: "completed",
     published: false,
-    row: 4,
   };
   const v = formValuesFrom(event);
   assert.equal(v.status, "completed");
@@ -117,5 +116,5 @@ test("formValuesFrom round-trips an event through the form", () => {
   assert.equal(v.image_alt, "Flyer");
   const r = validateEvent(v, { eventId: event.id, imageUrl: event.imageUrl }, NY);
   assert.ok(r.ok);
-  assert.deepEqual({ ...r.event, row: 4 }, event);
+  assert.deepEqual(r.event, event);
 });
