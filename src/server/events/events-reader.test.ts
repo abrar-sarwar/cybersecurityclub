@@ -77,3 +77,10 @@ test("the cache key hides the store address and separates stores", () => {
   assert.equal(key, storeCacheKey("https://abc.supabase.co"));
   assert.notEqual(key, storeCacheKey("https://xyz.supabase.co"));
 });
+
+test("describeError names the underlying cause when a fetch fails", async () => {
+  const { describeError } = await import("./events-reader");
+  const err = new TypeError("fetch failed", { cause: Object.assign(new Error("getaddrinfo ENOTFOUND x"), { code: "ENOTFOUND" }) });
+  assert.equal(describeError(err), "TypeError: fetch failed (cause: ENOTFOUND getaddrinfo ENOTFOUND x)");
+  assert.equal(describeError(new Error("plain")), "Error: plain");
+});

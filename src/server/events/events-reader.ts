@@ -36,8 +36,10 @@ export class BackoffError extends Error {
 }
 
 export function describeError(err: unknown): string {
-  const message = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
-  return message.slice(0, 200);
+  let message = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+  const cause = err instanceof Error ? (err as { cause?: unknown }).cause : undefined;
+  if (cause instanceof Error) message += ` (cause: ${[(cause as { code?: string }).code, cause.message].filter(Boolean).join(" ")})`;
+  return message.slice(0, 240);
 }
 
 /** A cache key part that separates stores without carrying their address. */
