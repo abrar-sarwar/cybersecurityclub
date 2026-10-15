@@ -11,7 +11,7 @@ const env = {
   GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: pem.replace(/\n/g, "\\n"),
 };
 const ok = (body: unknown) => new Response(JSON.stringify(body), { status: 200 });
-const configOf = (e: NodeJS.ProcessEnv): SheetsConfig => {
+const configOf = (e: Record<string, string | undefined>): SheetsConfig => {
   const r = readSheetsConfig(e);
   assert.ok(r.ok, "config should read");
   return r.config;

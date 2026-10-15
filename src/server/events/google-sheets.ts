@@ -29,7 +29,7 @@ export class SheetsError extends Error {
   }
 }
 
-export function readSheetsConfig(env: NodeJS.ProcessEnv = process.env): { ok: true; config: SheetsConfig } | { ok: false; missing: string[] } {
+export function readSheetsConfig(env: Record<string, string | undefined> = process.env): { ok: true; config: SheetsConfig } | { ok: false; missing: string[] } {
   const missing = REQUIRED_ENV.filter((key) => !env[key]?.trim());
   if (missing.length) return { ok: false, missing };
   const seconds = Number(env.EVENTS_CACHE_SECONDS ?? DEFAULT_CACHE_SECONDS);
