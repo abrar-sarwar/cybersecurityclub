@@ -125,6 +125,25 @@ export const CLUB_EVENTS: readonly ClubEvent[] = [
       alt: "Flyer reading: Familiar Faces, Cybersecurity Alumni Panel, October 14th at 6:00 PM, 55 Park Place, Room 1108. Includes photos of the panelists: Jhante Charles, aka @Cloudtechexec, Cloud Engineer at Nokia, and Juwan Rogers, Incident Response Consultant at Palo Alto Networks Unit 42.",
     },
   },
+  {
+    id: "2026-10-21-inheritance-protocol",
+    title: "The Inheritance Protocol: A Cyber Mystery",
+    date: "2026-10-21",
+    start: "17:30",
+    end: "19:00",
+    location: "Library South 102",
+    description:
+      "One mansion. One inheritance. Too many secrets. Behind the locked gates of a secluded smart mansion, an exclusive Halloween dinner takes a deadly turn. Work with your team to explore digital evidence, uncover family secrets and piece together the truth, from smart-home logs and Git history to hashes and steganography. The first team to crack the case wins TryHackMe Premium subscription vouchers. Presented with Girls Who Code and TryHackMe.",
+    category: "CTF",
+    difficulty: "All Levels",
+    registrationUrl: "https://pin.gsu.edu/event/12886687",
+    flyer: {
+      image: "/assets/events/inheritance-protocol.webp",
+      width: 1000,
+      height: 1250,
+      alt: "Flyer reading: The Inheritance Protocol, a cyber mystery. October 21st, 5:30 to 7:00 pm, Library South 102. Work with your team to solve the mystery. Presented by Girls Who Code, the GSU Cybersecurity Club and TryHackMe. A mansion. A dead founder. Who did it?",
+    },
+  },
 ];
 
 /**
