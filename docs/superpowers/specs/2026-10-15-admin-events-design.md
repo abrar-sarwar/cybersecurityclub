@@ -1,7 +1,7 @@
 # Officer admin page for events
 
 **Date:** 2026-10-15
-**Status:** approved in conversation; builds on the Google Sheets events design (`2026-10-15-google-sheets-events-design.md`)
+**Status:** implemented; builds on the Google Sheets events design (`2026-10-15-google-sheets-events-design.md`)
 
 ## Goal
 
@@ -58,7 +58,7 @@ a whole project for one bucket.
 | `src/lib/events/sheet.ts` | New option `includeUnpublished`. With it, unpublished rows are parsed like published ones and every event carries `published`. Every parsed event also carries `row` (its 1-based sheet row). | `sheet.test.ts` |
 | `src/lib/events/form.ts` | Pure: `FormData` → the 13 known cells in header order, validated by running `parseSheet` on `[header, row]`; field errors from its problems. `eventIdFor(title, date, taken)` makes a unique slug. | `form.test.ts` |
 | `src/server/events/sheet-writer.ts` | `createSheetWriter(config, deps)`: `readAll()` (header + raw rows, uncached), `append(cells)`, `update(row, cells)`. Writes use `valueInputOption=RAW` so nothing typed is ever treated as a formula. `update` overlays the known columns on the row's existing raw cells so extra columns officers add are never clobbered. | `sheet-writer.test.ts` with injected fetch |
-| `src/server/events/flyer-upload.ts` | `prepareFlyer(bytes)`: sharp decodes, accepts only PNG, JPEG and WebP, rejects anything else (SVG, HTML, renamed binaries), rejects under 200 px or over 8 MB, resizes to max 1600 px, re-encodes to WebP quality 82, strips metadata. `storeFlyer(eventId, webp)` puts it at `flyers/<eventId>-<hash8>.webp` with public access and returns the URL; `discardFlyer(url)` deletes a Blob URL, best effort. | `flyer-upload.test.ts` (sharp only; Blob calls injected) |
+| `src/server/events/flyer-upload.ts` | `prepareFlyer(bytes)`: sharp decodes, accepts only PNG, JPEG and WebP, rejects anything else (SVG, HTML, renamed binaries), rejects under 200 px or over 4 MB, resizes to max 1600 px, re-encodes to WebP quality 82, strips metadata. `storeFlyer(eventId, webp)` puts it at `flyers/<eventId>-<hash8>.webp` with public access and returns the URL; `discardFlyer(url)` deletes a Blob URL, best effort. | `flyer-upload.test.ts` (sharp only; Blob calls injected) |
 | `src/app/admin/*` | Pages: `login`, index (list), `events/new`, `events/[id]`. One `EventForm` client component using `useActionState` for field errors. Admin layout with sign-out and `robots: noindex`. | Playwright smoke |
 | `src/proxy.ts` | For `/admin` paths: `Cache-Control: private, no-store`, `X-Robots-Tag: noindex`, and a redirect to `/admin/login` when the session cookie is missing or invalid (pages verify again themselves). | e2e |
 
@@ -77,7 +77,7 @@ when there are any, so a broken row typed into the sheet is visible here.
 title, description (textarea), date, start time, end time, location, category
 (text with suggestions: Workshop, Meeting, Panel, Competition, Social),
 registration URL, status (Upcoming, Completed, Cancelled), published
-(checkbox), flyer (file input, PNG/JPEG/WebP, max 8 MB) with current flyer
+(checkbox), flyer (file input, PNG/JPEG/WebP, max 4 MB) with current flyer
 preview and a "Remove flyer" checkbox, and flyer alt text. Save, Cancel.
 Validation errors appear next to the field and the entered values are kept.
 
@@ -121,8 +121,8 @@ replaced or removed, revalidate, redirect.
 | --- | --- | --- |
 | `ADMIN_PASSWORD` | Vercel + local `.env` | 12+ characters. Generated locally by the setup; the user sets their own in production. |
 | `ADMIN_SESSION_SECRET` | Vercel + local `.env` | 32 random bytes, hex. |
-| `BLOB_READ_WRITE_TOKEN` | Vercel (set by connecting the store) + local `.env` | Public Blob store `cybersecurityclub-flyers`. |
-| `next.config.ts` | | `experimental.serverActions.bodySizeLimit: "9mb"` so an 8 MB flyer plus fields fits (Vercel's own request cap is 4.5 MB on Hobby, so the guide says flyers over 4 MB may fail there). |
+| Blob credentials | Injected by Vercel when the store is connected (`BLOB_STORE_ID` plus OIDC); locally via `vercel env pull` | Public Blob store `cybersecurityclub-flyers`. |
+| `next.config.ts` | | `experimental.serverActions.bodySizeLimit: "5mb"`; the flyer cap is 4 MB because Vercel caps request bodies at 4.5 MB. |
 
 ## Documentation
 

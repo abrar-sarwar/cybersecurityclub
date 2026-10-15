@@ -2,7 +2,7 @@
 
 The club website: home, events, challenges, resources and team. Built with Next.js (App Router). There is no database. Events come from a Google Sheet that officers edit (see `docs/events-google-sheet.md`); the board and page content are files in `src/content/` and `content/`.
 
-The site has **no accounts**. Nothing asks visitors to sign in, register, upload
+Officers manage events either in the Google Sheet or on `/admin`, a page behind one shared officer password (see `docs/events-google-sheet.md`). Otherwise the site has **no accounts**. Nothing asks visitors to sign in, register, upload
 a résumé, or give an email address. Club conversations happen on Discord, and
 event RSVPs use each event's PIN link.
 
@@ -22,7 +22,9 @@ The events page reads the club's Google Sheet through a read-only service
 account. Set `GOOGLE_SHEETS_SPREADSHEET_ID`, `GOOGLE_SERVICE_ACCOUNT_EMAIL`
 and `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY` (see `.env.example`). Without them
 the page renders an "events list is not available" notice and the server logs
-one `[events]` line saying which variable is missing. Setup, the sheet
+one `[events]` line saying which variable is missing. The officer admin page
+at `/admin` also needs `ADMIN_PASSWORD` and `ADMIN_SESSION_SECRET`, and the
+project's Vercel Blob store for flyer uploads (`vercel env pull .env.local`). Setup, the sheet
 template and the officer guide are in `docs/events-google-sheet.md`.
 
 ### Checks

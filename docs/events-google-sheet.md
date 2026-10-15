@@ -8,7 +8,28 @@ the sheet is live on the site within about five minutes.
 The sheet is the admin interface. Who can edit events is decided by who can
 edit the sheet, using Google's own sharing settings.
 
-## For officers: managing events
+## The admin page (easiest)
+
+Open **/admin** on the website and sign in with the shared officer password
+(ask the board for it). You get the list of every event, including hidden
+ones, and a form:
+
+- **New event**: fill in the title, date and whatever else is confirmed, tick
+  **Published** when it should show, and Save. The row is written into the
+  Google Sheet and the site updates immediately.
+- **Edit**: open an event from the list, change it, Save.
+- **Cancel**: set Status to Cancelled and Save. It stays on the site with a
+  "Cancelled" flag and no RSVP button until its day has passed.
+- **Hide**: untick Published and Save. The row stays in the sheet; the site
+  no longer shows it.
+- **Flyer**: choose a PNG, JPEG or WebP file (up to 4 MB). It is checked,
+  resized and stored for you; the sheet gets the image link. Fill in the
+  "flyer text for screen readers" box with what the flyer says.
+
+The admin page and the sheet are two views of the same rows. Anything you
+change in one shows in the other. Sign-ins last 12 hours.
+
+## For officers: managing events in the sheet directly
 
 Open the sheet (an existing officer shares it with you). The first tab,
 `Events`, has one row per event. Each column:
@@ -80,6 +101,31 @@ read, or a duplicate `event_id`. Links that do not start with `https://` are
 dropped from the event (the event still shows). If a header cell is renamed
 or deleted, the whole page shows the "not available" notice and the log says
 which column is missing. Changes take up to five minutes to appear.
+
+## For maintainers: the admin page
+
+The admin page needs two more environment variables, on Vercel and in the
+local `.env`:
+
+| Variable | Value |
+| --- | --- |
+| `ADMIN_PASSWORD` | The shared officer password, 12 or more characters. Changing it signs every officer out. |
+| `ADMIN_SESSION_SECRET` | 32 random bytes as hex (`openssl rand -hex 32`). Signs the session cookie. Changing it also signs everyone out. |
+
+Flyer uploads go to the Vercel Blob store `cybersecurityclub-flyers`, which is
+connected to the project (Vercel injects `BLOB_STORE_ID` and short-lived
+credentials; nothing to paste). For local development run
+`vercel env pull .env.local` to get the same values, and re-run it when the
+OIDC token expires (about 12 hours).
+
+The service account must be an **Editor** on the sheet for the admin page to
+save (reading only needs Viewer). Share the sheet with its email address as
+Editor.
+
+Shared login, honestly: nobody can tell which officer changed what, one
+leaked password means rotating it for everyone, and login rate limiting is
+per server instance. If that ever matters, per-officer accounts are the next
+step; the form and the sheet writer would not change.
 
 ## For maintainers: one-time setup
 
@@ -162,6 +208,24 @@ variable, the HTTP status Google returned, or the row that could not be read.
   current instant in `America/New_York`, on every request.
 
 ## Security notes
+
+The admin page:
+
+- Sessions are an HttpOnly, Secure, SameSite=Lax cookie signed with
+  `ADMIN_SESSION_SECRET`, scoped to `/admin`, 12 hours.
+- Five wrong passwords from one address block that address for 15 minutes;
+  one session can save at most 30 times in 10 minutes.
+- Admin pages send `Cache-Control: private, no-store` and
+  `X-Robots-Tag: noindex`, and `/admin` is disallowed in robots.txt.
+- Everything typed in the form goes through the same cleaning and limits as
+  the sheet parser, is validated before anything is written, and is written
+  with the Sheets API's RAW mode so a value starting with `=` can never
+  become a formula.
+- Uploads are decoded by the image library and re-encoded as WebP; the
+  original file is never stored, and anything that is not a PNG, JPEG or
+  WebP is refused whatever it is called.
+
+The site in general:
 
 - The service account has the `spreadsheets.readonly` scope and Viewer
   access to one sheet. It cannot write, and nothing on the site writes.
