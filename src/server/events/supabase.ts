@@ -7,6 +7,8 @@
 import { EVENT_COLUMNS, type EventRow } from "@/lib/events/db-row";
 
 const BUCKET = "flyers";
+/** The only object names this site ever writes: `<event id>-<hash8>.webp`. Anything else is never deleted. */
+const FLYER_OBJECT = /^[A-Za-z0-9_-]{1,64}-[0-9a-f]{8}\.webp$/;
 const DEFAULT_CACHE_SECONDS = 300;
 const MIN_CACHE_SECONDS = 30;
 const DEFAULT_TIMEOUT_MS = 8000;
@@ -48,7 +50,7 @@ export function createSupabaseClient(config: SupabaseConfig, deps: { fetch?: Fet
   const fetchImpl = deps.fetch ?? fetch;
   const timeoutMs = deps.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const rest = `${config.url}/rest/v1/events`;
-  const objectUrl = (path: string) => `${config.url}/storage/v1/object/${BUCKET}/${path}`;
+  const objectUrl = (path: string) => `${config.url}/storage/v1/object/${BUCKET}/${encodeURIComponent(path)}`;
   const publicPrefix = `${config.url}/storage/v1/object/public/${BUCKET}/`;
 
   async function call(url: string, init: RequestInit & { headers?: Record<string, string> }, what: string): Promise<Response> {
@@ -86,9 +88,11 @@ export function createSupabaseClient(config: SupabaseConfig, deps: { fetch?: Fet
     publicFlyerUrl(path: string): string {
       return publicPrefix + path;
     },
-    /** The object path when `url` is one of this project's public flyer URLs, otherwise null. */
+    /** The object name when `url` is one of this project's public flyer URLs in the shape this site writes, otherwise null. */
     flyerPathFromUrl(url: string): string | null {
-      return url.startsWith(publicPrefix) && url.length > publicPrefix.length ? url.slice(publicPrefix.length) : null;
+      if (!url.startsWith(publicPrefix)) return null;
+      const path = url.slice(publicPrefix.length);
+      return FLYER_OBJECT.test(path) ? path : null;
     },
   };
 }

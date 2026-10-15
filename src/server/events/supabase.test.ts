@@ -77,6 +77,11 @@ test("flyers upload with upsert, delete by path, and have predictable public URL
   assert.equal(calls[1].url, "https://abc.supabase.co/storage/v1/object/flyers/gbm-abcd1234.webp");
   assert.equal(client.publicFlyerUrl("gbm-abcd1234.webp"), "https://abc.supabase.co/storage/v1/object/public/flyers/gbm-abcd1234.webp");
   assert.equal(client.flyerPathFromUrl("https://abc.supabase.co/storage/v1/object/public/flyers/gbm-abcd1234.webp"), "gbm-abcd1234.webp");
+  // Only the shape this site writes; dot segments or other names never become a delete target.
+  assert.equal(client.flyerPathFromUrl("https://abc.supabase.co/storage/v1/object/public/flyers/../other-bucket/x.webp"), null);
+  assert.equal(client.flyerPathFromUrl("https://abc.supabase.co/storage/v1/object/public/flyers/%2e%2e/other-bucket/x.webp"), null);
+  assert.equal(client.flyerPathFromUrl("https://abc.supabase.co/storage/v1/object/public/flyers/sub/gbm-abcd1234.webp"), null);
+  assert.equal(client.flyerPathFromUrl("https://abc.supabase.co/storage/v1/object/public/flyers/gbm-abcd1234.png"), null);
   assert.equal(client.flyerPathFromUrl("https://abc.supabase.co/storage/v1/object/public/other/x.webp"), null);
   assert.equal(client.flyerPathFromUrl("https://evil.example/storage/v1/object/public/flyers/x.webp"), null);
   assert.equal(client.flyerPathFromUrl("/assets/events/x.webp"), null);
