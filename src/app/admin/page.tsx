@@ -71,7 +71,7 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
       ) : null}
       {result.ok && result.problems.length ? (
         <div className="adm-problem" role="status">
-          Rows the site cannot read (edited outside this page):
+          Events with a problem (edited outside this page). Open the event and save it to fix:
           <ul>
             {result.problems.map((p, i) => (
               <li key={i}>{p}</li>

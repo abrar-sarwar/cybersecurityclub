@@ -40,6 +40,11 @@ Field rules, in case something is refused:
 The event id (for example `resume-workshop-2026-09-22`) is made from the
 title and date when the event is created and never changes afterwards.
 
+If the list shows an "Events with a problem" box, someone edited a value
+outside this page that the site cannot use (for example an RSVP link that
+does not start with `https://`). The site drops that one value; open the event
+and save it to put it right.
+
 ## For maintainers
 
 ### What runs where

@@ -50,14 +50,29 @@ test("hidden rows keep published false; null times mean the whole day", () => {
   assert.equal(r.event.endsAt, "2026-09-23T03:59:00.000Z");
 });
 
-test("invalid rows are reported and skipped, never thrown", () => {
-  for (const bad of [{ ...row, date: "soon" }, { ...row, title: "" }, { ...row, start_time: "25:99" }, { ...row, id: "has space" }, null, "nope", 42]) {
+test("rows the rules skip are reported and rejected, never thrown", () => {
+  for (const bad of [{ ...row, date: "soon" }, { ...row, title: "" }, { ...row, id: "has space" }, null, "nope", 42]) {
     const r = eventFromRow(bad, NY);
     assert.equal(r.ok, false, JSON.stringify(bad));
     if (!r.ok) assert.match(r.problem, /\w/);
   }
+  const badDate = eventFromRow({ ...row, date: "soon" }, NY);
+  assert.ok(!badDate.ok && /resume-workshop-2026-09-22 date/.test(badDate.problem));
+});
+
+test("a row with a bad optional field keeps the event, drops the field and carries a warning", () => {
   const badTime = eventFromRow({ ...row, start_time: "25:99" }, NY);
-  assert.ok(!badTime.ok && /start_time/.test(badTime.problem));
+  assert.ok(badTime.ok, JSON.stringify(badTime));
+  assert.equal(badTime.event.startTime, null);
+  assert.equal(badTime.warnings.length, 1);
+  assert.match(badTime.warnings[0], /^resume-workshop-2026-09-22 start_time:/);
+  const badLink = eventFromRow({ ...row, registration_url: "http://example.com/x" }, NY);
+  assert.ok(badLink.ok);
+  assert.equal(badLink.event.registrationUrl, null);
+  assert.match(badLink.warnings[0], /registration_url/);
+  const clean = eventFromRow(row, NY);
+  assert.ok(clean.ok);
+  assert.deepEqual(clean.warnings, []);
 });
 
 test("form cells become a row with real booleans, lower-case status and null empty times", () => {

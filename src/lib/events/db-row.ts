@@ -28,15 +28,21 @@ export type EventRow = {
 
 export const EVENT_COLUMNS = ["id", "title", "description", "date", "start_time", "end_time", "location", "category", "image_url", "image_alt", "registration_url", "status", "published"] as const satisfies readonly (keyof EventRow)[];
 
-export function eventFromRow(row: unknown, timeZone: string): { ok: true; event: ClubEvent } | { ok: false; problem: string } {
+/**
+ * A row as an event. A row the rules skip (bad id, title or date) is rejected
+ * with a reason. A row with a bad optional field keeps the event, loses that
+ * field, and carries a warning, so officers can still open and fix it.
+ */
+export function eventFromRow(row: unknown, timeZone: string): { ok: true; event: ClubEvent; warnings: string[] } | { ok: false; problem: string } {
   if (!row || typeof row !== "object") return { ok: false, problem: "Not a row" };
   const r = row as Record<string, unknown>;
+  const label = typeof r.id === "string" && r.id ? r.id : "(no id)";
   const header = [...KNOWN_HEADERS];
   const cells = header.map((h) => (h === "event_id" ? r.id : r[h]) ?? "");
   const parsed = parseSheet([header, cells], { timeZone, includeUnpublished: true });
-  if (parsed.events.length === 1 && parsed.problems.length === 0) return { ok: true, event: parsed.events[0] };
-  const detail = parsed.problems.map((p) => `${p.field ?? "row"}: ${p.message}`).join("; ") || "could not be read";
-  return { ok: false, problem: `${typeof r.id === "string" && r.id ? r.id : "(no id)"} ${detail}` };
+  const notes = parsed.problems.map((p) => `${label} ${p.field ?? "row"}: ${p.message}`);
+  if (parsed.events.length === 1) return { ok: true, event: parsed.events[0], warnings: notes };
+  return { ok: false, problem: notes.join("; ") || `${label} could not be read` };
 }
 
 /** The validated form cells as a table row: real booleans, lower-case status, null for empty times. */

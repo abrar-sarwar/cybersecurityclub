@@ -29,8 +29,10 @@ export async function readAdminEvents(): Promise<AdminEventsResult> {
       const id = row && typeof row === "object" && typeof (row as { id?: unknown }).id === "string" ? (row as { id: string }).id : null;
       if (id) takenIds.push(id);
       const result = eventFromRow(row, branding.timezone);
-      if (result.ok) events.push(result.event);
-      else problems.push(result.problem);
+      if (result.ok) {
+        events.push(result.event);
+        problems.push(...result.warnings);
+      } else problems.push(result.problem);
     }
     return { ok: true, events, problems, takenIds };
   } catch (err) {

@@ -37,8 +37,10 @@ function getState(): State {
       const problems: string[] = [];
       for (const row of await client.listEvents({ onlyPublished: true })) {
         const result = eventFromRow(row, branding.timezone);
-        if (result.ok) events.push(result.event);
-        else problems.push(result.problem);
+        if (result.ok) {
+          events.push(result.event);
+          problems.push(...result.warnings);
+        } else problems.push(result.problem);
       }
       return { events, problems };
     },
