@@ -1,10 +1,20 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { readAdminConfig } from "@/server/admin/password";
+import { passwordTag, SESSION_COOKIE, verifySession } from "@/server/admin/session";
 
 /**
- * Runs before every page: security headers with a per-request Content
- * Security Policy nonce. Next.js reads the CSP header during rendering and
- * stamps the nonce on its own scripts, so no inline script runs without it.
+ * Runs before every page. Two jobs:
+ *
+ * 1. Security headers with a per-request Content Security Policy nonce.
+ *    Next.js reads the CSP header during rendering and stamps the nonce on
+ *    its own scripts, so no inline script runs without it.
+ * 2. For /admin, no-store and noindex headers, and a redirect to the login
+ *    page when the session cookie is missing or invalid. A convenience only:
+ *    every admin page and action verifies the session again itself.
  */
+
+const ADMIN_PREFIX = "/admin";
+const LOGIN_PATH = "/admin/login";
 
 function buildCsp(nonce: string): string {
   const dev = process.env.NODE_ENV === "development";
@@ -28,7 +38,7 @@ function buildCsp(nonce: string): string {
   return directives.join("; ");
 }
 
-function applySecurityHeaders(response: NextResponse, csp: string) {
+function applySecurityHeaders(response: NextResponse, csp: string, isAdmin: boolean) {
   response.headers.set("Content-Security-Policy", csp);
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "SAMEORIGIN");
@@ -36,6 +46,17 @@ function applySecurityHeaders(response: NextResponse, csp: string) {
   response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()");
   response.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains");
   response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
+  if (isAdmin) {
+    response.headers.set("Cache-Control", "private, no-store");
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  }
+}
+
+function hasValidSession(request: NextRequest): boolean {
+  const config = readAdminConfig();
+  if (!config.ok) return false;
+  const token = request.cookies.get(SESSION_COOKIE)?.value;
+  return verifySession(token, { secret: config.secret, passwordTag: passwordTag(config.password) }).ok;
 }
 
 export function proxy(request: NextRequest) {
@@ -45,8 +66,16 @@ export function proxy(request: NextRequest) {
   requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("content-security-policy", csp);
 
+  const path = request.nextUrl.pathname;
+  const isAdmin = path === ADMIN_PREFIX || path.startsWith(`${ADMIN_PREFIX}/`);
+  if (isAdmin && path !== LOGIN_PATH && !hasValidSession(request)) {
+    const redirect = NextResponse.redirect(new URL(LOGIN_PATH, request.url));
+    applySecurityHeaders(redirect, csp, true);
+    return redirect;
+  }
+
   const response = NextResponse.next({ request: { headers: requestHeaders } });
-  applySecurityHeaders(response, csp);
+  applySecurityHeaders(response, csp, isAdmin);
   return response;
 }
 
