@@ -92,9 +92,9 @@ Checkbox cells arrive as booleans.
   `published` is not TRUE, or when `event_id` repeats an earlier row.
 - An optional field that fails validation is dropped from that event and
   logged; the event still shows.
-- All text is trimmed, control characters are removed and the length limits
-  above are enforced. Text is rendered as text by React. No HTML from the
-  sheet is ever interpreted.
+- All text is trimmed and control and invisible characters are removed. Text
+  longer than its limit is cut to the limit and logged. Text is rendered as
+  text by React. No HTML from the sheet is ever interpreted.
 - At most 500 data rows are read.
 
 ### Time and phase
