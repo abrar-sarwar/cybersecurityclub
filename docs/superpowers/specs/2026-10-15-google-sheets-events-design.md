@@ -1,7 +1,7 @@
 # Events from a Google Sheet
 
 **Date:** 2026-10-15
-**Status:** approved for implementation (supersedes the Supabase event admin spec of 2026-10-14 for the events feature)
+**Status:** implemented (supersedes the Supabase event admin design of 2026-10-14; that spec, plan and code were removed from the tree on 2026-10-15 and remain in git history)
 
 ## Goal
 
