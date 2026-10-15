@@ -25,4 +25,8 @@ export type ClubEvent = {
   imageAlt: string | null;
   registrationUrl: string | null;
   status: EventStatus;
+  /** False only when parsed with `includeUnpublished`; public pages never see false. */
+  published: boolean;
+  /** 1-based row in the sheet, for the admin page's edits. */
+  row: number;
 };

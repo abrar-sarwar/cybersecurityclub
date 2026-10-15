@@ -133,16 +133,19 @@ export function isSiteImagePath(value: string): boolean {
   return /^\/[A-Za-z0-9_\-./]+$/.test(value) && !value.startsWith("//") && !value.includes("..");
 }
 
+/** A header cell as the parser matches it: trimmed, lower case, blanks to underscores. */
+export const normaliseHeader = (cell: Cell) => cleanText(cell).toLowerCase().replace(/\s+/g, "_");
+
 function headerIndex(headerRow: readonly Cell[]): Map<Header, number> {
   const columns = new Map<Header, number>();
   headerRow.forEach((cell, i) => {
-    const name = cleanText(cell).toLowerCase().replace(/\s+/g, "_");
+    const name = normaliseHeader(cell);
     if (KNOWN_HEADERS.includes(name) && !columns.has(name as Header)) columns.set(name as Header, i);
   });
   return columns;
 }
 
-export function parseSheet(values: readonly (readonly Cell[])[], options: { timeZone: string }): ParsedSheet {
+export function parseSheet(values: readonly (readonly Cell[])[], options: { timeZone: string; includeUnpublished?: boolean }): ParsedSheet {
   const problems: SheetProblem[] = [];
   const [headerRow, ...rows] = values;
   if (!headerRow) throw new SheetStructureError("The sheet has no header row");
@@ -163,7 +166,8 @@ export function parseSheet(values: readonly (readonly Cell[])[], options: { time
       return idx === undefined ? undefined : cells[idx];
     };
     if (cells.every((c) => cleanText(c) === "")) return;
-    if (!parsePublished(cell("published"))) return;
+    const published = parsePublished(cell("published"));
+    if (!published && !options.includeUnpublished) return;
 
     const report = (field: string, message: string) => {
       problems.push({ row, field, message });
@@ -231,6 +235,8 @@ export function parseSheet(values: readonly (readonly Cell[])[], options: { time
       imageAlt: imageUrl ? (text("image_alt", SHEET_LIMITS.imageAlt) ?? `${title} flyer`) : null,
       registrationUrl,
       status: status ?? "upcoming",
+      published,
+      row,
     });
   });
 

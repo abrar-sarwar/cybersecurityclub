@@ -18,6 +18,8 @@ const make = (id: string, startsAt: string, endsAt: string, status: ClubEvent["s
   imageAlt: null,
   registrationUrl: null,
   status,
+  published: true,
+  row: 2,
 });
 
 test("upcoming soonest first, past most recent first", () => {

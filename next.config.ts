@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: true,
   poweredByHeader: false,
+  experimental: {
+    // Flyer uploads travel inside a Server Action; Vercel caps request bodies at 4.5 MB.
+    serverActions: { bodySizeLimit: "5mb" },
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [360, 414, 640, 768, 1024, 1280, 1536, 1920],
