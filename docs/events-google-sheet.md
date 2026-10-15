@@ -77,8 +77,9 @@ once its end time (or the end of its day, when there are no times) has passed.
 The site skips rows it cannot read and logs why. The usual causes: `published`
 not ticked, a missing `event_id`, `title` or `date`, a `date` the site cannot
 read, or a duplicate `event_id`. Links that do not start with `https://` are
-dropped from the event (the event still shows). Changes take up to five
-minutes to appear.
+dropped from the event (the event still shows). If a header cell is renamed
+or deleted, the whole page shows the "not available" notice and the log says
+which column is missing. Changes take up to five minutes to appear.
 
 ## For maintainers: one-time setup
 
@@ -150,10 +151,13 @@ variable, the HTTP status Google returned, or the row that could not be read.
 - `src/lib/events/sheet.ts` validates every cell (lengths, dates, times,
   link schemes, published flag, duplicate IDs) and drops or trims what does
   not fit, logging the row number and reason.
-- `src/server/events/load-events.ts` caches the result through the Next.js
-  data cache for `EVENTS_CACHE_SECONDS`, keeps the last good list in memory
-  to serve during a Google outage, and waits 30 seconds between retries after
-  a failure. Google requests time out after 8 seconds.
+- `src/server/events/events-reader.ts` runs inside the cache: after a
+  failure it waits 30 seconds before calling Google again, and after a good
+  read it keeps that list and serves it through an outage. A sheet with no
+  usable header row counts as a failure, not an empty calendar.
+- `src/server/events/load-events.ts` caches the reader's result through the
+  Next.js data cache for `EVENTS_CACHE_SECONDS`, keyed by a hash of the
+  sheet and tab. Google requests time out after 8 seconds.
 - `src/lib/events/board.ts` splits events into upcoming and past for the
   current instant in `America/New_York`, on every request.
 

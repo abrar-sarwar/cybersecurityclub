@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
-    "test:unit": "tsx --test src/components/marketing/network-state.test.ts src/components/marketing/network-layout.test.ts src/lib/events/time.test.ts src/lib/events/public.test.ts src/lib/events/sheet.test.ts src/lib/events/board.test.ts src/lib/events/format.test.ts src/server/events/google-jwt.test.ts src/server/events/google-sheets.test.ts src/components/site/event-board.test.tsx",
+    "test:unit": "tsx --test src/components/marketing/network-state.test.ts src/components/marketing/network-layout.test.ts src/lib/events/time.test.ts src/lib/events/public.test.ts src/lib/events/sheet.test.ts src/lib/events/board.test.ts src/lib/events/format.test.ts src/server/events/google-jwt.test.ts src/server/events/google-sheets.test.ts src/server/events/events-reader.test.ts src/components/site/event-board.test.tsx",
     "test:e2e": "playwright test",
     "verify": "npm run typecheck && npm run lint && npm run test:unit"
   },

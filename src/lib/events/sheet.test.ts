@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { cleanText, isSiteImagePath, parsePublished, parseSheet, parseSheetDate, parseSheetTime, parseStatus, SHEET_LIMITS } from "./sheet";
+import { cleanText, isSiteImagePath, parsePublished, parseSheet, parseSheetDate, parseSheetTime, parseStatus, SHEET_LIMITS, SheetStructureError } from "./sheet";
 
 const NY = "America/New_York";
 const HEADER = ["event_id", "title", "description", "date", "start_time", "end_time", "location", "category", "image_url", "image_alt", "registration_url", "status", "published"] as const;
@@ -56,10 +56,12 @@ test("columns are matched by header name in any order and case; extra columns ar
   assert.equal(events[0].date, "2026-10-20");
 });
 
-test("a missing required column reports a problem and yields nothing", () => {
-  const { events, problems } = parseSheet([["event_id", "title", "date"], ["a", "b", "2026-01-01"]], { timeZone: NY });
-  assert.deepEqual(events, []);
-  assert.match(problems[0].message, /published/);
+test("a missing required column or header row is a structural failure, never an empty calendar", () => {
+  assert.throws(() => parseSheet([["event_id", "title", "date"], ["a", "b", "2026-01-01"]], { timeZone: NY }), (e: unknown) => e instanceof SheetStructureError && /published/.test((e as Error).message));
+  assert.throws(() => parseSheet([], { timeZone: NY }), SheetStructureError);
+  assert.throws(() => parseSheet([["Notes"], ["x"]], { timeZone: NY }), SheetStructureError);
+  // A header row with no data rows is a real, empty calendar.
+  assert.deepEqual(parseSheet([[...HEADER]], { timeZone: NY }), { events: [], problems: [] });
 });
 
 test("serial date and time cells give the calendar day and wall clock", () => {

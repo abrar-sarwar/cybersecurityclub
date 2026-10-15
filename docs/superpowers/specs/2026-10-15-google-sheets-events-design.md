@@ -126,9 +126,15 @@ nothing; it recomputes on every request.
   (default 300). This is the documented data-cache API for projects that do
   not enable Cache Components, which this project does not.
 - The last successful result is also kept in module memory. When a refresh
-  throws, the loader logs and returns the last good list; with no last good
-  list it returns `unavailable`.
-- After a failure the loader does not call Google again for 30 seconds.
+  fails, the reader logs and returns the last good list (so the cache is
+  refilled with known-good data); with no last good list the loader returns
+  `unavailable`. These rules run inside the cached function, because the
+  data cache re-runs it on every request once an entry is stale.
+- After a failure the reader does not call Google again for 30 seconds.
+- A sheet with no header row or a missing required column is a failure, not
+  an empty calendar: it never replaces the last good list.
+- The cache key includes a hash of the spreadsheet ID and tab so two sheets
+  never share an entry.
 - Concurrent cache misses share one in-flight promise.
 - Google requests use an 8 second timeout.
 - When any required env var is missing the loader returns `unconfigured`

@@ -1,7 +1,8 @@
 /**
  * Turns the cells of the officers' Google Sheet into events the site can
  * render. Pure: cells in, events and a list of row problems out. Every value
- * is untrusted text until it has been through here.
+ * is untrusted text until it has been through here. A sheet whose header row
+ * is missing or incomplete throws: that is an outage, not an empty calendar.
  *
  * Cells arrive as the Sheets API's UNFORMATTED_VALUE with SERIAL_NUMBER dates:
  * real date and time cells are numbers, checkboxes are booleans, and typed
@@ -29,6 +30,14 @@ const KNOWN_HEADERS: readonly string[] = [...REQUIRED_HEADERS, ...OPTIONAL_HEADE
 
 export type SheetProblem = { row: number; field?: string; message: string };
 export type ParsedSheet = { events: ClubEvent[]; problems: SheetProblem[] };
+
+/** The sheet as a whole cannot be read (no header row, or a required column is missing). Never an empty calendar. */
+export class SheetStructureError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "SheetStructureError";
+  }
+}
 
 type Cell = unknown;
 
@@ -136,10 +145,10 @@ function headerIndex(headerRow: readonly Cell[]): Map<Header, number> {
 export function parseSheet(values: readonly (readonly Cell[])[], options: { timeZone: string }): ParsedSheet {
   const problems: SheetProblem[] = [];
   const [headerRow, ...rows] = values;
-  if (!headerRow) return { events: [], problems: [{ row: 1, message: "The sheet has no header row" }] };
+  if (!headerRow) throw new SheetStructureError("The sheet has no header row");
   const columns = headerIndex(headerRow);
   const missing = REQUIRED_HEADERS.filter((h) => !columns.has(h));
-  if (missing.length) return { events: [], problems: [{ row: 1, message: `Missing required columns: ${missing.join(", ")}` }] };
+  if (missing.length) throw new SheetStructureError(`Missing required columns: ${missing.join(", ")}`);
   if (rows.length > SHEET_LIMITS.rows) {
     problems.push({ row: SHEET_LIMITS.rows + 2, message: `Only the first ${SHEET_LIMITS.rows} rows are read; ${rows.length - SHEET_LIMITS.rows} more were ignored` });
   }
