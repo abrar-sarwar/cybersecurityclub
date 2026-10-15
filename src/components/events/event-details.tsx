@@ -1,4 +1,4 @@
-import { CalendarDays, Clock, MapPin } from "lucide-react";
+import { CalendarDays, Clock, MapPin, Ticket } from "lucide-react";
 import Script from "next/script";
 import type { ReactNode } from "react";
 import { branding } from "@config/branding";
@@ -88,22 +88,16 @@ export function EventRegistration({ event, size = "md" }: { event: ClubEvent; si
   return (
     <div className="flex flex-wrap items-center gap-2">
       {event.lumaEventId ? <p className="basis-full text-sm font-semibold">Please register on both PIN and Luma.</p> : null}
-      <ButtonLink href={event.registrationUrl ?? branding.links.pinEvents} size={size} external>
-        {event.registrationUrl ? (event.lumaEventId ? "Register on PIN" : "Register") : "Find it on PIN"}
-        <span aria-hidden="true">↗</span>
-        <span className="sr-only">
-          : {event.title}, {formatEventDate(event.date, { month: "long", day: "numeric" })} (opens in a new tab)
-        </span>
-      </ButtonLink>
       {event.lumaEventId ? (
         <>
           {/* Luma's script opens its checkout over the page; without it the link still goes to the event. */}
           <a
             href={`https://luma.com/event/${event.lumaEventId}`}
-            className={buttonClasses({ variant: "outline", size, className: "luma-checkout--button" })}
+            className={buttonClasses({ size, className: "luma-checkout--button shadow-lg ring-2 ring-accent/40" })}
             data-luma-action="checkout"
             data-luma-event-id={event.lumaEventId}
           >
+            <Ticket className="size-5" aria-hidden />
             Register on Luma
             <span className="sr-only">
               : {event.title}, {formatEventDate(event.date, { month: "long", day: "numeric" })}
@@ -112,6 +106,18 @@ export function EventRegistration({ event, size = "md" }: { event: ClubEvent; si
           <Script id="luma-checkout" src="https://embed.lu.ma/checkout-button.js" strategy="lazyOnload" />
         </>
       ) : null}
+      <ButtonLink
+        href={event.registrationUrl ?? branding.links.pinEvents}
+        variant={event.lumaEventId ? "outline" : "primary"}
+        size={size}
+        external
+      >
+        {event.registrationUrl ? (event.lumaEventId ? "Register on PIN" : "Register") : "Find it on PIN"}
+        <span aria-hidden="true">↗</span>
+        <span className="sr-only">
+          : {event.title}, {formatEventDate(event.date, { month: "long", day: "numeric" })} (opens in a new tab)
+        </span>
+      </ButtonLink>
     </div>
   );
 }
