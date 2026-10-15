@@ -36,7 +36,6 @@ type Cell = unknown;
 const SERIAL_EPOCH_MS = Date.UTC(1899, 11, 30);
 const DAY_MS = 86_400_000;
 const ID_PATTERN = /^[A-Za-z0-9_-]{1,64}$/;
-// eslint-disable-next-line no-control-regex
 const CONTROL = /[\u0000-\u0008\u000b-\u001f\u007f]/g;
 const INVISIBLE = /[​-‏‪-‮⁦-⁩﻿]/g;
 

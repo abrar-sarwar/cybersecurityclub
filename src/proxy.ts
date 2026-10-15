@@ -24,7 +24,8 @@ function buildCsp(nonce: string): string {
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ""}`,
     // The homepage animation sets inline style attributes from React; nonces cannot cover attributes.
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob:",
+    // Event flyers are URLs officers paste into the sheet, so images may come from any https host.
+    "img-src 'self' https: data: blob:",
     "font-src 'self'",
     `connect-src 'self'${dev ? " ws://localhost:* ws://127.0.0.1:*" : ""}`,
     "media-src 'self'",

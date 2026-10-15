@@ -1811,6 +1811,8 @@ a.voice-name:focus-visible {
   margin-top: 1rem;
   color: var(--color-muted);
   line-height: 1.65;
+  /* Officers write line breaks in the sheet; keep them. */
+  white-space: pre-line;
 }
 
 .ev-actions {
@@ -1898,6 +1900,35 @@ a.voice-name:focus-visible {
   color: var(--color-muted);
   font-size: 0.9rem;
   line-height: 1.45;
+}
+
+/* A cancelled event keeps its place so people who planned to come see the change. */
+.ev-flag[data-cancelled] {
+  color: var(--color-muted);
+}
+
+.ev-flag[data-cancelled] .ev-flag-pulse {
+  display: none;
+}
+
+.ev-row[data-cancelled] .ev-row-title {
+  color: var(--color-muted);
+  text-decoration: line-through;
+}
+
+.ev-cancelled-note {
+  margin-top: 1rem;
+  color: var(--color-muted);
+  font-size: 0.95rem;
+}
+
+.ev-loading {
+  padding: 2rem 0;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .ev-note {

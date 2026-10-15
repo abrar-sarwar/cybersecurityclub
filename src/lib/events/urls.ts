@@ -21,7 +21,6 @@ export function isSafeHttpsUrl(value: string): boolean {
   if (url.username || url.password) return false;
   if (!url.hostname || !url.hostname.includes(".")) return false;
   // Control characters and whitespace have no place in a pasted link.
-  // eslint-disable-next-line no-control-regex
   if (/[\u0000-\u001f\u007f\s]/.test(value)) return false;
   return true;
 }
