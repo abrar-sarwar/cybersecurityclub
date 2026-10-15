@@ -7,7 +7,7 @@
  */
 import { createHash } from "node:crypto";
 import { del, put } from "@vercel/blob";
-import sharp from "sharp";
+import sharp, { type Metadata } from "sharp";
 
 export const FLYER_LIMITS = { maxBytes: 4 * 1024 * 1024, minPx: 200, maxPx: 1600 } as const;
 const FORMATS = new Set(["png", "jpeg", "webp"]);
@@ -23,7 +23,7 @@ export class FlyerError extends Error {
 export async function prepareFlyer(bytes: Uint8Array): Promise<{ webp: Buffer; width: number; height: number }> {
   if (bytes.byteLength > FLYER_LIMITS.maxBytes) throw new FlyerError(`Flyers can be at most ${FLYER_LIMITS.maxBytes / 1024 / 1024} MB`);
   if (bytes.byteLength === 0) throw new FlyerError("Choose an image file");
-  let meta: sharp.Metadata;
+  let meta: Metadata;
   try {
     meta = await sharp(bytes, { limitInputPixels: 40_000_000 }).metadata();
   } catch {
