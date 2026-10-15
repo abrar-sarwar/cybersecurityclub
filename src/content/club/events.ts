@@ -34,6 +34,8 @@ export type ClubEvent = {
   /** Optional: not every event has a level. */
   difficulty?: EventDifficulty;
   registrationUrl?: string;
+  /** Luma event ID ("evt-..."). Adds a Luma checkout button next to the PIN one. */
+  lumaEventId?: string;
   /** Slides, repositories, recordings and labs, mostly added after the event. */
   links?: EventLink[];
   flyer?: { image: string; width: number; height: number; alt: string };
@@ -137,6 +139,7 @@ export const CLUB_EVENTS: readonly ClubEvent[] = [
     category: "CTF",
     difficulty: "All Levels",
     registrationUrl: "https://pin.gsu.edu/event/12886687",
+    lumaEventId: "evt-36OCwMiom4FIR00",
     flyer: {
       image: "/assets/events/inheritance-protocol.webp",
       width: 1000,
