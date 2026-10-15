@@ -1,17 +1,19 @@
 "use client";
 
-import { type ReactNode, useActionState } from "react";
+import { cloneElement, type ReactElement, useActionState } from "react";
 import type { SaveState } from "@/app/admin/state";
 import { Button, ButtonLink } from "@/components/ui/button";
 import type { EventFormValues } from "@/lib/events/form";
 
 const CATEGORIES = ["Workshop", "Meeting", "Panel", "Competition", "Social", "Career"];
 
-function Field({ name, label, hint, error, children }: { name: string; label: string; hint?: string; error?: string; children: ReactNode }) {
+type FieldInput = ReactElement<{ "aria-invalid"?: boolean; "aria-describedby"?: string }>;
+
+function Field({ name, label, hint, error, children }: { name: string; label: string; hint?: string; error?: string; children: FieldInput }) {
   return (
     <label className="adm-field" data-invalid={error ? "" : undefined}>
       <span>{label}</span>
-      {children}
+      {cloneElement(children, { "aria-invalid": error ? true : undefined, "aria-describedby": error ? `err-${name}` : undefined })}
       {hint ? <small>{hint}</small> : null}
       {error ? (
         <span className="adm-error" role="alert" id={`err-${name}`}>
@@ -72,7 +74,8 @@ export function EventForm({ action, initial, eventId, imageUrl }: Props) {
           <input type="url" name="registration_url" defaultValue={v.registration_url} placeholder="https://pin.gsu.edu/…" />
         </Field>
         <Field name="status" label="Status" error={errors.status}>
-          <select name="status" defaultValue={v.status || "upcoming"}>
+          {/* Keyed on the value: React resets a form after an action and a select only reapplies defaultValue on remount. */}
+          <select key={v.status || "upcoming"} name="status" defaultValue={v.status || "upcoming"}>
             <option value="upcoming">Upcoming</option>
             <option value="completed">Completed</option>
             <option value="cancelled">Cancelled</option>
@@ -95,7 +98,7 @@ export function EventForm({ action, initial, eventId, imageUrl }: Props) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={imageUrl} alt="" />
             <label className="adm-check">
-              <input type="checkbox" name="remove_flyer" />
+              <input type="checkbox" name="remove_flyer" defaultChecked={state.removeFlyer ?? false} />
               Remove this flyer
             </label>
           </>

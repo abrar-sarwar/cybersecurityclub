@@ -1,7 +1,7 @@
 # Events in Supabase
 
 **Date:** 2026-10-15
-**Status:** approved in conversation ("just use supabase"); replaces the Google Sheets store of `2026-10-15-google-sheets-events-design.md` and keeps the admin page of `2026-10-15-admin-events-design.md`
+**Status:** implemented; replaces the Google Sheets store of `2026-10-15-google-sheets-events-design.md` and keeps the admin page of `2026-10-15-admin-events-design.md`
 
 ## Goal
 

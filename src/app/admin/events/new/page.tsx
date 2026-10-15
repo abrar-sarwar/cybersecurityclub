@@ -18,7 +18,7 @@ export default async function NewEventPage() {
   return (
     <section className="adm-card">
       <h1 className="adm-title">New event</h1>
-      <p className="adm-muted">Saving adds a row to the Google Sheet and shows the event on the site right away when it is published.</p>
+      <p className="adm-muted">Saving stores the event and shows it on the site right away when it is published.</p>
       <EventForm action={saveEvent} initial={EMPTY} eventId={null} imageUrl={null} />
     </section>
   );

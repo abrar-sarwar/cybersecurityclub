@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import sharp from "sharp";
-import { discardFlyer, FLYER_LIMITS, FlyerError, flyerPathname, isBlobUrl, prepareFlyer, storeFlyer } from "./flyer-upload";
+import { discardFlyer, FLYER_LIMITS, FlyerError, flyerPathname, prepareFlyer, storeFlyer } from "./flyer-upload";
 
 const image = (width: number, height: number) => sharp({ create: { width, height, channels: 3, background: "#123456" } });
 
@@ -43,34 +43,33 @@ test("non-images are rejected whatever their name", async () => {
   for (const bad of [svg, html, noise]) await assert.rejects(prepareFlyer(bad), FlyerError);
 });
 
-test("flyer pathnames are per event and content hashed; Blob URLs are recognised", async () => {
+test("flyer pathnames are per event and content hashed", async () => {
   const webp = (await prepareFlyer(await image(300, 300).png().toBuffer())).webp;
-  assert.match(flyerPathname("gbm-2026", webp), /^flyers\/gbm-2026-[0-9a-f]{8}\.webp$/);
-  assert.equal(isBlobUrl("https://abc123.public.blob.vercel-storage.com/flyers/x.webp"), true);
-  assert.equal(isBlobUrl("https://example.com/x.webp"), false);
-  assert.equal(isBlobUrl("/assets/events/x.webp"), false);
+  assert.match(flyerPathname("gbm-2026", webp), /^gbm-2026-[0-9a-f]{8}\.webp$/);
 });
 
-test("storeFlyer uploads publicly as WebP and discardFlyer deletes only Blob URLs", async () => {
+test("storeFlyer uploads as WebP and returns the public URL; discardFlyer deletes only this store's URLs", async () => {
   const webp = (await prepareFlyer(await image(300, 300).png().toBuffer())).webp;
-  const puts: { pathname: string; options: Record<string, unknown> }[] = [];
-  const put = (async (pathname: string, _body: unknown, options: Record<string, unknown>) => {
-    puts.push({ pathname, options });
-    return { url: `https://abc123.public.blob.vercel-storage.com/${pathname}` };
-  }) as unknown as typeof import("@vercel/blob").put;
-  const url = await storeFlyer("gbm-2026", webp, { put });
-  assert.match(url, /^https:\/\/abc123\.public\.blob\.vercel-storage\.com\/flyers\/gbm-2026-[0-9a-f]{8}\.webp$/);
-  assert.equal(puts[0].options.access, "public");
-  assert.equal(puts[0].options.contentType, "image/webp");
-  assert.equal(puts[0].options.addRandomSuffix, false);
-
+  const uploads: { path: string; contentType: string }[] = [];
   const deleted: string[] = [];
-  const del = (async (target: string) => {
-    deleted.push(target);
-    throw new Error("network down");
-  }) as unknown as typeof import("@vercel/blob").del;
-  await discardFlyer(url, { del });
-  await discardFlyer("https://example.com/x.webp", { del });
-  await discardFlyer(null, { del });
-  assert.deepEqual(deleted, [url]);
+  const store = {
+    uploadFlyer: async (path: string, _bytes: Buffer, contentType: string) => {
+      uploads.push({ path, contentType });
+    },
+    publicFlyerUrl: (path: string) => `https://abc.supabase.co/storage/v1/object/public/flyers/${path}`,
+    flyerPathFromUrl: (url: string) => (url.startsWith("https://abc.supabase.co/storage/v1/object/public/flyers/") ? url.slice("https://abc.supabase.co/storage/v1/object/public/flyers/".length) : null),
+    deleteFlyer: async (path: string) => {
+      deleted.push(path);
+      throw new Error("network down");
+    },
+  };
+  const url = await storeFlyer("gbm-2026", webp, store);
+  assert.match(url, /^https:\/\/abc\.supabase\.co\/storage\/v1\/object\/public\/flyers\/gbm-2026-[0-9a-f]{8}\.webp$/);
+  assert.equal(uploads[0].contentType, "image/webp");
+  assert.match(uploads[0].path, /^gbm-2026-[0-9a-f]{8}\.webp$/);
+  await discardFlyer(url, store);
+  await discardFlyer("https://example.com/x.webp", store);
+  await discardFlyer("/assets/events/x.webp", store);
+  await discardFlyer(null, store);
+  assert.deepEqual(deleted, [uploads[0].path]);
 });

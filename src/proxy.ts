@@ -56,7 +56,7 @@ function hasValidSession(request: NextRequest): boolean {
   const config = readAdminConfig();
   if (!config.ok) return false;
   const token = request.cookies.get(SESSION_COOKIE)?.value;
-  return verifySession(token, { secret: config.secret, passwordTag: passwordTag(config.password) }).ok;
+  return verifySession(token, { secret: config.secret, passwordTag: passwordTag(config.password, config.secret) }).ok;
 }
 
 export function proxy(request: NextRequest) {

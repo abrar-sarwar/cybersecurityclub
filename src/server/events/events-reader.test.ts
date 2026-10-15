@@ -1,11 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { SheetStructureError } from "@/lib/events/sheet";
-import { BackoffError, createEventsReader, sheetCacheKey } from "./events-reader";
+import type { ClubEvent } from "@/lib/events/event";
+import { BackoffError, createEventsReader, storeCacheKey } from "./events-reader";
 
-const HEADER = ["event_id", "title", "date", "published"];
-const good = [HEADER, ["a", "Alpha", "2026-09-02", true]];
-const withBadRow = [HEADER, ["a", "Alpha", "2026-09-02", true], ["", "No id", "2026-09-03", true]];
+const event = (id: string): ClubEvent => ({ id, title: id, description: null, category: null, date: "2026-09-02", startTime: null, endTime: null, startsAt: "2026-09-02T04:00:00.000Z", endsAt: "2026-09-03T03:59:00.000Z", location: null, imageUrl: null, imageAlt: null, registrationUrl: null, status: "upcoming", published: true });
+const good = { events: [event("a")], problems: [] };
 
 function logger() {
   const lines: string[] = [];
@@ -13,29 +12,24 @@ function logger() {
   return { lines, log };
 }
 
-test("a successful read returns the published events and logs the row problems", async () => {
+test("a successful read returns the events and logs the problems", async () => {
   const { lines, log } = logger();
-  const read = createEventsReader({ fetchValues: async () => withBadRow, timeZone: "America/New_York", label: "abc…", log });
-  const events = await read();
-  assert.deepEqual(
-    events.map((e) => e.id),
-    ["a"],
-  );
-  assert.ok(lines.some((l) => l.startsWith("warn [events] sheet abc… row 3 event_id")), lines.join("\n"));
-  assert.ok(lines.some((l) => l === "info [events] read 1 published event(s) from sheet abc…"), lines.join("\n"));
+  const read = createEventsReader({ fetchEvents: async () => ({ events: [event("a")], problems: ["no-id title: Required"] }), label: "db", log });
+  assert.deepEqual((await read()).map((e) => e.id), ["a"]);
+  assert.ok(lines.includes("warn [events] db: no-id title: Required"), lines.join("\n"));
+  assert.ok(lines.includes("info [events] read 1 published event(s) from db"), lines.join("\n"));
 });
 
-test("after a failure the reader does not call Google again for 30 seconds and logs the failure once", async () => {
+test("after a failure the reader does not call the store again for 30 seconds and logs the failure once", async () => {
   const { lines, log } = logger();
   let clock = 1_000_000;
   let calls = 0;
   const read = createEventsReader({
-    fetchValues: async () => {
+    fetchEvents: async () => {
       calls++;
       throw new Error("ECONNRESET");
     },
-    timeZone: "America/New_York",
-    label: "abc…",
+    label: "db",
     log,
     now: () => clock,
   });
@@ -47,7 +41,7 @@ test("after a failure the reader does not call Google again for 30 seconds and l
   clock += 21_000;
   await assert.rejects(read(), /ECONNRESET/);
   assert.equal(calls, 2);
-  assert.equal(lines.filter((l) => l.startsWith("error [events] could not load the events sheet abc…")).length, 2);
+  assert.equal(lines.filter((l) => l.startsWith("error [events] could not load events from db")).length, 2);
 });
 
 test("after a good read the reader serves the last good list through an outage", async () => {
@@ -56,13 +50,12 @@ test("after a good read the reader serves the last good list through an outage",
   let fail = false;
   let calls = 0;
   const read = createEventsReader({
-    fetchValues: async () => {
+    fetchEvents: async () => {
       calls++;
       if (fail) throw new Error("503");
       return good;
     },
-    timeZone: "America/New_York",
-    label: "abc…",
+    label: "db",
     log,
     now: () => clock,
   });
@@ -70,26 +63,17 @@ test("after a good read the reader serves the last good list through an outage",
   assert.equal(first[0].id, "a");
   fail = true;
   clock += 400_000;
-  const during = await read();
-  assert.deepEqual(during, first);
+  assert.deepEqual(await read(), first);
   assert.equal(calls, 2);
   clock += 10_000;
   assert.deepEqual(await read(), first);
   assert.equal(calls, 2);
 });
 
-test("a sheet with no usable header is a failure, not an empty calendar", async () => {
-  const { lines, log } = logger();
-  const read = createEventsReader({ fetchValues: async () => [["Notes"], ["x"]], timeZone: "America/New_York", label: "abc…", log });
-  await assert.rejects(read(), SheetStructureError);
-  assert.ok(lines.some((l) => l.startsWith("error [events] could not load the events sheet abc…: SheetStructureError")), lines.join("\n"));
-});
-
-test("the cache key identifies the sheet without carrying its ID", () => {
-  const key = sheetCacheKey("1abcDEFghijkl", "Events");
+test("the cache key hides the store address and separates stores", () => {
+  const key = storeCacheKey("https://abc.supabase.co");
   assert.match(key, /^[0-9a-f]{16}$/);
-  assert.ok(!key.includes("1abcDEF"));
-  assert.equal(key, sheetCacheKey("1abcDEFghijkl", "Events"));
-  assert.notEqual(key, sheetCacheKey("1abcDEFghijkl", "Spring"));
-  assert.notEqual(key, sheetCacheKey("other", "Events"));
+  assert.ok(!key.includes("abc"));
+  assert.equal(key, storeCacheKey("https://abc.supabase.co"));
+  assert.notEqual(key, storeCacheKey("https://xyz.supabase.co"));
 });

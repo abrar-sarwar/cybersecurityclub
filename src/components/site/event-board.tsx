@@ -6,11 +6,11 @@ import type { ClubEvent } from "@/lib/events/event";
 import { eventDetail } from "@/lib/events/format";
 
 /**
- * The events page's lists, fed from the officers' Google Sheet. Upcoming
+ * The events page's lists, fed from the events database. Upcoming
  * events lead: the next one is a large card with everything needed to turn
  * up, and any after it are compact rows. Past events are a strip of flyers.
  *
- * Every string here came from a spreadsheet cell. React renders it as text;
+ * Every string here was typed by an officer. React renders it as text;
  * nothing is ever interpreted as HTML.
  */
 

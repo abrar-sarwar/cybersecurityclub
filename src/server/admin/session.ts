@@ -3,15 +3,16 @@
  * `pw` is a short hash of the current password, so changing the password
  * invalidates every session. Pure: usable from the proxy and from tests.
  */
-import { createHash, createHmac, timingSafeEqual } from "node:crypto";
+import { createHmac, timingSafeEqual } from "node:crypto";
 
 export const SESSION_COOKIE = "admin_session";
 export const SESSION_TTL_MS = 12 * 3_600_000;
 
 type Payload = { exp: number; pw: string };
 
-export function passwordTag(password: string): string {
-  return createHash("sha256").update(password).digest("hex").slice(0, 12);
+/** A short, keyed fingerprint of the password: nothing password-derived is in the cookie without the secret. */
+export function passwordTag(password: string, secret: string): string {
+  return createHmac("sha256", secret).update(password).digest("hex").slice(0, 16);
 }
 
 function sign(payload: string, secret: string): string {

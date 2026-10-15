@@ -1,7 +1,0 @@
-event_id,title,description,date,start_time,end_time,location,category,image_url,image_alt,registration_url,status,published
-gbm-fall-2026,General Body Meeting,"First meeting of the Fall 2026 semester. Meet the board, hear the plan for the semester and find out how to get involved.",2026-09-02,15:00,16:00,CMII Building Room 211,Meeting,/assets/events/general-body.webp,"Flyer reading: Wednesday, first meeting of the Fall 2026 semester, CMII Building Room 211, September 2, 3:00 to 4:00 pm.",https://pin.gsu.edu/organization/cysecclub/events,Completed,TRUE
-fundamentals-2026-09,Mastering Cybersecurity Fundamentals,"A hands-on introduction to the ideas every security role builds on. No experience needed; bring a laptop.",2026-09-11,,,,Workshop,/assets/events/fundamentals.webp,"Flyer reading: Join us for our Mastering Cybersecurity Fundamentals workshop, over a background of code.",,Completed,TRUE
-resume-workshop-2026-09,Resume Workshop,"GSU tech clubs present a resume workshop. Bring a draft and leave with a stronger one.",2026-09-22,17:30,19:30,CLSO 150,Workshop,/assets/events/resume-workshop.webp,"Flyer reading: GSU tech clubs present resume workshop, September 22nd, CLSO 150, 5:30 to 7:30 pm.",,Completed,TRUE
-example-upcoming,Example: Lockpicking Night,"Delete this row or edit it into a real event. Line breaks in this cell show on the site.
-
-Second paragraph here.",2026-11-05,18:00,20:00,Student Center East 218,Workshop,,,https://pin.gsu.edu/organization/cysecclub/events,Upcoming,FALSE

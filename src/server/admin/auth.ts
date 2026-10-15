@@ -10,7 +10,7 @@ export async function hasAdminSession(): Promise<boolean> {
   const config = readAdminConfig();
   if (!config.ok) return false;
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
-  return verifySession(token, { secret: config.secret, passwordTag: passwordTag(config.password) }).ok;
+  return verifySession(token, { secret: config.secret, passwordTag: passwordTag(config.password, config.secret) }).ok;
 }
 
 /** Pages and actions call this first. Signed-out visitors land on the login page. */
@@ -23,7 +23,7 @@ export async function startAdminSession(): Promise<void> {
   if (!config.ok) throw new Error("The admin page is not configured");
   (await cookies()).set({
     name: SESSION_COOKIE,
-    value: createSession({ secret: config.secret, passwordTag: passwordTag(config.password) }),
+    value: createSession({ secret: config.secret, passwordTag: passwordTag(config.password, config.secret) }),
     httpOnly: true,
     secure: process.env.NODE_ENV !== "development",
     sameSite: "lax",

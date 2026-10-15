@@ -1,7 +1,7 @@
 # Events from a Google Sheet
 
 **Date:** 2026-10-15
-**Status:** implemented (supersedes the Supabase event admin design of 2026-10-14; that spec, plan and code were removed from the tree on 2026-10-15 and remain in git history)
+**Status:** superseded on 2026-10-15 by `2026-10-15-supabase-events-design.md` (previously: supersedes the Supabase event admin design of 2026-10-14; that spec, plan and code were removed from the tree on 2026-10-15 and remain in git history)
 
 ## Goal
 

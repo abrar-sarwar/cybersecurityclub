@@ -1,18 +1,19 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
+import { updateTag } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { branding } from "@config/branding";
-import { cellsFor, eventIdFor, KNOWN_HEADERS, readForm, validateEvent } from "@/lib/events/form";
+import { rowFromCells } from "@/lib/events/db-row";
+import { cellsFor, eventIdFor, readForm, validateEvent } from "@/lib/events/form";
 import { endAdminSession, hasAdminSession, sessionKey, startAdminSession } from "@/server/admin/auth";
-import { getSheetWriter, readAdminSheet } from "@/server/admin/events";
+import { getSupabaseClient, readAdminEvents } from "@/server/admin/events";
 import { comparePassword, readAdminConfig } from "@/server/admin/password";
 import { createRateLimiter } from "@/server/admin/rate-limit";
 import { requestIp } from "@/server/admin/request-ip";
 import { describeError } from "@/server/events/events-reader";
 import { discardFlyer, FlyerError, prepareFlyer, storeFlyer } from "@/server/events/flyer-upload";
-import { mergeRow } from "@/server/events/sheet-writer";
+import { SupabaseError } from "@/server/events/supabase";
 import type { LoginState, SaveState } from "./state";
 
 const loginAttempts = createRateLimiter({ limit: 5, windowMs: 15 * 60_000 });
@@ -40,50 +41,51 @@ export async function signOut(): Promise<void> {
 export async function saveEvent(_state: SaveState, form: FormData): Promise<SaveState> {
   if (!(await hasAdminSession())) redirect("/admin/login");
   const values = readForm(form);
-  if (!saves.hit(await sessionKey()).ok) return { message: "Too many saves in a short time. Wait a few minutes and try again.", values };
+  const removeFlyer = form.get("remove_flyer") === "on";
+  const fail = (partial: Omit<SaveState, "values" | "removeFlyer">): SaveState => ({ ...partial, values, removeFlyer });
+  if (!saves.hit(await sessionKey()).ok) return fail({ message: "Too many saves in a short time. Wait a few minutes and try again." });
 
-  const sheet = await readAdminSheet();
-  const writer = getSheetWriter();
-  if (!sheet.ok || !writer) {
-    return { message: !writer || sheet.ok || sheet.reason === "unconfigured" ? "The Google Sheet is not configured." : "The sheet could not be read, so nothing was saved.", values };
-  }
+  const store = getSupabaseClient();
+  if (!store) return fail({ message: "The events database is not configured." });
+  const admin = await readAdminEvents();
+  if (!admin.ok) return fail({ message: admin.reason === "unconfigured" ? "The events database is not configured." : "The events database could not be read, so nothing was saved." });
 
   const editingId = form.get("event_id");
   const editing = typeof editingId === "string" && editingId !== "" ? editingId : null;
-  const current = editing ? sheet.sheet.events.find((e) => e.id === editing) : undefined;
-  if (editing && !current) return { message: "This event is no longer in the sheet. Go back to the list and try again.", values };
-  const eventId = current?.id ?? eventIdFor(values.title || "event", values.date || "undated", sheet.sheet.takenIds);
+  const current = editing ? admin.events.find((e) => e.id === editing) : undefined;
+  if (editing && !current) return fail({ message: "This event no longer exists. Go back to the list and try again." });
+  const eventId = current?.id ?? eventIdFor(values.title || "event", values.date || "undated", admin.takenIds);
 
   const file = form.get("flyer");
   const upload = file instanceof File && file.size > 0 ? file : null;
-  const removeFlyer = form.get("remove_flyer") === "on";
   const keptUrl = removeFlyer ? null : (current?.imageUrl ?? null);
   const validated = validateEvent(values, { eventId, imageUrl: upload ? PENDING_FLYER : keptUrl }, branding.timezone);
-  if (!validated.ok) return { errors: validated.errors, values };
+  if (!validated.ok) return fail({ errors: validated.errors });
 
   let uploaded: string | null = null;
   if (upload) {
     try {
       const { webp } = await prepareFlyer(new Uint8Array(await upload.arrayBuffer()));
-      uploaded = await storeFlyer(eventId, webp);
+      uploaded = await storeFlyer(eventId, webp, store);
     } catch (err) {
-      if (err instanceof FlyerError) return { errors: { flyer: err.message }, values };
+      if (err instanceof FlyerError) return fail({ errors: { flyer: err.message } });
       console.error(`[admin] flyer upload failed: ${describeError(err)}`);
-      return { errors: { flyer: "The flyer could not be uploaded. Try again in a moment." }, values };
+      return fail({ errors: { flyer: "The flyer could not be uploaded. Try again in a moment." } });
     }
   }
   const imageUrl = uploaded ?? keptUrl;
-  const cells = cellsFor(values, { eventId, imageUrl });
-  const header = sheet.sheet.header.length ? sheet.sheet.header : [...KNOWN_HEADERS];
+  const row = rowFromCells(cellsFor(values, { eventId, imageUrl }));
   try {
-    if (current) await writer.update(current.row, mergeRow(header, sheet.sheet.rows[current.row - 2] ?? [], cells));
-    else await writer.append(mergeRow(header, [], cells));
+    if (current) await store.upsertEvent(row);
+    else await store.insertEvent(row);
   } catch (err) {
-    console.error(`[admin] saving to the sheet failed: ${describeError(err)}`);
-    await discardFlyer(uploaded);
-    return { message: "Saving to the sheet failed. Nothing was changed.", values };
+    await discardFlyer(uploaded, store);
+    if (err instanceof SupabaseError && err.status === 409) return fail({ message: "Another event just took that id. Save again to get a new one." });
+    console.error(`[admin] saving the event failed: ${describeError(err)}`);
+    return fail({ message: "Saving failed. Nothing was changed." });
   }
-  if (current?.imageUrl && current.imageUrl !== imageUrl) await discardFlyer(current.imageUrl);
-  revalidateTag("events", "max");
+  if (current?.imageUrl && current.imageUrl !== imageUrl) await discardFlyer(current.imageUrl, store);
+  // Read-your-own-writes: the next public request renders the new list, not a stale one.
+  updateTag("events");
   redirect(`/admin?saved=${encodeURIComponent(eventId)}`);
 }

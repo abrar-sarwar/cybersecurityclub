@@ -5,7 +5,7 @@ import { clubToday } from "@/lib/dates";
 import type { ClubEvent } from "@/lib/events/event";
 import { eventDetail } from "@/lib/events/format";
 import { requireAdmin } from "@/server/admin/auth";
-import { readAdminSheet } from "@/server/admin/events";
+import { readAdminEvents } from "@/server/admin/events";
 import { readAdminConfig } from "@/server/admin/password";
 
 export const dynamic = "force-dynamic";
@@ -47,9 +47,9 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
   if (!config.ok) return <NotConfigured missing={config.missing} />;
   await requireAdmin();
   const { saved } = await searchParams;
-  const result = await readAdminSheet();
+  const result = await readAdminEvents();
   const today = clubToday();
-  const events = result.ok ? [...result.sheet.events].sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title)) : [];
+  const events = result.ok ? [...result.events].sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title)) : [];
   const upcoming = events.filter((e) => e.date >= today);
   const past = events.filter((e) => e.date < today).reverse();
 
@@ -61,23 +61,20 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
       </div>
       {saved ? (
         <p className="adm-notice" role="status">
-          Saved. The site shows the change now; the sheet has the row too.
+          Saved. The site shows the change now.
         </p>
       ) : null}
       {!result.ok ? (
         <p className="adm-problem" role="alert">
-          {result.reason === "unconfigured" ? "The Google Sheet is not configured on the server." : `The sheet could not be read.${result.detail ? ` ${result.detail}.` : ""}`}
+          {result.reason === "unconfigured" ? "The events database is not configured on the server." : "The events database could not be read. Try again in a moment."}
         </p>
       ) : null}
-      {result.ok && result.sheet.problems.length ? (
+      {result.ok && result.problems.length ? (
         <div className="adm-problem" role="status">
-          Rows the site cannot read as typed in the sheet:
+          Rows the site cannot read (edited outside this page):
           <ul>
-            {result.sheet.problems.map((p, i) => (
-              <li key={i}>
-                Row {p.row}
-                {p.field ? `, ${p.field}` : ""}: {p.message}
-              </li>
+            {result.problems.map((p, i) => (
+              <li key={i}>{p}</li>
             ))}
           </ul>
         </div>

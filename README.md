@@ -1,8 +1,8 @@
 # Cybersecurity Club at GSU
 
-The club website: home, events, challenges, resources and team. Built with Next.js (App Router). There is no database. Events come from a Google Sheet that officers edit (see `docs/events-google-sheet.md`); the board and page content are files in `src/content/` and `content/`.
+The club website: home, events, challenges, resources and team. Built with Next.js (App Router). Events live in a Supabase project and are managed on `/admin` (see `docs/events-admin.md`); the board and page content are files in `src/content/` and `content/`.
 
-Officers manage events either in the Google Sheet or on `/admin`, a page behind one shared officer password (see `docs/events-google-sheet.md`). Otherwise the site has **no accounts**. Nothing asks visitors to sign in, register, upload
+Officers manage events on `/admin`, a page behind one shared officer password (see `docs/events-admin.md`). Otherwise the site has **no accounts**. Nothing asks visitors to sign in, register, upload
 a résumé, or give an email address. Club conversations happen on Discord, and
 event RSVPs use each event's PIN link.
 
@@ -18,20 +18,18 @@ In production, set `APP_URL` in the host's build environment: canonical links, t
 
 ### Events
 
-The events page reads the club's Google Sheet through a read-only service
-account. Set `GOOGLE_SHEETS_SPREADSHEET_ID`, `GOOGLE_SERVICE_ACCOUNT_EMAIL`
-and `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY` (see `.env.example`). Without them
-the page renders an "events list is not available" notice and the server logs
-one `[events]` line saying which variable is missing. The officer admin page
-at `/admin` also needs `ADMIN_PASSWORD` and `ADMIN_SESSION_SECRET`, and the
-project's Vercel Blob store for flyer uploads (`vercel env pull .env.local`). Setup, the sheet
-template and the officer guide are in `docs/events-google-sheet.md`.
+The events page reads from Supabase and the admin page writes to it. Set
+`SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `ADMIN_PASSWORD` and
+`ADMIN_SESSION_SECRET` (see `.env.example`). Without the Supabase values the
+events page renders an "events list is not available" notice and the server
+logs one `[events]` line saying which variable is missing. Setup, schema
+changes and the officer guide are in `docs/events-admin.md`.
 
 ### Checks
 
 | Command | What it runs |
 | --- | --- |
-| `npm run test:unit` | Homepage network logic, sheet parsing, event dates and Google sign-in |
+| `npm run test:unit` | Homepage network logic, event rules and dates, the Supabase client, admin sessions and flyer processing |
 | `npm run verify` | Typecheck, lint and unit tests |
 | `npm run typecheck` / `npm run lint` | TypeScript and ESLint |
 | `npm run build` | Production build |

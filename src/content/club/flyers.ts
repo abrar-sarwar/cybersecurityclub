@@ -3,8 +3,8 @@
  * the linked form collects interest: it does not confirm a place, a cost or a
  * competition date, so nothing here states one.
  *
- * Events no longer live in this file: officers manage them in the club's
- * Google Sheet (see docs/events-google-sheet.md).
+ * Events no longer live in this file: officers manage them on /admin
+ * (see docs/events-admin.md).
  */
 export const NCL = {
   eyebrow: "Recruiting now",

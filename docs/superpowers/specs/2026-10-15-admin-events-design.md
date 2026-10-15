@@ -1,7 +1,7 @@
 # Officer admin page for events
 
 **Date:** 2026-10-15
-**Status:** implemented; builds on the Google Sheets events design (`2026-10-15-google-sheets-events-design.md`)
+**Status:** implemented; the Google Sheet store it was built on was replaced the same day by `2026-10-15-supabase-events-design.md`; builds on the Google Sheets events design (`2026-10-15-google-sheets-events-design.md`)
 
 ## Goal
 
