@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const LIVE = ["/", "/events", "/challenges", "/resources", "/team", "/privacy", "/accessibility"];
+const LIVE = ["/", "/events", "/challenges", "/competitions", "/resources", "/team", "/privacy", "/accessibility"];
 const GONE = ["/careers", "/careers/quiz", "/careers/projects", "/careers/results", "/stories", "/learn"];
 const REMOVED_LINK = /^\/(careers|stories|learn)(\/|$|#|\?)/;
 
@@ -8,6 +8,7 @@ const NAV = [
   ["Home", "/"],
   ["Events", "/events"],
   ["Challenges", "/challenges"],
+  ["Competitions", "/competitions"],
   ["Resources", "/resources"],
   ["Team", "/team"],
 ];
@@ -28,7 +29,7 @@ test("removed routes are gone", async ({ request }) => {
   }
 });
 
-test("the header nav points at the five pages", async ({ page }) => {
+test("the header nav points at the six pages", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
   const links = page.locator(".signal-header-nav a");
@@ -91,12 +92,13 @@ test("robots.txt no longer mentions careers", async ({ request }) => {
   expect(text).toContain("sitemap.xml");
 });
 
-test("the new pages are marked as unfinished", async ({ page }) => {
-  for (const [path, title] of [["/challenges", "Challenges & Competitions"], ["/resources", "Resources"]]) {
+test("challenges and competitions are separate pages", async ({ page }) => {
+  for (const [path, title] of [["/challenges", "Challenges"], ["/competitions", "Competitions"]]) {
     await page.goto(path);
-    await expect(page.getByRole("heading", { level: 1 }).locator(".glitch-text")).toHaveText(title);
-    await expect(page.locator("[data-pending-content]")).toContainText("Content pending");
-    await expect(page).toHaveTitle(new RegExp(`^${title.replace("&", "&")} · `));
+    await expect(page).toHaveTitle(new RegExp(`^${title} · `));
     await expect(page.locator("link[rel='canonical']")).toHaveAttribute("href", new RegExp(`${path}$`));
   }
+  await page.goto("/challenges");
+  await expect(page.locator("#competitions")).toHaveCount(0);
+  await expect(page.locator("main a[href='/competitions']")).toHaveCount(1);
 });

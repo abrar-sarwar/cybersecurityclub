@@ -801,7 +801,7 @@ a.card:hover,
 
 @media (min-width: 1024px) {
   .signal-footer-inner {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr auto auto;
     gap: 2.5rem;
   }
 }

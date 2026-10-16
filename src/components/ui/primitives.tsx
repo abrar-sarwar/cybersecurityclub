@@ -6,7 +6,7 @@ export function Card({ children, className, as: Tag = "div" }: { children: React
   return <Tag className={cn("card", className)}>{children}</Tag>;
 }
 
-type Tone = "brand" | "navy" | "muted" | "success" | "warning" | "danger" | "cyan";
+export type Tone = "brand" | "navy" | "muted" | "success" | "warning" | "danger" | "cyan";
 
 const tones: Record<Tone, string> = {
   brand: "border-[rgba(111,168,255,0.35)] bg-[rgba(23,107,255,0.12)] text-brand-700",

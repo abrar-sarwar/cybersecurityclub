@@ -1,0 +1,26 @@
+/*
+  Hack The Box skin for the HTB platform card on the Challenges page.
+  Everything is scoped under .htb so the palette never leaks into the club theme.
+  Loaded after flare.css.
+*/
+
+.htb {
+  --htb-bg: #141d2b;
+  --htb-surface: #1a2332;
+  --htb-border: #2a3447;
+  --htb-text: #a4b1cd;
+  --htb-green: #9fef00;
+  color: var(--htb-text);
+}
+
+.htb-panel {
+  border: 1px solid var(--htb-border);
+  border-radius: 0.5rem;
+  background: var(--htb-surface);
+  box-shadow: 0 24px 48px -32px rgba(0, 0, 0, 0.9);
+}
+
+.htb :focus-visible,
+.htb:focus-visible {
+  outline-color: var(--htb-green);
+}

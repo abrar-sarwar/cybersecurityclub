@@ -3,6 +3,11 @@ import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import "./observatory.css";
 import "./signal.css";
+import "./flare.css";
+import "./htb.css";
+import "./cylab.css";
+import "./thm.css";
+import "./challenges.css";
 import { branding } from "@config/branding";
 import { siteUrl } from "@/lib/site";
 

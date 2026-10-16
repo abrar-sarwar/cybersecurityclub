@@ -1,0 +1,22 @@
+/*
+  CyLab Security Academy skin for the CyLabs platform card on the Challenges page.
+  Follows the academy's dark hero panels: deep blue ground, white text, orange accent.
+  Everything is scoped under .cylab. Loaded after htb.css.
+*/
+
+.cylab {
+  --cylab-bg: oklch(15% 0.05 235);
+  --cylab-orange: #f07025;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.75rem;
+  background:
+    radial-gradient(110% 120% at 100% 0%, rgba(240, 112, 37, 0.14), transparent 55%),
+    var(--cylab-bg);
+  box-shadow: 0 24px 48px -32px rgba(0, 0, 0, 0.9);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.cylab:focus-visible,
+.cylab :focus-visible {
+  outline-color: var(--cylab-orange);
+}
