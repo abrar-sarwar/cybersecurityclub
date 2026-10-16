@@ -13,12 +13,17 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: true,
   poweredByHeader: false,
+  experimental: {
+    // Flyer uploads travel inside a Server Action; Vercel caps request bodies at 4.5 MB.
+    serverActions: { bodySizeLimit: "5mb" },
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [360, 414, 640, 768, 1024, 1280, 1536, 1920],
     qualities: [60, 75, 85],
   },
   serverExternalPackages: ["sharp"],
+  // Content-Security-Policy is set per request in src/proxy.ts (it carries a nonce).
   async headers() {
     return [
       {
@@ -27,7 +32,8 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=()" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
+          { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
         ],
       },
     ];

@@ -8,14 +8,14 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
-    "test:unit": "tsx --test src/components/marketing/network-state.test.ts src/components/marketing/network-layout.test.ts src/content/club/events.test.ts",
+    "test:unit": "tsx --test src/components/marketing/network-state.test.ts src/components/marketing/network-layout.test.ts src/lib/events/time.test.ts src/lib/events/public.test.ts src/lib/events/sheet.test.ts src/lib/events/board.test.ts src/lib/events/format.test.ts src/lib/events/form.test.ts src/lib/events/db-row.test.ts src/lib/events/links.test.ts src/lib/events/calendar.test.ts src/server/events/events-reader.test.ts src/server/events/supabase.test.ts src/server/events/flyer-upload.test.ts src/server/admin/session.test.ts src/server/admin/password.test.ts src/server/admin/rate-limit.test.ts src/components/site/event-board.test.tsx",
     "test:e2e": "playwright test",
     "verify": "npm run typecheck && npm run lint && npm run test:unit"
   },
   "dependencies": {
     "clsx": "^2.1.1",
     "lucide-react": "^1.46.0",
-    "next": "16.3.5",
+    "next": "16.4.2",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "sharp": "^0.35.4",
@@ -29,7 +29,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.5",
+    "eslint-config-next": "16.4.2",
     "tailwindcss": "^4",
     "tsx": "^4.23.13",
     "typescript": "^5"

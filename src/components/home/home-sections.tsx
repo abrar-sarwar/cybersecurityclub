@@ -3,9 +3,10 @@ import { branding } from "@config/branding";
 import { DiscordMark } from "@/components/brand/discord-mark";
 import { ButtonLink } from "@/components/ui/button";
 import { ExternalLink } from "@/components/ui/external-link";
-import { EventCategoryBadge, TbdSlots } from "@/components/events/event-details";
+import { EventCategoryBadge, EventFlyer, TbdSlots } from "@/components/events/event-details";
 import { Card, EmptyState, SectionHeading } from "@/components/ui/primitives";
-import { formatEventDate, formatEventTime, type ClubEvent } from "@/content/club/events";
+import type { ClubEvent } from "@/lib/events/event";
+import { formatEventDate, formatTimeRange } from "@/lib/events/format";
 import { HOME_BEGINNER, HOME_COMPETE, HOME_EVENTS_EMPTY, HOME_JOIN,HOME_PRACTICE, HOME_TRYHACKME } from "@/content/club/home";
 import { TryHackMeIcon } from "@/components/challenges/platform-icon";
 import { CLUB_PHOTOS } from "@/content/club/photos";
@@ -27,23 +28,35 @@ function DiscordButton({ label = "Join Discord", size }: { label?: string; size?
   );
 }
 
-export function EventSpotlight({ events }: { events: readonly ClubEvent[] }) {
+/** Keeps the section's place while the events are read, so the page below it does not jump. */
+export function EventSpotlightLoading() {
+  return (
+    <section className="container-x section" aria-labelledby="home-events" aria-busy="true">
+      <SectionHeading id="home-events" eyebrow="Coming up" title="Upcoming events" />
+      <p className="mt-8 text-muted" role="status">
+        Loading events…
+      </p>
+    </section>
+  );
+}
+
+/** The next few events. With `unavailable`, the events database could not be read and the section says so instead of claiming there is nothing on. */
+export function EventSpotlight({ events, unavailable }: { events: readonly ClubEvent[]; unavailable?: boolean }) {
   return (
     <section className="container-x section" aria-labelledby="home-events">
       <SectionHeading id="home-events" eyebrow="Coming up" title="Upcoming events" />
-      {events.length === 0 ? (
+      {unavailable ? (
+        <EmptyState className="mt-8" icon={<CalendarDays className="size-5" />} title="The events list is not available right now" description="Upcoming events are also listed on PIN and announced in Discord." action={<DiscordButton />} />
+      ) : events.length === 0 ? (
         <EmptyState className="mt-8" icon={<CalendarDays className="size-5" />} title="No events scheduled yet" description={HOME_EVENTS_EMPTY} action={<DiscordButton />} />
       ) : (
         <>
           <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {events.map((event) => {
-              const time = formatEventTime(event);
+              const time = formatTimeRange(event.startTime, event.endTime);
               return (
                 <Card as="li" key={event.id} className="flex flex-col gap-4 p-5">
-                  {event.flyer ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={event.flyer.image} alt={event.flyer.alt} width={event.flyer.width} height={event.flyer.height} loading="lazy" decoding="async" className="h-auto w-full rounded-lg" />
-                  ) : null}
+                  <EventFlyer event={event} className="h-auto w-full rounded-lg" />
                   <div className="flex gap-4">
                     <div className="date-stamp self-start" aria-hidden="true">
                       <span className="date-stamp-month">{formatEventDate(event.date, { month: "short" })}</span>

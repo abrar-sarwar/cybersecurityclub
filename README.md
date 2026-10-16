@@ -1,8 +1,8 @@
 # Cybersecurity Club at GSU
 
-The club website: home, events, challenges, resources and team. Built with Next.js (App Router). There is no database: events, the board and page content are files in `src/content/` and `content/`.
+The club website: home, events, challenges, resources and team. Built with Next.js (App Router). Events live in a Supabase project and are managed on `/admin` (see `docs/events-admin.md`); the board and page content are files in `src/content/` and `content/`.
 
-The site has **no accounts**. Nothing asks visitors to sign in, register, upload
+Officers manage events on `/admin`, a page behind one shared officer password (see `docs/events-admin.md`). Otherwise the site has **no accounts**. Nothing asks visitors to sign in, register, upload
 a résumé, or give an email address. Club conversations happen on Discord, and
 event RSVPs use each event's PIN link.
 
@@ -16,11 +16,20 @@ npm run dev
 
 In production, set `APP_URL` in the host's build environment: canonical links, the sitemap and social previews are fixed at build time and default to `http://localhost:3000`.
 
+### Events
+
+The events page reads from Supabase and the admin page writes to it. Set
+`SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `ADMIN_PASSWORD` and
+`ADMIN_SESSION_SECRET` (see `.env.example`). Without the Supabase values the
+events page renders an "events list is not available" notice and the server
+logs one `[events]` line saying which variable is missing. Setup, schema
+changes and the officer guide are in `docs/events-admin.md`.
+
 ### Checks
 
 | Command | What it runs |
 | --- | --- |
-| `npm run test:unit` | Homepage network logic and event date handling |
+| `npm run test:unit` | Homepage network logic, event rules and dates, the Supabase client, admin sessions and flyer processing |
 | `npm run verify` | Typecheck, lint and unit tests |
 | `npm run typecheck` / `npm run lint` | TypeScript and ESLint |
 | `npm run build` | Production build |
