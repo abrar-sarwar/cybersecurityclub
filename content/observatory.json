@@ -102,6 +102,28 @@
         "treatment": "mono",
         "source": "https://gtri.gatech.edu/themes/custom/georgia_tech/images/site_logo.png"
       }
+    },
+    {
+      "name": "Microsoft",
+      "confirmed": true,
+      "logo": {
+        "src": "/assets/internships/microsoft.svg",
+        "width": 338,
+        "height": 72,
+        "treatment": "mono",
+        "source": "https://commons.wikimedia.org/wiki/File:Microsoft_logo_(2012).svg"
+      }
+    },
+    {
+      "name": "Capital One",
+      "confirmed": true,
+      "logo": {
+        "src": "/assets/internships/capital-one.svg",
+        "width": 418,
+        "height": 150,
+        "treatment": "mono",
+        "source": "https://commons.wikimedia.org/wiki/File:Capital_One_logo.svg"
+      }
     }
   ],
   "projects": [],
