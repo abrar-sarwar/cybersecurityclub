@@ -61,6 +61,15 @@ export const competitions: Competition[] = [
     description: "Teams defend infrastructure against a red team. Something the club is exploring, not yet committed to.",
   },
   {
+    name: "NCAE Cyber Games",
+    type: "Blue team defense, beginner friendly",
+    date: "To be decided",
+    teamSize: "To be confirmed",
+    status: "interest",
+    description:
+      "A defense competition built for students new to cyber competitions: teams secure and keep services running while a red team attacks. Something the club is exploring, not yet committed to.",
+  },
+  {
     name: "CCDC (Collegiate Cyber Defense Competition)",
     type: "Blue team defense",
     date: "To be decided",
