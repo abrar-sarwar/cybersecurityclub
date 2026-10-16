@@ -23,3 +23,8 @@ export function formatTimeRange(start: string | null, end: string | null): strin
 export function eventDetail(event: Pick<ClubEvent, "category" | "location" | "startTime" | "endTime">): string {
   return [event.category, event.location, formatTimeRange(event.startTime, event.endTime)].filter(Boolean).join(" · ");
 }
+
+/** A plain YYYY-MM-DD day, formatted in UTC so it stays on that day wherever the server runs. */
+export function formatEventDate(date: string, options: Intl.DateTimeFormatOptions = { weekday: "long", month: "long", day: "numeric" }): string {
+  return new Date(`${date}T00:00:00Z`).toLocaleDateString("en-US", { timeZone: "UTC", ...options });
+}

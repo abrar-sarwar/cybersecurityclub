@@ -3,10 +3,13 @@
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { EventBadges, EventFacts, EventMaterials, EventRegistration } from "@/components/events/event-details";
-import { eventsInMonth, eventsOn, formatClock, formatEventDate, formatEventTime, monthWeeks, type ClubEvent } from "@/content/club/events";
+import { eventsInMonth, eventsOn, monthWeeks } from "@/lib/events/calendar";
+import type { ClubEvent } from "@/lib/events/event";
+import { formatClockTime, formatEventDate, formatTimeRange } from "@/lib/events/format";
 
 /**
- * Month grid and agenda over the same event list the rest of the site uses.
+ * Month grid and agenda over the same published events the rest of the site
+ * shows.
  * `today` (YYYY-MM-DD, club timezone) comes from the server so the first
  * render matches on both sides; all date math is on plain strings or in UTC.
  */
@@ -37,7 +40,7 @@ function AgendaList({ events, today, onOpen, emptyText }: { events: ClubEvent[];
               {formatEventDate(event.date, { weekday: "short", month: "short", day: "numeric" })}
             </time>
             <span className={`font-semibold ${event.date < today ? "text-muted" : "text-navy-900"}`}>{event.title}</span>
-            <span className="text-sm text-muted">{[formatEventTime(event), event.location].filter(Boolean).join(" · ")}</span>
+            <span className="text-sm text-muted">{[formatTimeRange(event.startTime, event.endTime), event.location].filter(Boolean).join(" · ")}</span>
           </button>
         </li>
       ))}
@@ -143,7 +146,7 @@ export function EventCalendar({ events, today }: { events: readonly ClubEvent[];
                                   className="block size-6 rounded-full border border-[rgba(111,168,255,0.35)] bg-[rgba(23,107,255,0.3)] text-left text-xs leading-4 text-navy-900 hover:bg-[rgba(23,107,255,0.45)] focus-visible:outline-2 focus-visible:outline-brand-600 sm:size-auto sm:w-full sm:rounded-md sm:px-1.5 sm:py-1"
                                 >
                                   <span className="sr-only sm:not-sr-only sm:line-clamp-2">
-                                    {event.start ? <span className="text-muted">{formatClock(event.start)} </span> : null}
+                                    {event.startTime ? <span className="text-muted">{formatClockTime(event.startTime)} </span> : null}
                                     {event.title}
                                   </span>
                                 </button>

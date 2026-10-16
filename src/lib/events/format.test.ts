@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { eventDetail, formatClockTime, formatTimeRange } from "./format";
+import { eventDetail, formatClockTime, formatTimeRange, formatEventDate } from "./format";
 
 test("clock times read like a flyer", () => {
   assert.equal(formatClockTime("15:00"), "3:00 PM");
@@ -21,4 +21,10 @@ test("the detail line joins what exists", () => {
   assert.equal(eventDetail({ category: "Workshop", location: "CMII 211", startTime: "15:00", endTime: "16:00" }), "Workshop · CMII 211 · 3:00 to 4:00 PM");
   assert.equal(eventDetail({ category: null, location: "CMII 211", startTime: null, endTime: null }), "CMII 211");
   assert.equal(eventDetail({ category: null, location: null, startTime: null, endTime: null }), "");
+});
+
+test("formatEventDate keeps a YYYY-MM-DD day on that day whatever the server's zone", () => {
+  assert.equal(formatEventDate("2026-10-21"), "Wednesday, October 21");
+  assert.equal(formatEventDate("2026-10-21", { month: "short", day: "numeric" }), "Oct 21");
+  assert.equal(formatEventDate("2026-10-01", { month: "long", year: "numeric" }), "October 2026");
 });
