@@ -16,9 +16,12 @@ const values = (over: Partial<EventFormValues> = {}): EventFormValues => ({
   status: "upcoming",
   published: "on",
   image_alt: "",
+  difficulty: "",
+  luma_event_id: "",
+  links: "",
   ...over,
 });
-const extra = { eventId: "resume-workshop-2026-09-22", imageUrl: null };
+const extra = { eventId: "resume-workshop-2026-09-22", imageUrl: null, imageWidth: null, imageHeight: null };
 
 test("readForm trims, keeps description line breaks and fills missing fields with empty strings", () => {
   const form = new FormData();
@@ -33,8 +36,8 @@ test("readForm trims, keeps description line breaks and fills missing fields wit
   assert.equal(v.registration_url, "");
 });
 
-test("cellsFor produces the 13 known cells with TRUE/FALSE and a capitalised status", () => {
-  const cells = cellsFor(values(), { eventId: "x", imageUrl: "https://example.com/a.webp" });
+test("cellsFor produces every known cell with TRUE/FALSE and a capitalised status", () => {
+  const cells = cellsFor(values({ difficulty: "Beginner", luma_event_id: "evt-x1", links: "Slides | https://example.com/s" }), { eventId: "x", imageUrl: "https://example.com/a.webp", imageWidth: 1000, imageHeight: 988 });
   assert.deepEqual(cells, {
     event_id: "x",
     title: "Resume Workshop",
@@ -49,7 +52,13 @@ test("cellsFor produces the 13 known cells with TRUE/FALSE and a capitalised sta
     registration_url: "https://pin.gsu.edu/organization/cysecclub/events",
     status: "Upcoming",
     published: "TRUE",
+    difficulty: "Beginner",
+    luma_event_id: "evt-x1",
+    links: "Slides | https://example.com/s",
+    image_width: "1000",
+    image_height: "988",
   });
+  assert.equal(cellsFor(values(), extra).image_width, "");
   assert.equal(cellsFor(values({ published: "", status: "cancelled" }), extra).published, "FALSE");
   assert.equal(cellsFor(values({ status: "cancelled" }), extra).status, "Cancelled");
 });
@@ -78,6 +87,9 @@ test("the form rejects what the sheet parser would skip or drop, with the error 
   assert.ok(errorsFor({ title: "x".repeat(121) }).title);
   assert.ok(errorsFor({ status: "postponed" }).status);
   assert.ok(errorsFor({ image_alt: "y".repeat(301) }).image_alt);
+  assert.ok(errorsFor({ luma_event_id: "12345" }).luma_event_id);
+  assert.ok(errorsFor({ difficulty: "Expert" }).difficulty);
+  assert.ok(errorsFor({ links: "Slides | http://example.com/s" }).links);
 });
 
 test("eventIdFor slugs the title and date and never repeats a taken id", () => {
@@ -109,12 +121,20 @@ test("formValuesFrom round-trips an event through the form", () => {
     registrationUrl: null,
     status: "completed",
     published: false,
+    difficulty: "Beginner",
+    lumaEventId: "evt-x1",
+    links: [{ label: "Slides", href: "https://example.com/s" }],
+    imageWidth: 1000,
+    imageHeight: 988,
   };
   const v = formValuesFrom(event);
   assert.equal(v.status, "completed");
   assert.equal(v.published, "");
   assert.equal(v.image_alt, "Flyer");
-  const r = validateEvent(v, { eventId: event.id, imageUrl: event.imageUrl }, NY);
+  assert.equal(v.difficulty, "Beginner");
+  assert.equal(v.luma_event_id, "evt-x1");
+  assert.equal(v.links, "Slides | https://example.com/s");
+  const r = validateEvent(v, { eventId: event.id, imageUrl: event.imageUrl, imageWidth: event.imageWidth, imageHeight: event.imageHeight }, NY);
   assert.ok(r.ok);
   assert.deepEqual(r.event, event);
 });

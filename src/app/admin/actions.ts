@@ -58,33 +58,33 @@ export async function saveEvent(_state: SaveState, form: FormData): Promise<Save
 
   const file = form.get("flyer");
   const upload = file instanceof File && file.size > 0 ? file : null;
-  const keptUrl = removeFlyer ? null : (current?.imageUrl ?? null);
-  const validated = validateEvent(values, { eventId, imageUrl: upload ? PENDING_FLYER : keptUrl }, branding.timezone);
+  const kept = removeFlyer || !current?.imageUrl ? null : { imageUrl: current.imageUrl, imageWidth: current.imageWidth, imageHeight: current.imageHeight };
+  const validated = validateEvent(values, { eventId, imageUrl: upload ? PENDING_FLYER : (kept?.imageUrl ?? null), imageWidth: kept?.imageWidth ?? null, imageHeight: kept?.imageHeight ?? null }, branding.timezone);
   if (!validated.ok) return fail({ errors: validated.errors });
 
-  let uploaded: string | null = null;
+  let uploaded: { imageUrl: string; imageWidth: number; imageHeight: number } | null = null;
   if (upload) {
     try {
-      const { webp } = await prepareFlyer(new Uint8Array(await upload.arrayBuffer()));
-      uploaded = await storeFlyer(eventId, webp, store);
+      const { webp, width, height } = await prepareFlyer(new Uint8Array(await upload.arrayBuffer()));
+      uploaded = { imageUrl: await storeFlyer(eventId, webp, store), imageWidth: width, imageHeight: height };
     } catch (err) {
       if (err instanceof FlyerError) return fail({ errors: { flyer: err.message } });
       console.error(`[admin] flyer upload failed: ${describeError(err)}`);
       return fail({ errors: { flyer: "The flyer could not be uploaded. Try again in a moment." } });
     }
   }
-  const imageUrl = uploaded ?? keptUrl;
-  const row = rowFromCells(cellsFor(values, { eventId, imageUrl }));
+  const flyer = uploaded ?? kept;
+  const row = rowFromCells(cellsFor(values, { eventId, imageUrl: flyer?.imageUrl ?? null, imageWidth: flyer?.imageWidth ?? null, imageHeight: flyer?.imageHeight ?? null }));
   try {
     if (current) await store.upsertEvent(row);
     else await store.insertEvent(row);
   } catch (err) {
-    await discardFlyer(uploaded, store);
+    await discardFlyer(uploaded?.imageUrl ?? null, store);
     if (err instanceof SupabaseError && err.status === 409) return fail({ message: "Another event just took that id. Save again to get a new one." });
     console.error(`[admin] saving the event failed: ${describeError(err)}`);
     return fail({ message: "Saving failed. Nothing was changed." });
   }
-  if (current?.imageUrl && current.imageUrl !== imageUrl) await discardFlyer(current.imageUrl, store);
+  if (current?.imageUrl && current.imageUrl !== row.image_url) await discardFlyer(current.imageUrl, store);
   // Read-your-own-writes: the next public request renders the new list, not a stale one.
   updateTag("events");
   redirect(`/admin?saved=${encodeURIComponent(eventId)}`);

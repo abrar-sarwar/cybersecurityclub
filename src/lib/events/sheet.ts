@@ -8,9 +8,13 @@
  * real date and time cells are numbers, checkboxes are booleans, and typed
  * text is a string. Each parser accepts both forms.
  */
-import type { ClubEvent, EventStatus } from "./event";
+import { EVENT_DIFFICULTIES, type ClubEvent, type EventDifficulty, type EventStatus } from "./event";
+import { parseLinks } from "./links";
+import { cleanText } from "./text";
 import { parseLocal, zonedLocalToUtc } from "./time";
 import { isSafeHttpsUrl } from "./urls";
+
+export { cleanText } from "./text";
 
 export const SHEET_LIMITS = {
   rows: 500,
@@ -20,11 +24,13 @@ export const SHEET_LIMITS = {
   location: 200,
   category: 40,
   imageAlt: 300,
+  imagePx: 10_000,
+  lumaId: 64,
   year: { min: 2000, max: 2100 },
 } as const;
 
 export const REQUIRED_HEADERS = ["event_id", "title", "date", "published"] as const;
-export const OPTIONAL_HEADERS = ["description", "start_time", "end_time", "location", "category", "image_url", "image_alt", "registration_url", "status"] as const;
+export const OPTIONAL_HEADERS = ["description", "start_time", "end_time", "location", "category", "image_url", "image_alt", "registration_url", "status", "difficulty", "luma_event_id", "links", "image_width", "image_height"] as const;
 type Header = (typeof REQUIRED_HEADERS)[number] | (typeof OPTIONAL_HEADERS)[number];
 const KNOWN_HEADERS: readonly string[] = [...REQUIRED_HEADERS, ...OPTIONAL_HEADERS];
 
@@ -45,25 +51,7 @@ type Cell = unknown;
 const SERIAL_EPOCH_MS = Date.UTC(1899, 11, 30);
 const DAY_MS = 86_400_000;
 const ID_PATTERN = /^[A-Za-z0-9_-]{1,64}$/;
-const CONTROL = /[\u0000-\u0008\u000b-\u001f\u007f]/g;
-const INVISIBLE = /[​-‏‪-‮⁦-⁩﻿]/g;
-
-/** Trims, strips control and invisible characters and collapses blanks. With `multiline`, line breaks survive (at most one blank line in a row). */
-export function cleanText(value: Cell, multiline = false): string {
-  if (value === null || value === undefined) return "";
-  let s = String(value).replace(/\r\n?/g, "\n").replace(CONTROL, "").replace(INVISIBLE, "").replace(/\t/g, " ");
-  if (multiline) {
-    s = s
-      .split("\n")
-      .map((line) => line.replace(/ {2,}/g, " ").trim())
-      .join("\n")
-      .replace(/\n{3,}/g, "\n\n");
-  } else {
-    s = s.replace(/\s+/g, " ");
-  }
-  return s.trim();
-}
-
+const LUMA_ID = /^evt-[A-Za-z0-9]+$/;
 const two = (n: number) => String(n).padStart(2, "0");
 
 function dayKeyOf(year: number, month: number, day: number): string | null {
@@ -126,6 +114,26 @@ export function parseStatus(value: Cell): EventStatus | null {
   if (s === "completed") return "completed";
   if (s === "cancelled" || s === "canceled") return "cancelled";
   return null;
+}
+
+/** A level from the fixed list, matched without regard to case; anything else is null. */
+export function parseDifficulty(value: Cell): EventDifficulty | null {
+  const s = cleanText(value).toLowerCase();
+  return EVENT_DIFFICULTIES.find((d) => d.toLowerCase() === s) ?? null;
+}
+
+/** A Luma event id, typed bare (`evt-…`) or pasted as the event's luma.com / lu.ma link. Null when it is neither. */
+export function parseLumaEventId(value: Cell): string | null {
+  const s = cleanText(value);
+  if (!s || s.length > 200) return null;
+  const id = /^https:\/\/(?:www\.)?(?:luma\.com|lu\.ma)\/(?:event\/)?([^/?#]+)/i.exec(s)?.[1] ?? s;
+  return LUMA_ID.test(id) && id.length <= SHEET_LIMITS.lumaId ? id : null;
+}
+
+/** A whole number of pixels between 1 and the limit, from a number or digits; null otherwise. */
+export function parsePixels(value: Cell): number | null {
+  const n = typeof value === "number" ? value : /^\d{1,5}$/.test(cleanText(value)) ? Number(cleanText(value)) : NaN;
+  return Number.isInteger(n) && n >= 1 && n <= SHEET_LIMITS.imagePx ? n : null;
 }
 
 /** A path on this site: starts with one slash, plain characters only, no `..`. */
@@ -215,6 +223,23 @@ export function parseSheet(values: readonly (readonly Cell[])[], options: { time
 
     const imageUrl = link("image_url", true);
     const registrationUrl = link("registration_url", false);
+    const difficultyText = cleanText(cell("difficulty"));
+    const difficulty = parseDifficulty(difficultyText);
+    if (difficultyText && !difficulty) report("difficulty", `Use ${EVENT_DIFFICULTIES.join(", ")}; ignored`);
+    const lumaText = cleanText(cell("luma_event_id"));
+    const lumaEventId = parseLumaEventId(lumaText);
+    if (lumaText && !lumaEventId) report("luma_event_id", "Use the Luma event id, which starts with evt-, or the event's luma.com link; ignored");
+    const materials = parseLinks(cell("links"));
+    for (const message of materials.problems) report("links", message);
+    const pixels = (h: Header): number | null => {
+      if (!imageUrl || cleanText(cell(h)) === "") return null;
+      const parsed = parsePixels(cell(h));
+      if (parsed === null) report(h, `Must be a whole number of pixels up to ${SHEET_LIMITS.imagePx}; ignored`);
+      return parsed;
+    };
+    const imageWidth = pixels("image_width");
+    const imageHeight = pixels("image_height");
+    const sized = imageWidth !== null && imageHeight !== null;
     const startsAt = zonedLocalToUtc(`${date}T${startTime ?? "00:00"}`, options.timeZone);
     let endsAt = zonedLocalToUtc(`${date}T${endTime ?? "23:59"}`, options.timeZone);
     if (endsAt.getTime() <= startsAt.getTime()) endsAt = new Date(startsAt.getTime() + 60_000);
@@ -225,6 +250,7 @@ export function parseSheet(values: readonly (readonly Cell[])[], options: { time
       title,
       description: text("description", SHEET_LIMITS.description, true),
       category: text("category", SHEET_LIMITS.category),
+      difficulty,
       date,
       startTime,
       endTime,
@@ -233,7 +259,11 @@ export function parseSheet(values: readonly (readonly Cell[])[], options: { time
       location: text("location", SHEET_LIMITS.location),
       imageUrl,
       imageAlt: imageUrl ? (text("image_alt", SHEET_LIMITS.imageAlt) ?? `${title} flyer`) : null,
+      imageWidth: sized ? imageWidth : null,
+      imageHeight: sized ? imageHeight : null,
       registrationUrl,
+      lumaEventId,
+      links: materials.links,
       status: status ?? "upcoming",
       published,
     });

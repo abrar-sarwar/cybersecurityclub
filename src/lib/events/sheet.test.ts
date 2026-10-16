@@ -3,7 +3,7 @@ import test from "node:test";
 import { cleanText, isSiteImagePath, parsePublished, parseSheet, parseSheetDate, parseSheetTime, parseStatus, SHEET_LIMITS, SheetStructureError } from "./sheet";
 
 const NY = "America/New_York";
-const HEADER = ["event_id", "title", "description", "date", "start_time", "end_time", "location", "category", "image_url", "image_alt", "registration_url", "status", "published"] as const;
+const HEADER = ["event_id", "title", "description", "date", "start_time", "end_time", "location", "category", "image_url", "image_alt", "registration_url", "status", "published", "difficulty", "luma_event_id", "links", "image_width", "image_height"] as const;
 
 type Row = Partial<Record<(typeof HEADER)[number], unknown>>;
 const row = (r: Row) => HEADER.map((h) => r[h] ?? "");
@@ -43,6 +43,11 @@ test("a complete row becomes an event with instants in New York time", () => {
   assert.equal(e.imageAlt, "Flyer");
   assert.equal(e.registrationUrl, "https://pin.gsu.edu/event/1");
   assert.equal(e.status, "upcoming");
+  assert.equal(e.difficulty, null);
+  assert.equal(e.lumaEventId, null);
+  assert.deepEqual(e.links, []);
+  assert.equal(e.imageWidth, null);
+  assert.equal(e.imageHeight, null);
 });
 
 test("columns are matched by header name in any order and case; extra columns are ignored", () => {
@@ -227,5 +232,55 @@ test("includeUnpublished keeps hidden rows and marks each event with published",
   assert.deepEqual(
     onlyPublished.events.map((e) => [e.id, e.published]),
     [["b", true]],
+  );
+});
+
+test("difficulty, Luma id and materials are read; unknown values are reported and dropped", () => {
+  const { events, problems } = parseSheet(
+    sheet(
+      { ...base, difficulty: "all levels", luma_event_id: "https://luma.com/event/evt-36OCwMiom4FIR00", links: "Slides | https://example.com/s" },
+      { ...base, event_id: "bad", difficulty: "Expert", luma_event_id: "not-an-id", links: "Slides | http://example.com/s" },
+    ),
+    { timeZone: NY },
+  );
+  assert.equal(events[0].difficulty, "All Levels");
+  assert.equal(events[0].lumaEventId, "evt-36OCwMiom4FIR00");
+  assert.deepEqual(events[0].links, [{ label: "Slides", href: "https://example.com/s" }]);
+  assert.equal(events[1].difficulty, null);
+  assert.equal(events[1].lumaEventId, null);
+  assert.deepEqual(events[1].links, []);
+  assert.deepEqual(
+    problems.map((p) => [p.row, p.field]),
+    [
+      [3, "difficulty"],
+      [3, "luma_event_id"],
+      [3, "links"],
+    ],
+  );
+});
+
+test("a bare Luma id is accepted as typed", () => {
+  const { events } = parseSheet(sheet({ ...base, luma_event_id: " evt-abc123 " }), { timeZone: NY });
+  assert.equal(events[0].lumaEventId, "evt-abc123");
+});
+
+test("flyer dimensions are whole pixels and only kept with a flyer", () => {
+  const { events, problems } = parseSheet(
+    sheet(
+      { ...base, image_url: "https://example.com/a.webp", image_width: 1600, image_height: "2000" },
+      { ...base, event_id: "nopic", image_width: 1600, image_height: 2000 },
+      { ...base, event_id: "odd", image_url: "https://example.com/a.webp", image_width: "wide", image_height: 0 },
+    ),
+    { timeZone: NY },
+  );
+  assert.equal(events[0].imageWidth, 1600);
+  assert.equal(events[0].imageHeight, 2000);
+  assert.equal(events[1].imageWidth, null);
+  assert.equal(events[1].imageHeight, null);
+  assert.equal(events[2].imageWidth, null);
+  assert.equal(events[2].imageHeight, null);
+  assert.deepEqual(
+    problems.map((p) => p.field),
+    ["image_width", "image_height"],
   );
 });

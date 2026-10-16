@@ -4,8 +4,9 @@
  * synthetic row), so a row edited by hand in the Supabase dashboard is held
  * to the same standard and skipped, with a reason, when it fails.
  */
-import type { ClubEvent } from "./event";
+import type { ClubEvent, EventLink } from "./event";
 import { type EventCells, KNOWN_HEADERS } from "./form";
+import { parseLinks } from "./links";
 import { parseSheet } from "./sheet";
 
 export type EventRow = {
@@ -24,9 +25,16 @@ export type EventRow = {
   registration_url: string;
   status: string;
   published: boolean;
+  /** One of EVENT_DIFFICULTIES or empty. */
+  difficulty: string;
+  luma_event_id: string;
+  /** jsonb: `[{ label, href }]`. */
+  links: EventLink[];
+  image_width: number | null;
+  image_height: number | null;
 };
 
-export const EVENT_COLUMNS = ["id", "title", "description", "date", "start_time", "end_time", "location", "category", "image_url", "image_alt", "registration_url", "status", "published"] as const satisfies readonly (keyof EventRow)[];
+export const EVENT_COLUMNS = ["id", "title", "description", "date", "start_time", "end_time", "location", "category", "image_url", "image_alt", "registration_url", "status", "published", "difficulty", "luma_event_id", "links", "image_width", "image_height"] as const satisfies readonly (keyof EventRow)[];
 
 /**
  * A row as an event. A row the rules skip (bad id, title or date) is rejected
@@ -45,8 +53,9 @@ export function eventFromRow(row: unknown, timeZone: string): { ok: true; event:
   return { ok: false, problem: notes.join("; ") || `${label} could not be read` };
 }
 
-/** The validated form cells as a table row: real booleans, lower-case status, null for empty times. */
+/** The validated form cells as a table row: real booleans and numbers, lower-case status, null for empty times, materials as an array. */
 export function rowFromCells(cells: EventCells): EventRow {
+  const px = (s: string) => (s ? Number(s) : null);
   return {
     id: cells.event_id,
     title: cells.title,
@@ -61,5 +70,10 @@ export function rowFromCells(cells: EventCells): EventRow {
     registration_url: cells.registration_url,
     status: cells.status.toLowerCase(),
     published: cells.published === "TRUE",
+    difficulty: cells.difficulty,
+    luma_event_id: cells.luma_event_id,
+    links: parseLinks(cells.links).links,
+    image_width: px(cells.image_width),
+    image_height: px(cells.image_height),
   };
 }

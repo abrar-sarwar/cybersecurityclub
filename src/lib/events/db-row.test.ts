@@ -13,11 +13,16 @@ const row: EventRow = {
   end_time: "19:30",
   location: "CLSO 150",
   category: "Workshop",
-  image_url: "https://abc.supabase.co/storage/v1/object/public/flyers/flyers/x.webp",
+  image_url: "https://abc.supabase.co/storage/v1/object/public/flyers/x.webp",
   image_alt: "Flyer",
   registration_url: "https://pin.gsu.edu/organization/cysecclub/events",
   status: "upcoming",
   published: true,
+  difficulty: "All Levels",
+  luma_event_id: "evt-36OCwMiom4FIR00",
+  links: [{ label: "Slides", href: "https://example.com/s" }],
+  image_width: 1000,
+  image_height: 1250,
 };
 const values: EventFormValues = {
   title: row.title,
@@ -31,12 +36,15 @@ const values: EventFormValues = {
   status: "upcoming",
   published: "on",
   image_alt: row.image_alt,
+  difficulty: "All Levels",
+  luma_event_id: "evt-36OCwMiom4FIR00",
+  links: "Slides | https://example.com/s",
 };
 
 test("a table row becomes the same event the form would produce", () => {
   const fromRow = eventFromRow(row, NY);
   assert.ok(fromRow.ok, JSON.stringify(fromRow));
-  const fromForm = validateEvent(values, { eventId: row.id, imageUrl: row.image_url }, NY);
+  const fromForm = validateEvent(values, { eventId: row.id, imageUrl: row.image_url, imageWidth: 1000, imageHeight: 1250 }, NY);
   assert.ok(fromForm.ok);
   assert.deepEqual(fromRow.event, fromForm.event);
   assert.equal(fromRow.event.startsAt, "2026-09-22T21:30:00.000Z");
@@ -76,8 +84,20 @@ test("a row with a bad optional field keeps the event, drops the field and carri
 });
 
 test("form cells become a row with real booleans, lower-case status and null empty times", () => {
-  const cells = cellsFor({ ...values, start_time: "", end_time: "", status: "cancelled", published: "" }, { eventId: row.id, imageUrl: null });
+  const cells = cellsFor({ ...values, start_time: "", end_time: "", status: "cancelled", published: "" }, { eventId: row.id, imageUrl: null, imageWidth: null, imageHeight: null });
   const out = rowFromCells(cells);
-  assert.deepEqual(out, { ...row, start_time: null, end_time: null, image_url: "", status: "cancelled", published: false });
+  assert.deepEqual(out, { ...row, start_time: null, end_time: null, image_url: "", status: "cancelled", published: false, image_width: null, image_height: null });
   assert.deepEqual(Object.keys(out).sort(), [...EVENT_COLUMNS].sort());
+});
+
+test("materials go into the row as an array and come back out as links", () => {
+  const cells = cellsFor({ ...values, links: "Slides | https://example.com/s\nRepo | https://github.com/x/y" }, { eventId: row.id, imageUrl: null, imageWidth: null, imageHeight: null });
+  const out = rowFromCells(cells);
+  assert.deepEqual(out.links, [
+    { label: "Slides", href: "https://example.com/s" },
+    { label: "Repo", href: "https://github.com/x/y" },
+  ]);
+  const back = eventFromRow({ ...row, links: out.links }, NY);
+  assert.ok(back.ok);
+  assert.deepEqual(back.event.links, out.links);
 });

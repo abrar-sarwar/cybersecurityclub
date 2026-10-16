@@ -9,7 +9,7 @@ import { saveEvent } from "../../actions";
 export const metadata: Metadata = { title: "New event" };
 export const dynamic = "force-dynamic";
 
-const EMPTY: EventFormValues = { title: "", description: "", date: "", start_time: "", end_time: "", location: "", category: "", registration_url: "", status: "upcoming", published: "on", image_alt: "" };
+const EMPTY: EventFormValues = { title: "", description: "", date: "", start_time: "", end_time: "", location: "", category: "", difficulty: "", registration_url: "", luma_event_id: "", links: "", status: "upcoming", published: "on", image_alt: "" };
 
 export default async function NewEventPage() {
   const config = readAdminConfig();

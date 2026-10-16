@@ -9,7 +9,7 @@ const config = (() => {
   assert.ok(r.ok);
   return r.config as SupabaseConfig;
 })();
-const row: EventRow = { id: "x", title: "X", description: "", date: "2026-09-22", start_time: null, end_time: null, location: "", category: "", image_url: "", image_alt: "", registration_url: "", status: "upcoming", published: true };
+const row: EventRow = { id: "x", title: "X", description: "", date: "2026-09-22", start_time: null, end_time: null, location: "", category: "", image_url: "", image_alt: "", registration_url: "", status: "upcoming", published: true, difficulty: "", luma_event_id: "", links: [], image_width: null, image_height: null };
 type Call = { url: string; init: RequestInit };
 function fakeFetch(answer: (url: URL, init: RequestInit) => Response) {
   const calls: Call[] = [];
@@ -41,7 +41,7 @@ test("listEvents filters published rows and orders by date", async () => {
   assert.equal(url.origin + url.pathname, "https://abc.supabase.co/rest/v1/events");
   assert.equal(url.searchParams.get("published"), "eq.true");
   assert.equal(url.searchParams.get("order"), "date.asc,title.asc");
-  assert.match(url.searchParams.get("select") ?? "", /^id,title,description,date,start_time,end_time,location,category,image_url,image_alt,registration_url,status,published$/);
+  assert.match(url.searchParams.get("select") ?? "", /^id,title,description,date,start_time,end_time,location,category,image_url,image_alt,registration_url,status,published,difficulty,luma_event_id,links,image_width,image_height$/);
   assert.equal(new Headers(calls[0].init.headers).get("apikey"), "sb_secret_abc123");
   assert.equal(calls[0].init.cache, "no-store");
   await client.listEvents({ onlyPublished: false });

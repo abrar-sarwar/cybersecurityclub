@@ -3,7 +3,7 @@ import test from "node:test";
 import type { ClubEvent } from "@/lib/events/event";
 import { BackoffError, createEventsReader, storeCacheKey } from "./events-reader";
 
-const event = (id: string): ClubEvent => ({ id, title: id, description: null, category: null, date: "2026-09-02", startTime: null, endTime: null, startsAt: "2026-09-02T04:00:00.000Z", endsAt: "2026-09-03T03:59:00.000Z", location: null, imageUrl: null, imageAlt: null, registrationUrl: null, status: "upcoming", published: true });
+const event = (id: string): ClubEvent => ({ id, title: id, description: null, category: null, difficulty: null, date: "2026-09-02", startTime: null, endTime: null, startsAt: "2026-09-02T04:00:00.000Z", endsAt: "2026-09-03T03:59:00.000Z", location: null, imageUrl: null, imageAlt: null, imageWidth: null, imageHeight: null, registrationUrl: null, lumaEventId: null, links: [], status: "upcoming", published: true });
 const good = { events: [event("a")], problems: [] };
 
 function logger() {

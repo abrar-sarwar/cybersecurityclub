@@ -5,9 +5,10 @@
  * error here, so officers fix it before it reaches the sheet.
  */
 import type { ClubEvent } from "./event";
+import { linksToText } from "./links";
 import { cleanText, OPTIONAL_HEADERS, parseSheet, REQUIRED_HEADERS, SHEET_LIMITS } from "./sheet";
 
-export const FORM_FIELDS = ["title", "description", "date", "start_time", "end_time", "location", "category", "registration_url", "status", "published", "image_alt"] as const;
+export const FORM_FIELDS = ["title", "description", "date", "start_time", "end_time", "location", "category", "difficulty", "registration_url", "luma_event_id", "links", "status", "published", "image_alt"] as const;
 export type FormField = (typeof FORM_FIELDS)[number];
 /** Every field as a string; `published` is "on" when ticked, "" otherwise. */
 export type EventFormValues = Record<FormField, string>;
@@ -25,15 +26,18 @@ export function readForm(form: FormData): EventFormValues {
   const values = {} as EventFormValues;
   for (const field of FORM_FIELDS) {
     const raw = form.get(field);
-    values[field] = cleanText(typeof raw === "string" ? raw : "", field === "description");
+    values[field] = cleanText(typeof raw === "string" ? raw : "", field === "description" || field === "links");
   }
   return values;
 }
 
 const capitalise = (s: string) => (s ? s[0].toUpperCase() + s.slice(1).toLowerCase() : "");
 
-/** The 13 known cells as strings, ready for a RAW write. */
-export function cellsFor(values: EventFormValues, extra: { eventId: string; imageUrl: string | null }): EventCells {
+/** What the form does not carry itself: the id, and the flyer the server stored. */
+export type FormExtra = { eventId: string; imageUrl: string | null; imageWidth: number | null; imageHeight: number | null };
+
+/** Every known cell as a string, the way the rules read them. */
+export function cellsFor(values: EventFormValues, extra: FormExtra): EventCells {
   return {
     event_id: extra.eventId,
     title: values.title,
@@ -48,10 +52,15 @@ export function cellsFor(values: EventFormValues, extra: { eventId: string; imag
     registration_url: values.registration_url,
     status: capitalise(values.status),
     published: values.published === "on" ? "TRUE" : "FALSE",
+    difficulty: values.difficulty,
+    luma_event_id: values.luma_event_id,
+    links: values.links,
+    image_width: extra.imageUrl && extra.imageWidth ? String(extra.imageWidth) : "",
+    image_height: extra.imageUrl && extra.imageHeight ? String(extra.imageHeight) : "",
   };
 }
 
-export function validateEvent(values: EventFormValues, extra: { eventId: string; imageUrl: string | null }, timeZone: string): ValidatedEvent {
+export function validateEvent(values: EventFormValues, extra: FormExtra, timeZone: string): ValidatedEvent {
   const cells = cellsFor(values, extra);
   const header = [...KNOWN_HEADERS];
   const row = header.map((h) => cells[h]);
@@ -95,7 +104,10 @@ export function formValuesFrom(event: ClubEvent): EventFormValues {
     end_time: event.endTime ?? "",
     location: event.location ?? "",
     category: event.category ?? "",
+    difficulty: event.difficulty ?? "",
     registration_url: event.registrationUrl ?? "",
+    luma_event_id: event.lumaEventId ?? "",
+    links: linksToText(event.links),
     status: event.status,
     published: event.published ? "on" : "",
     image_alt: event.imageAlt ?? "",
