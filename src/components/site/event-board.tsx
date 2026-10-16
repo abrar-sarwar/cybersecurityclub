@@ -17,7 +17,7 @@ import { formatEventDate, formatTimeRange } from "@/lib/events/format";
 function NextEvent({ event, today }: { event: ClubEvent; today: string }) {
   const cancelled = event.status === "cancelled";
   return (
-    <article className="ev-next" data-flyer={event.imageUrl ? "" : undefined} aria-labelledby={`next-${event.id}`}>
+    <article id={`event-${event.id}`} className="ev-next scroll-mt-24" data-flyer={event.imageUrl ? "" : undefined} aria-labelledby={`next-${event.id}`}>
       {event.imageUrl ? (
         <div className="ev-next-flyer">
           <EventFlyer event={event} eager />
@@ -78,7 +78,7 @@ export function UpcomingEvents({ events, today }: { events: readonly ClubEvent[]
             {later.map((event) => {
               const time = formatTimeRange(event.startTime, event.endTime);
               return (
-                <li key={event.id} className="ev-row !items-start" data-cancelled={event.status === "cancelled" ? "" : undefined}>
+                <li key={event.id} id={`event-${event.id}`} className="ev-row scroll-mt-24 !items-start" data-cancelled={event.status === "cancelled" ? "" : undefined}>
                   <time className="ev-row-date" dateTime={event.date}>
                     <span>{formatEventDate(event.date, { month: "short" })}</span>
                     <b>{formatEventDate(event.date, { day: "numeric" })}</b>
@@ -109,7 +109,7 @@ export function PastEvents({ events }: { events: readonly ClubEvent[] }) {
   return (
     <ol className="mt-6 grid gap-4 md:grid-cols-2">
       {events.map((event) => (
-        <li key={event.id} className="card flex gap-4 p-4">
+        <li key={event.id} id={`event-${event.id}`} className="card flex scroll-mt-24 gap-4 p-4">
           {event.imageUrl ? (
             <div className="ev-past-thumb w-[4.5rem] flex-none self-start">
               {/* The flyer repeats the title and date beside it, so it is decorative here. */}

@@ -35,3 +35,16 @@ test("the homepage spotlight shows upcoming events or says why not", async ({ pa
   await expect(section).not.toContainText("Loading events");
   await expect(section.locator("li, .signal-empty").first()).toBeVisible();
 });
+
+test("a homepage event card leads to that event on the events page", async ({ page }) => {
+  await page.goto("/");
+  const card = page.locator("section[aria-labelledby='home-events'] li a").first();
+  test.skip((await card.count()) === 0, "no upcoming events to click");
+  const href = await card.getAttribute("href");
+  expect(href).toMatch(/^\/events#event-[A-Za-z0-9_-]+$/);
+  await card.click();
+  await page.waitForURL(/\/events#event-/);
+  const target = page.locator(`[id="${href!.split("#")[1]}"]`);
+  await expect(target).toBeVisible();
+  await expect(target.getByRole("link", { name: /Register|Find it on PIN/ }).first()).toBeVisible();
+});
