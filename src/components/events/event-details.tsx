@@ -1,6 +1,5 @@
 import { CalendarDays, Clock, MapPin, Ticket } from "lucide-react";
 import Script from "next/script";
-import type { ReactNode } from "react";
 import { branding } from "@config/branding";
 import { ButtonLink, buttonClasses } from "@/components/ui/button";
 import { ExternalLink } from "@/components/ui/external-link";
@@ -157,13 +156,4 @@ export function EventFlyer({ event, eager, decorative, className }: { event: Clu
       className={className}
     />
   );
-}
-
-/** Pads a grid or list with "TBD" cards so a short list never leaves visible gaps. */
-export function TbdSlots({ count, as: Tag = "li", className }: { count: number; as?: "li" | "div"; className?: string }): ReactNode {
-  return Array.from({ length: Math.max(0, count) }, (_, i) => (
-    <Tag key={`tbd-${i}`} className={`card flex min-h-32 items-center justify-center border-dashed p-5 text-center text-muted ${className ?? ""}`}>
-      <p className="font-display text-lg font-semibold">TBD, stay tuned!</p>
-    </Tag>
-  ));
 }

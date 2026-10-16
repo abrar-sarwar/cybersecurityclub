@@ -3,7 +3,7 @@ import { branding } from "@config/branding";
 import { DiscordMark } from "@/components/brand/discord-mark";
 import { ButtonLink } from "@/components/ui/button";
 import { ExternalLink } from "@/components/ui/external-link";
-import { EventCategoryBadge, EventFlyer, TbdSlots } from "@/components/events/event-details";
+import { EventCategoryBadge, EventFlyer } from "@/components/events/event-details";
 import { Card, EmptyState, SectionHeading } from "@/components/ui/primitives";
 import type { ClubEvent } from "@/lib/events/event";
 import { formatEventDate, formatTimeRange } from "@/lib/events/format";
@@ -95,7 +95,6 @@ export function EventSpotlight({ events, unavailable }: { events: readonly ClubE
                 </Card>
               );
             })}
-            <TbdSlots count={3 - events.length} />
           </ul>
           <div className="mt-8">
             <ButtonLink href="/events" variant="outline">
