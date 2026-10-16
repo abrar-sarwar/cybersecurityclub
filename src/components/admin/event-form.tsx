@@ -3,9 +3,25 @@
 import { cloneElement, type ReactElement, useActionState } from "react";
 import type { SaveState } from "@/app/admin/state";
 import { Button, ButtonLink } from "@/components/ui/button";
+import { EVENT_CATEGORIES, EVENT_DIFFICULTIES } from "@/lib/events/event";
 import type { EventFormValues } from "@/lib/events/form";
 
-const CATEGORIES = ["Workshop", "Meeting", "Panel", "Competition", "Social", "Career"];
+/** A select over a fixed list that still shows a value typed outside it (edited in the table by hand), so saving does not silently clear it. */
+function Choice({ name, value, options, none }: { name: string; value: string; options: readonly string[]; none: string }) {
+  const known = (options as readonly string[]).includes(value);
+  return (
+    // Keyed on the value: React resets a form after an action and a select only reapplies defaultValue on remount.
+    <select key={value} name={name} defaultValue={value}>
+      <option value="">{none}</option>
+      {!known && value ? <option value={value}>{value}</option> : null}
+      {options.map((o) => (
+        <option key={o} value={o}>
+          {o}
+        </option>
+      ))}
+    </select>
+  );
+}
 
 type FieldInput = ReactElement<{ "aria-invalid"?: boolean; "aria-describedby"?: string }>;
 
@@ -58,8 +74,11 @@ export function EventForm({ action, initial, eventId, imageUrl }: Props) {
         <Field name="date" label="Date" error={errors.date}>
           <input type="date" name="date" defaultValue={v.date} required />
         </Field>
-        <Field name="category" label="Category" error={errors.category}>
-          <input name="category" defaultValue={v.category} list="adm-categories" maxLength={40} />
+        <Field name="category" label="Category" hint="Colours the tag on the site." error={errors.category}>
+          <Choice name="category" value={v.category} options={EVENT_CATEGORIES} none="Not set" />
+        </Field>
+        <Field name="difficulty" label="Level" error={errors.difficulty}>
+          <Choice name="difficulty" value={v.difficulty} options={EVENT_DIFFICULTIES} none="Not set" />
         </Field>
         <Field name="start_time" label="Start time" error={errors.start_time}>
           <input type="time" name="start_time" defaultValue={v.start_time} />
@@ -72,6 +91,9 @@ export function EventForm({ action, initial, eventId, imageUrl }: Props) {
         </Field>
         <Field name="registration_url" label="RSVP link" hint="Must start with https://" error={errors.registration_url}>
           <input type="url" name="registration_url" defaultValue={v.registration_url} placeholder="https://pin.gsu.edu/…" />
+        </Field>
+        <Field name="luma_event_id" label="Luma event id" hint="Optional. Starts with evt- and ends the event's luma.com link. Adds a Register on Luma button." error={errors.luma_event_id}>
+          <input name="luma_event_id" defaultValue={v.luma_event_id} maxLength={200} placeholder="evt-…" />
         </Field>
         <Field name="status" label="Status" error={errors.status}>
           {/* Keyed on the value: React resets a form after an action and a select only reapplies defaultValue on remount. */}
@@ -86,11 +108,9 @@ export function EventForm({ action, initial, eventId, imageUrl }: Props) {
           Published (visible on the site)
         </label>
       </div>
-      <datalist id="adm-categories">
-        {CATEGORIES.map((c) => (
-          <option key={c} value={c} />
-        ))}
-      </datalist>
+      <Field name="links" label="Materials" hint="Optional, usually added afterwards. One per line as Label | https://link: slides, recording, repository, lab. Up to 10." error={errors.links}>
+        <textarea name="links" defaultValue={v.links} rows={3} />
+      </Field>
 
       <div className="adm-flyer">
         {imageUrl ? (

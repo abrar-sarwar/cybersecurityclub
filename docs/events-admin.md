@@ -23,6 +23,14 @@ Open **/admin** on the website and sign in with the shared officer password
   resized to at most 1600 px and stored for you. Fill in the "flyer text for
   screen readers" box with what the flyer says; the site's accessibility page
   promises this.
+- **Category and level**: pick from the lists. The category colours the tag
+  on the event; the level is kept for the record.
+- **Luma**: if the event also takes registrations on Luma, paste its event
+  id (`evt-…`, the end of the event's luma.com link). The site adds a
+  "Register on Luma" button beside the PIN one.
+- **Materials**: after the event, add the slides, recording, repository or
+  lab, one per line as `Label | https://link`. They show in the past-events
+  archive and in the event's details.
 
 Field rules, in case something is refused:
 
@@ -33,8 +41,11 @@ Field rules, in case something is refused:
 | Date | Required. The day it happens, in Eastern time. |
 | Start and end time | Optional. End must be after start on the same day. |
 | Location | Up to 200 characters. |
-| Category | Up to 40 characters, e.g. Workshop, Meeting, Panel, Competition, Social. |
+| Category | One of Workshop, General Body Meeting, CTF, Competition, Social, Speaker, Career, Training. |
+| Level | One of Beginner, Intermediate, Advanced, All Levels, or not set. |
 | RSVP link | Must start with `https://`. |
+| Luma event id | Starts with `evt-`; letters and digits only. The event's luma.com link is accepted too. |
+| Materials | Up to 10 lines of `Label | https://link`. Labels up to 80 characters. A line without an `https://` link is refused. |
 | Flyer text | Up to 300 characters. |
 
 The event id (for example `resume-workshop-2026-09-22`) is made from the
@@ -54,7 +65,9 @@ and save it to put it right.
   no policies and the API roles have no privileges, so only the secret key can
   read or write. The website is the only client.
 - Flyers: Supabase Storage bucket `flyers`, public for reads, WebP only, 5 MB
-  limit. Only the server writes to it.
+  limit. Only the server writes to it. The six events the site shipped with
+  (seeded by the `event_details` migration) point at flyers in
+  `public/assets/events/` instead; leave those files in place.
 - The website reads published events through the Next.js data cache
   (`EVENTS_CACHE_SECONDS`, default 300), keeps the last good list in memory to
   serve through an outage, waits 30 seconds between retries after a failure,
@@ -125,5 +138,7 @@ the next step; the form and the database would not change.
 Earlier in 2026-10 the events were read from a Google Sheet that officers
 edited directly, and before that from a hard-coded list. The Google Sheet,
 service account and Cloud project are no longer used by the site and can be
-deleted from the club's Google account. The design records are in
-`docs/superpowers/specs/`.
+deleted from the club's Google account. On 2026-10-16 the events UI built on
+`main` (calendar, category tags, Luma checkout, materials) was merged onto
+the database-backed events, and the list that lived in code was moved into
+the table. The design records are in `docs/superpowers/specs/`.
